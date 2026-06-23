@@ -1,11 +1,10 @@
-/**
- * Folder: project root
- * File: middleware.ts
- * Purpose:
- * - Central route protection and role-based access checks.
- * - Runs before protected routes are served.
- *
- * Example (when implementing later):
- * - Redirect unauthenticated users from "/user/*" to "/login".
- * - Allow only role "company" to access "/company/*".
- */
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function middleware(_request: NextRequest) {
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)"],
+};

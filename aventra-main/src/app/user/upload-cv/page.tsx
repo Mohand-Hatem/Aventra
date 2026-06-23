@@ -1,11 +1,10 @@
-/**
- * Folder: src/app/user/upload-cv
- * File: page.tsx
- * Purpose:
- * - CV upload page route for candidates.
- * - Starts ATS parsing and AI analysis workflow.
- *
- * Example (when implementing later):
- * - Render UploadCvForm from "@/components/feature/cv/upload-cv-form".
- * - Show mutation status (pending/success/error).
- */
+export default function UploadCvPage() {
+  return (
+    <section>
+      <h1 className="text-3xl font-semibold tracking-tight">Upload CV</h1>
+      <p className="mt-2 text-muted-foreground">
+        Upload your resume to get ATS scoring and improvement suggestions.
+      </p>
+    </section>
+  );
+}

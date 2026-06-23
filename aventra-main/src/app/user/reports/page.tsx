@@ -1,11 +1,10 @@
-/**
- * Folder: src/app/user/reports
- * File: page.tsx
- * Purpose:
- * - User reports page route.
- * - Displays previous CV analysis results and insights.
- *
- * Example (when implementing later):
- * - Fetch report list with useCvAnalysisListQuery.
- * - Render cards/table for history.
- */
+export default function UserReportsPage() {
+  return (
+    <section>
+      <h1 className="text-3xl font-semibold tracking-tight">Reports</h1>
+      <p className="mt-2 text-muted-foreground">
+        View your CV analysis history and AI insights.
+      </p>
+    </section>
+  );
+}

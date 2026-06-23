@@ -1,11 +1,10 @@
-/**
- * Folder: src/app/user/profile
- * File: page.tsx
- * Purpose:
- * - User profile page route.
- * - Shows candidate account details and preferences.
- *
- * Example (when implementing later):
- * - Query current user profile via React Query.
- * - Render editable profile form.
- */
+export default function UserProfilePage() {
+  return (
+    <section>
+      <h1 className="text-3xl font-semibold tracking-tight">Profile</h1>
+      <p className="mt-2 text-muted-foreground">
+        Manage your personal information and preferences.
+      </p>
+    </section>
+  );
+}

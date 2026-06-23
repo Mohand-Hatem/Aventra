@@ -1,11 +1,10 @@
-/**
- * Folder: src/app/register
- * File: page.tsx
- * Purpose:
- * - Register route ("/register") UI.
- * - Supports account creation for user/company roles.
- *
- * Example (when implementing later):
- * - Use register schema from "@/schemas/auth".
- * - Trigger useRegisterMutation from "@/queries/auth".
- */
+export default function RegisterPage() {
+  return (
+    <section className="mx-auto w-full max-w-md px-4 py-24 sm:px-6">
+      <h1 className="text-3xl font-semibold tracking-tight">Create account</h1>
+      <p className="mt-2 text-muted-foreground">
+        Join Aventra to optimize your resume or discover candidates.
+      </p>
+    </section>
+  );
+}

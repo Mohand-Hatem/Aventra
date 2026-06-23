@@ -1,10 +1,10 @@
-/**
- * Folder: src/app
- * File: loading.tsx
- * Purpose:
- * - Global route-level loading UI for App Router.
- * - Shown while route segments are being resolved.
- *
- * Example (when implementing later):
- * - Render centered skeleton/spinner component.
- */
+export default function Loading() {
+  return (
+    <section className="flex min-h-[40vh] items-center justify-center px-4">
+      <div className="flex items-center gap-3 text-muted-foreground">
+        <span className="size-4 animate-spin rounded-full border-2 border-muted border-t-primary" />
+        <span className="text-sm font-medium">Loading...</span>
+      </div>
+    </section>
+  );
+}
