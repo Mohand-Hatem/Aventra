@@ -27,9 +27,9 @@ export const PRICING_PLANS: PricingPlan[] = [
   },
   {
     name: "Pro",
-    price: "79.90",
+    price: "500",
     description: "For serious job seekers & recruiters",
-    tokens: "25,000 tokens / month",
+    tokens: "2000 tokens / month",
     featured: true,
     features: [
       "Unlimited CV uploads",
@@ -45,9 +45,9 @@ export const PRICING_PLANS: PricingPlan[] = [
   },
   {
     name: "Enterprise",
-    price: "400.90",
+    price: "1000",
     description: "For companies hiring at scale",
-    tokens: "100,000 tokens / month",
+    tokens: "4000 tokens / month",
     featured: false,
     features: [
       "Everything in Pro",
