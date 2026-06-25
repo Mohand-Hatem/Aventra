@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
-import { useIsDark } from "@/hooks/isDark";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -21,7 +20,6 @@ const authLinks = [
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const isDark = useIsDark();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,23 +45,22 @@ export default function Navbar() {
         )}
       >
         <Link href="/" className="flex items-center gap-3">
-        {isDark ? (
+          <Image
+            src="/Aventra-logo.png"
+            alt="Aventra logo"
+            width={150}
+            height={150}
+            priority
+            className="block dark:hidden"
+          />
           <Image
             src="/Aventra-logo-white1.png"
             alt="Aventra logo"
             width={150}
             height={150}
             priority
+            className="hidden dark:block"
           />
-          ) : (
-            <Image
-              src="/Aventra-logo.png"
-              alt="Aventra logo"
-              width={150}
-              height={150}
-              priority
-            />
-          )}
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">

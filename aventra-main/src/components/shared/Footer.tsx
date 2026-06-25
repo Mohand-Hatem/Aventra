@@ -1,42 +1,261 @@
 import Link from "next/link";
+import Image from "next/image";
+import React from "react";
+import Marqee from "@/components/shared/marqee";
+import {
+  IconBrandX,
+  IconBrandLinkedin,
+  IconBrandGithub,
+  IconArrowUp,
+  IconMail,
+  IconShieldCheck,
+  IconLock,
+  IconRobot,
+  IconStar,
+  IconChartBar,
+  IconUsers,
+  IconSearch,
+  IconSparkles,
+} from "@tabler/icons-react";
+import ScrollTop from "../feature/scrollTop";
 
-const footerLinks = [
-  { href: "/pricing", label: "Pricing" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-  { href: "/login", label: "Sign in" },
+const marqueeItems = [
+  { icon: <IconRobot className="size-3.5" />, label: "AI-Powered Hiring" },
+  { icon: <IconChartBar className="size-3.5" />, label: "ATS Score Analysis" },
+  {
+    icon: <IconSearch className="size-3.5" />,
+    label: "Smart Candidate Search",
+  },
+  { icon: <IconShieldCheck className="size-3.5" />, label: "Secure & Private" },
+  { icon: <IconUsers className="size-3.5" />, label: "47,300+ Users" },
+  { icon: <IconSparkles className="size-3.5" />, label: "AI Bullet Rewriter" },
+  { icon: <IconStar className="size-3.5" />, label: "4.9 / 5 Reviews" },
+  { icon: <IconLock className="size-3.5" />, label: "Data Protected" },
+];
+
+function MarqueeItem({
+  icon,
+  label,
+}: {
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-xs font-medium text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
+      <span className="size-1.5 shrink-0 rounded-full bg-primary dark:bg-sky" />
+      {icon}
+      {label}
+    </span>
+  );
+}
+
+function MarqueeSeparator() {
+  return <span className="mx-5 h-4 w-px bg-border opacity-30" aria-hidden />;
+}
+
+const trustBadges = [
+  {
+    icon: <IconShieldCheck className="size-6 text-primary dark:text-sky" />,
+    title: "Secure Platform",
+    sub: "End-to-end encrypted",
+  },
+  {
+    icon: <IconLock className="size-6 text-primary dark:text-sky" />,
+    title: "Privacy First",
+    sub: "GDPR compliant",
+  },
+  {
+    icon: <IconRobot className="size-6 text-primary dark:text-sky" />,
+    title: "AI Certified",
+    sub: "Responsible AI use",
+  },
+  {
+    icon: <IconStar className="size-6 text-amber-400" />,
+    title: "Top Rated",
+    sub: "4.9 / 5 on G2",
+  },
+];
+
+const columns = [
+  {
+    heading: "Product",
+    links: [
+      { href: "/features", label: "Features" },
+      { href: "/pricing", label: "Pricing" },
+      { href: "/demo", label: "Demo" },
+      { href: "/integrations", label: "Integrations" },
+      { href: "/changelog", label: "Changelog" },
+    ],
+  },
+  {
+    heading: "Resources",
+    links: [
+      { href: "/docs", label: "Documentation" },
+      { href: "/docs/api", label: "API Reference" },
+      { href: "/blog", label: "Blog" },
+      { href: "/case-studies", label: "Case Studies" },
+      { href: "/webinars", label: "Webinars" },
+    ],
+  },
+  {
+    heading: "Company",
+    links: [
+      { href: "/about", label: "About Us" },
+      { href: "/careers", label: "Careers" },
+      { href: "/press", label: "Press Kit" },
+      { href: "/contact", label: "Contact" },
+      { href: "/partners", label: "Partners" },
+    ],
+  },
+  {
+    heading: "Legal",
+    links: [
+      { href: "/terms", label: "Terms of Service" },
+      { href: "/privacy", label: "Privacy Policy" },
+      { href: "/cookies", label: "Cookie Policy" },
+    ],
+  },
+];
+
+const socials = [
+  { href: "https://x.com", icon: IconBrandX, label: "X / Twitter" },
+  { href: "https://linkedin.com", icon: IconBrandLinkedin, label: "LinkedIn" },
+  { href: "https://github.com", icon: IconBrandGithub, label: "GitHub" },
 ];
 
 export default function Footer() {
   return (
-    <footer className="mt-auto border-t border-border bg-card">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6 md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="font-heading text-lg font-semibold text-foreground">
-            Aventra
-          </p>
-          <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-            AI-powered resume optimization and candidate discovery.
-          </p>
-        </div>
-
-        <nav className="flex flex-wrap gap-x-6 gap-y-2">
-          {footerLinks.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+    <footer className="w-full  border-t border-border/60 ">
+      <div className="border-b border-border/50 bg-background/80 py-3 backdrop-blur-sm">
+        <Marqee>
+          <div className="flex items-center">
+            {marqueeItems.map((item, i) => (
+              <div key={i} className="flex items-center">
+                <MarqueeItem {...item} />
+                <MarqueeSeparator />
+              </div>
+            ))}
+          </div>
+        </Marqee>
       </div>
 
-      <div className="border-t border-border/60 px-4 py-4 sm:px-6">
-        <p className="text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Aventra. All rights reserved.
-        </p>
+      <div className="mx-auto max-w-360 px-4 py-14 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[220px_1fr_200px]">
+          <div className="flex flex-col gap-6">
+            <Link href="/" className="flex items-center gap-2.5">
+              <Image
+                src="/Aventra-logo.png"
+                alt="Aventra logo"
+                width={140}
+                height={40}
+                className="dark:hidden"
+              />
+              <Image
+                src="/Aventra-logo-white1.png"
+                alt="Aventra logo"
+                width={140}
+                height={40}
+                className="hidden dark:block"
+              />
+            </Link>
+
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              AI-powered resume optimization and candidate discovery — built for
+              both job seekers and hiring teams.
+            </p>
+
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                Stay Updated
+              </p>
+              <form className="flex gap-2">
+                <div className="relative flex-1">
+                  <IconMail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="email"
+                    placeholder="your@email.com"
+                    className="h-9 w-full rounded-lg border border-border bg-muted/40 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-sky/50"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="h-9 rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90 dark:bg-sky dark:text-foreground dark:hover:bg-sky/90"
+                >
+                  Join
+                </button>
+              </form>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {socials.map(({ href, icon: Icon, label }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="flex size-8 items-center justify-center rounded-lg border border-border/60 bg-muted/40 text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary dark:hover:border-sky/40 dark:hover:text-sky"
+                >
+                  <Icon className="size-4" />
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+            {columns.map((col) => (
+              <div key={col.heading}>
+                <p className="mb-3 text-xs font-bold uppercase tracking-widest text-foreground">
+                  {col.heading}
+                </p>
+                <ul className="space-y-2">
+                  {col.links.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Right — trust / compliance badges */}
+          <div className="flex flex-col gap-3">
+            <p className="mb-1 text-xs font-bold uppercase tracking-widest text-foreground">
+              Compliance
+            </p>
+            {trustBadges.map((b) => (
+              <div
+                key={b.title}
+                className="flex items-center gap-3 rounded-xl border border-border/50 bg-muted/30 px-3 py-2.5"
+              >
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border/40 bg-background">
+                  {b.icon}
+                </span>
+                <div>
+                  <p className="text-xs font-semibold text-foreground">
+                    {b.title}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">{b.sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-border/40">
+        <div className="mx-auto flex max-w-360 items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+          <p className="text-xs text-muted-foreground">
+            {`© ${new Date().getFullYear()} Aventra\u00A0\u00A0|\u00A0\u00A0All rights reserved`}
+          </p>
+          <ScrollTop />
+        </div>
       </div>
     </footer>
   );

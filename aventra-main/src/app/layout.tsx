@@ -4,7 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
-import { ThemeProvider } from "@/providers/theme-provider";
+import { AppProviders } from "@/providers/app-providers";
 
 
 
@@ -46,11 +46,11 @@ export default function RootLayout({
       )}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        <ThemeProvider>
+        <AppProviders>
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />
-        </ThemeProvider>
+        </AppProviders>
       </body>
     </html>
   );

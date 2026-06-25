@@ -1,10 +1,21 @@
+"use client";
+
+import { ReactQueryProvider } from "./react-query-provider";
+import { ThemeProvider } from "./theme-provider";
+
 /**
- * Folder: src/providers
- * File: app-providers.tsx
- * Purpose:
- * - Root providers composition for the app.
- * - Wraps children with React Query provider and future providers.
+ * AppProviders — single entry-point for all root providers.
+ * Add new providers here so layout.tsx stays clean.
  *
- * Example (when implementing later):
- * - <ReactQueryProvider>{children}</ReactQueryProvider>
+ * Order matters: ThemeProvider is outermost so every component
+ * (including query-fetching ones) can read the current theme.
  */
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider>
+      <ReactQueryProvider>
+        {children}
+      </ReactQueryProvider>
+    </ThemeProvider>
+  );
+}
