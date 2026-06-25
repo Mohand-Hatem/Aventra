@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
+import { IconMenu2, IconX } from "@tabler/icons-react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -20,6 +21,7 @@ const authLinks = [
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,64 +37,117 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="fixed top-4 z-50 flex w-full justify-center px-3 sm:px-6">
+    <header className="fixed top-2 md:top-4 z-50 flex w-full justify-center px-2 sm:px-6">
       <nav
         className={cn(
-          "flex h-16 w-full items-center justify-between  rounded-2xl px-4 transition-all duration-300 ease-out sm:px-6",
+          "flex w-full flex-col justify-center rounded-2xl border transition-all duration-300 ease-out",
           isScrolled
-            ? " border border-border/70 bg-background/65 shadow-lg shadow-foreground/5 backdrop-blur-xl md:w-[80%]"
-            : "border border-transparent bg-transparent md:w-full",
+            ? "border-border/70 bg-background/80 shadow-lg shadow-foreground/5 backdrop-blur-xl md:w-[85%]"
+            : "border-transparent bg-transparent md:w-full",
+          isOpen && "border-border/70 bg-background/95 backdrop-blur-xl"
         )}
       >
-        <Link href="/" className="flex items-center gap-3">
-          <Image
-            src="/Aventra-logo.png"
-            alt="Aventra logo"
-            width={150}
-            height={150}
-            priority
-            className="block dark:hidden"
-          />
-          <Image
-            src="/Aventra-logo-white1.png"
-            alt="Aventra logo"
-            width={150}
-            height={150}
-            priority
-            className="hidden dark:block"
-          />
-        </Link>
+        {/* Main Navbar Row */}
+        <div className="flex h-14 md:h-16 items-center justify-between px-4 sm:px-6">
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/Aventra-logo.png"
+              alt="Aventra logo"
+              width={130}
+              height={130}
+              priority
+              className="block dark:hidden md:w-[150px]"
+            />
+            <Image
+              src="/Aventra-logo-white1.png"
+              alt="Aventra logo"
+              width={130}
+              height={130}
+              priority
+              className="hidden dark:block md:w-[150px]"
+            />
+          </Link>
 
-        <div className="hidden items-center gap-6 md:flex">
-          <ThemeToggle />
+          {/* Desktop Nav */}
+          <div className="hidden items-center gap-6 md:flex">
+            <ThemeToggle />
 
-          {navLinks.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {item.label}
-            </Link>
-          ))}
-
-          <div className="flex items-center gap-2 border-s border-border/60 ps-4">
-            {authLinks.map((item) => (
+            {navLinks.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={cn(
-                  "rounded-xl px-3 py-2 text-sm font-medium transition-colors",
-                  item.variant === "primary"
-                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                )}
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 {item.label}
               </Link>
             ))}
+
+            <div className="flex items-center gap-2 border-s border-border/60 ps-4">
+              {authLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "rounded-xl px-3 py-2 text-sm font-medium transition-colors",
+                    item.variant === "primary"
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                  )}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Nav Actions */}
+          <div className="flex items-center gap-3 md:hidden">
+            <ThemeToggle />
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <IconX className="size-5" /> : <IconMenu2 className="size-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        {isOpen && (
+          <div className="flex flex-col gap-4 border-t border-border/40 px-6 py-5 md:hidden animate-in fade-in slide-in-from-top-5 duration-200">
+            <div className="flex flex-col gap-3">
+              {navLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className="text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+            <div className="h-px bg-border/40 w-full" />
+            <div className="flex flex-col gap-2">
+              {authLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    "w-full rounded-xl py-2.5 text-center text-sm font-medium transition-colors",
+                    item.variant === "primary"
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "border border-border text-muted-foreground hover:bg-muted hover:text-foreground",
+                  )}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </nav>
     </header>
   );

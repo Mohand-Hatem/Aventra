@@ -18,7 +18,7 @@ import {
   IconArrowRight,
   IconBulb,
 } from "@tabler/icons-react";
-import { useUser } from "@/hooks/clientAuth";
+import { useLogin, useUser } from "@/hooks/clientAuth";
 
 /*
   --chart-accent is set on the root section:
@@ -400,13 +400,11 @@ function CompanyCards() {
 /* ── main landing ────────────────────────────────── */
 
 export default function Landing() {
-  const { data } = useUser();
-  console.log(data);
   return (
     <section
       className={cn(
-        "relative h-screen  w-full overflow-hidden bg-background",
-        /* set --chart-accent to switch between primary (light) and sky (dark) */
+        "relative min-h-screen lg:h-screen w-full overflow-y-auto lg:overflow-hidden bg-background",
+
         "[--chart-accent:var(--color-primary)] dark:[--chart-accent:var(--color-sky)]",
       )}
     >
@@ -425,7 +423,7 @@ export default function Landing() {
         className="pointer-events-none absolute bottom-0 left-0 z-0 h-[30vh] w-[30vw] rounded-full bg-primary/10 blur-3xl dark:bg-sky/10"
       />
 
-      <div className="relative z-10 mx-auto grid h-full w-full max-w-360 grid-cols-1 items-center gap-8 px-4 pt-20 pb-6 sm:px-6 lg:grid-cols-2 lg:gap-14">
+      <div className="relative z-10 mx-auto grid h-auto lg:h-full w-full max-w-360 grid-cols-1 items-center gap-8 px-4 pt-24 pb-12 sm:px-6 lg:grid-cols-2 lg:gap-14">
         {/* ── LEFT: hero copy + B2B/B2C cards ── */}
         <div className="flex flex-col">
           <span className="mb-4 flex w-fit items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
@@ -433,12 +431,19 @@ export default function Landing() {
             NOW SCORING WITH AVENTRA&apos;S ATS 2026 CRITERIA
           </span>
 
-          <h1 className="font-heading text-4xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-5xl lg:text-[3.4rem]">
-            Beat the ATS.
-            <br />
-            <span className="text-primary dark:text-sky">Land more</span>{" "}
-            interviews.
-          </h1>
+          {/* Heading + Mobile Pie Chart row */}
+          <div className="flex flex-row items-start justify-between gap-4">
+            <div className="flex-1">
+              <h1 className="font-heading text-4xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-5xl lg:text-[3.4rem]">
+                Beat the ATS.
+                <br />
+                <span className="text-primary dark:text-sky">
+                  Land more
+                </span>{" "}
+                interviews.
+              </h1>
+            </div>
+          </div>
 
           <p className="mt-4 max-w-md text-sm text-muted-foreground sm:text-base">
             Upload your resume. Get an instant ATS score, fixable issues, and
@@ -477,7 +482,7 @@ export default function Landing() {
         </div>
 
         {/* ── RIGHT: cards ── */}
-        <div className="flex h-full flex-col justify-center overflow-y-auto rounded-2xl bg-muted/30 p-4 dark:bg-transparent">
+        <div className="flex h-auto lg:h-full flex-col justify-center overflow-visible lg:overflow-y-auto rounded-2xl bg-muted/30 p-4 dark:bg-transparent">
           <div className="flex flex-col gap-6">
             <UserCards />
             <div className="h-px shrink-0 bg-border/60" />

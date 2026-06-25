@@ -23,7 +23,8 @@ export const useLogin = () => {
       // ✅ setQueryData: السيرفر رجع اليوزر → حطه في الـ cache فوراً
       // مفيش request تاني لـ /auth/me
       queryClient.setQueryData(["user"], data.user);
-      router.push("/profile");
+      console.log("Login success", data);
+      // router.push("/profile");
     },
   });
 };
