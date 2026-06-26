@@ -15,5 +15,5 @@ export interface PricingPlan {
   featured: boolean;
   features: string[];
   cta: string;
-  href: string;
+  // href: string;
 }

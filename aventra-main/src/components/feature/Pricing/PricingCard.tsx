@@ -4,9 +4,12 @@
  * Purpose:
  * - Single pricing plan card component.
  * - Uses primary (light) / sky (dark) CSS vars from globals.css.
+ * - Checks accessToken cookie before redirecting to payment or login.
  */
 
-import Link from "next/link";
+"use client";
+
+import { useRouter } from "next/navigation";
 import { IconCheck } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import type { PricingPlan } from "@/types/pricing";
@@ -16,7 +19,18 @@ interface PricingCardProps {
 }
 
 export default function PricingCard({ plan }: PricingCardProps) {
-  const { name, price, description, tokens, featured, features, cta, href } = plan;
+  const { name, price, description, tokens, featured, features, cta } = plan;
+  const router = useRouter();
+
+  function handleSelectPlan() {
+    const hasToken = document.cookie.includes("accessToken");
+
+    if (hasToken) {
+      router.push(`/payment?plan=${name}`);
+    } else {
+      router.push(`/login?plan=${name}`);
+    }
+  }
 
   return (
     <div
@@ -114,17 +128,17 @@ export default function PricingCard({ plan }: PricingCardProps) {
       </ul>
 
       {/* CTA */}
-      <Link
-        href={href}
+      <button
+        onClick={handleSelectPlan}
         className={cn(
           "mt-8 block w-full rounded-xl py-3 text-center text-sm font-semibold transition-all duration-200",
           featured
             ? "bg-white text-primary hover:bg-white/90 shadow"
-            : "border-2 border-primary dark:border-sky text-primary dark:text-sky hover:bg-primary dark:hover:bg-sky  dark:hover:text-white  hover:text-white"
+            : "border-2 border-primary dark:border-sky text-primary dark:text-sky hover:bg-primary dark:hover:bg-sky hover:text-white dark:hover:text-white"
         )}
       >
         {cta}
-      </Link>
+      </button>
     </div>
   );
 }

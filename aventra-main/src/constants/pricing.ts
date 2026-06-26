@@ -23,7 +23,7 @@ export const PRICING_PLANS: PricingPlan[] = [
       "Email support",
     ],
     cta: "Get Started",
-   href: "/register?plan=Basic",
+  //  href: "/register?plan=Basic",
   },
   {
     name: "Pro",
@@ -41,7 +41,7 @@ export const PRICING_PLANS: PricingPlan[] = [
       "Priority support",
     ],
     cta: "Get Pro",
-    href: "/register?plan=Pro",
+    // href: "/register?plan=Pro",
   },
   {
     name: "Enterprise",
@@ -59,6 +59,6 @@ export const PRICING_PLANS: PricingPlan[] = [
       "SLA support",
     ],
     cta: "Contact Sales",
-   href: "/register?plan=Enterprise"
+  //  href: "/register?plan=Enterprise"
   },
 ];
