@@ -12,14 +12,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterFormValues } from "@/schemas/auth";
 import { useRegister } from "@/queries/auth";
 import type { RegisterRole } from "@/types/auth";
-
+import { appToast } from "@/lib/toast";
 const inputClasses =
   "w-full rounded-2xl border border-[#DCE7FF] bg-white/80 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-[#4F7CFF] focus:ring-4 focus:ring-[#4F7CFF]/15 disabled:cursor-not-allowed disabled:opacity-60 dark:border-[#4F7CFF]/20 dark:bg-white/5 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-[#7EA2FF] dark:focus:ring-[#4F7CFF]/20";
 
 export function RegisterForm() {
   const [role, setRole] = useState<RegisterRole>("user");
   const [showPassword, setShowPassword] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
 
   const registerMutation = useRegister();
 
@@ -41,7 +40,7 @@ export function RegisterForm() {
     },
   });
 
-  const password = watch("password");
+  const password = watch("password") || "";
 
   const passwordChecks = useMemo(
     () => [
@@ -58,14 +57,12 @@ export function RegisterForm() {
         valid: /[0-9]/.test(password),
       },
     ],
-    [password],
+    [password]
   );
 
   const isSubmitting = registerMutation.isPending;
 
   const onSubmit = async (values: RegisterFormValues) => {
-    setSuccessMessage("");
-
     try {
       await registerMutation.mutateAsync({
         name: {
@@ -77,16 +74,16 @@ export function RegisterForm() {
         role,
       });
 
-      setSuccessMessage("Account created successfully.");
-    } catch {
-      setSuccessMessage("");
+      appToast.success("Account created successfully 🎉");
+    } catch (error) {
+      if (error instanceof Error) {
+        appToast.error(error.message);
+        return;
+      }
+
+      appToast.error("Something went wrong. Please try again.");
     }
   };
-
-  const backendError =
-    registerMutation.error instanceof Error
-      ? registerMutation.error.message
-      : "Something went wrong. Please try again.";
 
   return (
     <section className="rounded-[2rem] border border-[#DCE7FF] bg-white/85 p-6 shadow-2xl shadow-[#4F7CFF]/10 backdrop-blur-xl dark:border-[#4F7CFF]/20 dark:bg-[#07111f]/90 dark:shadow-[#4F7CFF]/10 sm:p-8 lg:p-10">
@@ -240,18 +237,6 @@ export function RegisterForm() {
         {errors.terms?.message && (
           <p className="text-sm font-medium text-red-500">
             {errors.terms.message}
-          </p>
-        )}
-
-        {registerMutation.isError && (
-          <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600 dark:border-red-500/20 dark:bg-red-500/10">
-            {backendError}
-          </p>
-        )}
-
-        {successMessage && (
-          <p className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700 dark:border-green-500/20 dark:bg-green-500/10 dark:text-green-300">
-            {successMessage}
           </p>
         )}
 
