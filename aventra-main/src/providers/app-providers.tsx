@@ -1,10 +1,16 @@
-/**
- * Folder: src/providers
- * File: app-providers.tsx
- * Purpose:
- * - Root providers composition for the app.
- * - Wraps children with React Query provider and future providers.
- *
- * Example (when implementing later):
- * - <ReactQueryProvider>{children}</ReactQueryProvider>
- */
+
+
+"use client";
+
+import { ThemeProvider } from "next-themes";
+import { ReactQueryProvider } from "@/providers/react-query-provider";
+
+export function AppProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <ReactQueryProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        {children}
+      </ThemeProvider>
+    </ReactQueryProvider>
+  );
+}
