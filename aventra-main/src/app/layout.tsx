@@ -1,16 +1,23 @@
 import type { Metadata } from "next";
-import {  Geist_Mono, Inter, Geist } from "next/font/google";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
+
 import { cn } from "@/lib/utils";
+
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
-import { ThemeProvider } from "@/providers/theme-provider";
 
+import { AppProviders } from "@/providers/app-providers";
 
+const interHeading = Inter({
+  subsets: ["latin"],
+  variable: "--font-heading",
+});
 
-const interHeading = Inter({subsets:['latin'],variable:'--font-heading'});
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 const geistInter = Inter({
   variable: "--font-inter",
@@ -24,7 +31,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Aventra",
-  description: "Aventra helps job seekers optimize their resumes with AI-powered ATS analysis and enables companies to discover the best candidates efficiently."
+  description:
+    "Aventra helps job seekers optimize their resumes with AI-powered ATS analysis and enables companies to discover the best candidates efficiently.",
 };
 
 export default function RootLayout({
@@ -34,23 +42,23 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      suppressHydrationWarning
       lang="en"
+      suppressHydrationWarning
       className={cn(
         "h-full",
         geistInter.className,
         geistMono.variable,
         "font-sans",
         geist.variable,
-        interHeading.variable,
+        interHeading.variable
       )}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        <ThemeProvider>
+        <AppProviders>
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />
-        </ThemeProvider>
+        </AppProviders>
       </body>
     </html>
   );

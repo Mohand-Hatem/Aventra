@@ -1,11 +1,19 @@
-/**
- * Folder: src/providers
- * File: react-query-provider.tsx
- * Purpose:
- * - Client-side QueryClientProvider wrapper.
- * - Creates/stores QueryClient instance for React Query hooks.
- *
- * Example (when implementing later):
- * - const [queryClient] = useState(createQueryClient)
- * - return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
- */
+"use client";
+
+import { ReactNode, useState } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/react-query";
+
+type Props = {
+  children: ReactNode;
+};
+
+export function ReactQueryProvider({ children }: Props) {
+  const [client] = useState(() => queryClient);
+
+  return (
+    <QueryClientProvider client={client}>
+      {children}
+    </QueryClientProvider>
+  );
+}
