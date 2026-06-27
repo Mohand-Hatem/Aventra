@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { useLocaleFormat } from "@/hooks/useLocaleFormat";
+import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
@@ -31,9 +33,12 @@ const gaugeConfig = {
   score: { color: "var(--chart-accent)" },
 } satisfies ChartConfig;
 
+const candidateScores = [94, 87, 79];
+
 /* ── ATS score gauge ─────────────────────────────── */
 
 function ScoreGauge({ score }: { score: number }) {
+  const { n, digits } = useLocaleFormat();
   const data = [{ value: score }];
   return (
     <div className="relative size-24 shrink-0">
@@ -65,11 +70,11 @@ function ScoreGauge({ score }: { score: number }) {
         </RadialBarChart>
       </ChartContainer>
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-lg font-bold leading-none text-foreground">
-          {score}
+        <span dir="ltr" className="text-lg font-bold leading-none text-foreground">
+          {n(score)}
         </span>
-        <span className="mt-0.5 text-[10px] leading-none text-muted-foreground">
-          /100
+        <span dir="ltr" className="mt-0.5 text-[10px] leading-none text-muted-foreground">
+          {digits("/100")}
         </span>
       </div>
     </div>
@@ -78,19 +83,18 @@ function ScoreGauge({ score }: { score: number }) {
 
 /* ── candidate progress bars ─────────────────────── */
 
-const candidates = [
-  { name: "Ahmed M.", role: "Senior FE", score: 94 },
-  { name: "Sara K.", role: "React Dev", score: 87 },
-  { name: "Omar H.", role: "Full Stack", score: 79 },
-];
-
 function CandidateChart() {
+  const t = useTranslations("landing");
+  const { n } = useLocaleFormat();
   const [animated, setAnimated] = useState(false);
+  const candidates = (
+    t.raw("candidates") as Array<{ name: string; role: string }>
+  ).map((c, i) => ({ ...c, score: candidateScores[i] }));
 
   useEffect(() => {
     // Small delay so the element is painted before the transition fires
-    const t = setTimeout(() => setAnimated(true), 120);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setAnimated(true), 120);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -98,14 +102,13 @@ function CandidateChart() {
       {candidates.map((c, i) => (
         <div key={c.name} className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-foreground">
-              {c.name}
-            </span>
+            <span className="text-xs font-medium text-foreground">{c.name}</span>
             <span
-              className="text-xs font-semibold"
+              dir="ltr"
+              className="text-xs font-semibold tabular-nums"
               style={{ color: "var(--chart-accent)", opacity: 1 - i * 0.1 }}
             >
-              {c.score}
+              {n(c.score)}
             </span>
           </div>
           <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
@@ -130,12 +133,15 @@ function CandidateChart() {
 function Chip({
   children,
   className,
+  dir,
 }: {
   children: React.ReactNode;
   className?: string;
+  dir?: "ltr" | "rtl" | "auto";
 }) {
   return (
     <span
+      dir={dir}
       className={cn(
         "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium leading-none",
         className,
@@ -178,39 +184,37 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 /* ── B2B / B2C overview cards ────────────────────── */
 
 function B2BCards() {
+  const t = useTranslations("landing");
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-3">
         <div className="h-px flex-1 bg-border/60" />
         <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-          Who We Serve
+          {t("whoWeServe")}
         </span>
         <div className="h-px flex-1 bg-border/60" />
       </div>
 
       <div className="flex flex-col gap-3">
         <div className="relative flex h-40 overflow-hidden border border-border/60 rounded-lg bg-card shadow-card dark:border-border/40">
-          <div className="flex flex-1 flex-col justify-evenly py-5 pl-6 pr-4">
+          <div className="flex flex-1 flex-col justify-evenly py-5 ps-6 pe-4">
             <div>
               <p className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">
-                Job Seekers
+                {t("jobSeekers")}
               </p>
-              <p className="mt-2 text-2xl font-bold dark:text-sky text-primary ">
-                {" "}
-                B2C
+              <p className="mt-2 text-2xl font-bold text-primary dark:text-sky">
+                {t("b2cLabel")}
               </p>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Resume scoring, ATS fixes & rewritten bullets to land more
-              interviews.
-            </p>
+            <p className="text-sm text-muted-foreground">{t("b2cDesc")}</p>
           </div>
-          <div className="relative w-70 -right-5 shrink-0">
+          <div className="relative w-70 -inset-e-5 shrink-0">
             <Image
               src="/ats.png"
-              alt="ATS resume scoring dashboard"
+              alt={t("altAts")}
               fill
-              className="object-cover object-right"
+              className="object-cover object-end"
               sizes="200px"
             />
           </div>
@@ -218,24 +222,21 @@ function B2BCards() {
 
         {/* B2B card */}
         <div className="relative flex h-40 overflow-hidden border border-border/60 rounded-lg bg-card shadow-card dark:border-border/40">
-          <div className="flex flex-1 flex-col justify-evenly py-5 pl-6 pr-4">
+          <div className="flex flex-1 flex-col justify-evenly py-5 ps-6 pe-4">
             <div>
               <p className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">
-                Companies
+                {t("companies")}
               </p>
-              <p className="mt-2 text-2xl font-bold dark:text-sky text-primary ">
-                B2B
+              <p className="mt-2 text-2xl font-bold text-primary dark:text-sky">
+                {t("b2bLabel")}
               </p>
             </div>
-            <p className="text-sm text-muted-foreground">
-              AI-ranked candidate search, smart filters & bulk screening at
-              scale.
-            </p>
+            <p className="text-sm text-muted-foreground">{t("b2bDesc")}</p>
           </div>
-          <div className="relative w-60 -right-5 shrink-0">
+          <div className="relative w-60 -end-5 shrink-0">
             <Image
               src="/comapny.png"
-              alt="Company building"
+              alt={t("altCompany")}
               fill
               className="object-cover object-center"
               sizes="200px"
@@ -250,29 +251,23 @@ function B2BCards() {
 /* ── user cards ──────────────────────────────────── */
 
 function UserCards() {
-  const issues = [
-    "Weak action verbs",
-    "Missing: React, AWS",
-    "Inconsistent dates",
-  ];
-  const strengths = ["Strong metrics", "Clear outcomes", "Relevant stack"];
-  const suggestions = [
-    "Add CI/CD experience",
-    "Include open source",
-    "Add certifications",
-  ];
+  const t = useTranslations("landing");
+  const issues = t.raw("issuesList") as string[];
+  const strengths = t.raw("strengthsList") as string[];
+  const suggestions = t.raw("suggestionsList") as string[];
+  const tags = t.raw("tags") as string[];
 
   return (
     <div className="flex flex-col gap-3">
-      <SectionLabel>For Job Seekers</SectionLabel>
+      <SectionLabel>{t("forJobSeekers")}</SectionLabel>
 
       <HeroCard>
         <div className="mb-3 flex items-center justify-between">
           <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            <IconChartBar className="size-3.5" /> ATS Readiness
+            <IconChartBar className="size-3.5" /> {t("atsReadiness")}
           </span>
           <Chip className="bg-primary/15 text-primary dark:bg-sky/15 dark:text-sky">
-            Strong
+            {t("strong")}
           </Chip>
         </div>
         <div className="flex items-center gap-4">
@@ -282,17 +277,20 @@ function UserCards() {
               Senior_Frontend.pdf
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {["React", "TypeScript", "AWS"].map((t) => (
-                <Chip key={t} className="bg-muted text-muted-foreground">
-                  +{t}
+              {tags.map((tag) => (
+                <Chip key={tag} dir="ltr" className="bg-muted text-muted-foreground">
+                  +{tag}
                 </Chip>
               ))}
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              <span className="font-semibold text-primary dark:text-sky">
-                +18 pts
+              <span
+                dir="ltr"
+                className="font-semibold text-primary dark:text-sky"
+              >
+                {t("pointsGain")}
               </span>{" "}
-              vs V1
+              {t("vsV1")}
             </p>
           </div>
         </div>
@@ -301,7 +299,8 @@ function UserCards() {
       <div className="grid grid-cols-3 gap-3">
         <HeroCard>
           <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            <IconAlertTriangle className="size-3.5 text-destructive" /> Issues
+            <IconAlertTriangle className="size-3.5 text-destructive" />{" "}
+            {t("issues")}
           </div>
           <ul className="space-y-1.5">
             {issues.map((issue) => (
@@ -318,7 +317,7 @@ function UserCards() {
         <HeroCard>
           <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             <IconTrendingUp className="size-3.5 text-primary dark:text-sky" />{" "}
-            Strengths
+            {t("strengths")}
           </div>
           <ul className="space-y-1.5">
             {strengths.map((s) => (
@@ -334,12 +333,12 @@ function UserCards() {
 
         <HeroCard>
           <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            <IconBulb className="size-3.5 text-amber-500" /> Suggestions
+            <IconBulb className="size-3.5 text-amber-500" /> {t("suggestions")}
           </div>
           <ul className="space-y-1.5">
             {suggestions.map((s) => (
               <li key={s} className="flex items-start gap-2">
-                <IconArrowRight className="mt-0.5 size-3 shrink-0 text-amber-500" />
+                <IconArrowRight className="mt-0.5 size-3 shrink-0 text-amber-500 rtl:rotate-180" />
                 <span className="text-xs leading-tight text-muted-foreground">
                   {s}
                 </span>
@@ -355,27 +354,30 @@ function UserCards() {
 /* ── company cards ───────────────────────────────── */
 
 function CompanyCards() {
+  const t = useTranslations("landing");
+  const searchTags = t.raw("searchTags") as string[];
+
   return (
     <div className="flex flex-col gap-3">
-      <SectionLabel>For Companies</SectionLabel>
+      <SectionLabel>{t("forCompanies")}</SectionLabel>
 
       <HeroCard>
         <div className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          <IconBriefcase className="size-3.5" /> Candidate Search
+          <IconBriefcase className="size-3.5" /> {t("candidateSearch")}
         </div>
         <div className="flex items-center gap-2.5 rounded-lg border border-border/60 bg-muted/50 px-3 py-2">
           <IconSearch className="size-3.5 shrink-0 text-muted-foreground" />
           <span className="text-xs text-muted-foreground">
-            Search by major, skills, experience…
+            {t("searchPlaceholder")}
           </span>
         </div>
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {["Senior FE", "React", "AWS", "5+ yrs"].map((t) => (
+          {searchTags.map((tag) => (
             <Chip
-              key={t}
+              key={tag}
               className="bg-primary/10 text-primary dark:bg-sky/10 dark:text-sky"
             >
-              {t}
+              {tag}
             </Chip>
           ))}
         </div>
@@ -384,10 +386,10 @@ function CompanyCards() {
       <HeroCard className="flex min-h-40 flex-col">
         <div className="mb-3 flex items-center justify-between">
           <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            <IconSparkles className="size-3.5 text-primary dark:text-sky" /> AI
-            Ranked Results
+            <IconSparkles className="size-3.5 text-primary dark:text-sky" />{" "}
+            {t("aiRankedResults")}
           </span>
-          <span className="text-xs text-muted-foreground">3 matches</span>
+          <span className="text-xs text-muted-foreground">{t("matches")}</span>
         </div>
         <div className="flex flex-1 flex-col justify-between">
           <CandidateChart />
@@ -400,6 +402,13 @@ function CompanyCards() {
 /* ── main landing ────────────────────────────────── */
 
 export default function Landing() {
+  const t = useTranslations("landing");
+  const trustItems = [
+    t("trust.noCard"),
+    t("trust.freeAnalysis"),
+    t("trust.resumesAnalyzed"),
+  ];
+
   return (
     <section
       className={cn(
@@ -416,11 +425,11 @@ export default function Landing() {
       {/* glow blobs */}
       <div
         aria-hidden
-        className="pointer-events-none absolute right-0 top-0 z-0 h-[50vh] w-[45vw] rounded-full bg-primary/10 blur-3xl dark:bg-sky/15"
+        className="pointer-events-none absolute end-0 top-0 z-0 h-[50vh] w-[45vw] rounded-full bg-primary/10 blur-3xl dark:bg-sky/15"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute bottom-0 left-0 z-0 h-[30vh] w-[30vw] rounded-full bg-primary/10 blur-3xl dark:bg-sky/10"
+        className="pointer-events-none absolute bottom-0 start-0 z-0 h-[30vh] w-[30vw] rounded-full bg-primary/10 blur-3xl dark:bg-sky/10"
       />
 
       <div className="relative z-10 mx-auto grid h-auto lg:h-full w-full max-w-360 grid-cols-1 items-center gap-8 px-4 pt-24 pb-12 sm:px-6 lg:grid-cols-2 lg:gap-14">
@@ -428,31 +437,30 @@ export default function Landing() {
         <div className="flex flex-col">
           <span className="mb-4 flex w-fit items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
             <IconSparkles className="size-3" />
-            NOW SCORING WITH AVENTRA&apos;S ATS 2026 CRITERIA
+            {t("badge")}
           </span>
 
           {/* Heading + Mobile Pie Chart row */}
           <div className="flex flex-row items-start justify-between gap-4">
             <div className="flex-1">
               <h1 className="font-heading text-4xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-5xl lg:text-[3.4rem]">
-                Beat the ATS.
+                {t("titleLine1")}
                 <br />
                 <span className="text-primary dark:text-sky">
-                  Land more
+                  {t("titleAccent")}
                 </span>{" "}
-                interviews.
+                {t("titleLine2")}
               </h1>
             </div>
           </div>
 
           <p className="mt-4 max-w-md text-sm text-muted-foreground sm:text-base">
-            Upload your resume. Get an instant ATS score, fixable issues, and
-            AI-rewritten bullets — built for engineers, by engineers.
+            {t("subtitle")}
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Button asChild size="lg" className="rounded-xl px-6">
-              <Link href="/register">Upload your resume →</Link>
+              <Link href="/register">{t("uploadResume")}</Link>
             </Button>
             <Button
               asChild
@@ -460,18 +468,15 @@ export default function Landing() {
               size="lg"
               className="rounded-xl px-6"
             >
-              <Link href="/pricing">▶ See how it works</Link>
+              <Link href="/pricing">{t("seeHowItWorks")}</Link>
             </Button>
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
-            {[
-              "No credit card required",
-              "Free ATS analysis",
-              "47,300+ resumes analyzed",
-            ].map((t) => (
-              <span key={t} className="flex items-center gap-1.5">
-                <IconCheck className="size-3 text-primary dark:text-sky" /> {t}
+            {trustItems.map((item) => (
+              <span key={item} className="flex items-center gap-1.5">
+                <IconCheck className="size-3 text-primary dark:text-sky" />{" "}
+                {item}
               </span>
             ))}
           </div>

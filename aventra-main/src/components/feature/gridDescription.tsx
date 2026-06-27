@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
+import { useLocaleFormat } from "@/hooks/useLocaleFormat";
 import { cn } from "@/lib/utils";
 import {
   ChartContainer,
@@ -55,7 +57,7 @@ function BentoCard({
 
 /* ── live badge ─────────────────────────────────── */
 
-function LiveBadge({ label = "Live Stats" }: { label?: string }) {
+function LiveBadge({ label }: { label: string }) {
   return (
     <span className="flex items-center gap-1.5 rounded-full bg-black/50 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur-sm">
       <span className="relative flex size-1.5">
@@ -115,49 +117,77 @@ function MiniLine() {
   );
 }
 
-/* ── pipeline stages ────────────────────────────── */
-
-const stages = [
-  { label: "Applied", count: 1247, color: "bg-blue-500" },
-  { label: "Scored", count: 408, color: "bg-violet-500" },
-  { label: "Searched", count: 192, color: "bg-amber-500" },
-  { label: "Recommended", count: 47, color: "bg-emerald-500" },
+const stageMeta = [
+  { key: "applied" as const, count: 1247, color: "bg-blue-500" },
+  { key: "scored" as const, count: 408, color: "bg-violet-500" },
+  { key: "searched" as const, count: 192, color: "bg-amber-500" },
+  { key: "recommended" as const, count: 47, color: "bg-emerald-500" },
 ];
 
-/* ── weekly activity line chart data ─────────────── */
+const weekSearches = [62, 78, 55, 91, 84, 48];
+const weekApplications = [40, 55, 38, 70, 60, 30];
 
-const weekData = [
-  { day: "Mon", searches: 62, applications: 40 },
-  { day: "Tue", searches: 78, applications: 55 },
-  { day: "Wed", searches: 55, applications: 38 },
-  { day: "Thu", searches: 91, applications: 70 },
-  { day: "Fri", searches: 84, applications: 60 },
-  { day: "Sat", searches: 48, applications: 30 },
-];
-
-const weeklyChartConfig = {
-  searches: {
-    label: "Active Searches",
-    color: "var(--color-primary)",
-  },
-  applications: {
-    label: "Applications",
-    color: "var(--color-sky)",
-  },
-} satisfies ChartConfig;
-
-/* ── Top ATS candidates ──────────────────────────── */
-
-const topATS = [
-  { initials: "AM", name: "Ahmed M.", role: "Senior Frontend", score: 96, color: "bg-blue-500" },
-  { initials: "LK", name: "Layla K.", role: "Backend Eng.", score: 93, color: "bg-emerald-500" },
-  { initials: "OH", name: "Omar H.", role: "Full Stack", score: 89, color: "bg-amber-500" },
-  { initials: "NS", name: "Nour S.", role: "Data Engineer", score: 85, color: "bg-rose-500" },
+const topCandidateScores = [96, 93, 89, 85];
+const topCandidateColors = [
+  "bg-blue-500",
+  "bg-emerald-500",
+  "bg-amber-500",
+  "bg-rose-500",
 ];
 
 /* ── main grid ───────────────────────────────────── */
 
 export default function GridDescription() {
+  const t = useTranslations("grid");
+  const { n, digits } = useLocaleFormat();
+
+  const gridTags = ["b2c", "b2b", "ats"] as const;
+
+  const stages = stageMeta.map((s) => ({
+    ...s,
+    label: t(`stages.${s.key}`),
+  }));
+
+  const weekDays = t.raw("weekDays") as string[];
+  const weekData = weekDays.map((day, i) => ({
+    day,
+    searches: weekSearches[i],
+    applications: weekApplications[i],
+  }));
+
+  const weeklyChartConfig = {
+    searches: {
+      label: t("activeSearches"),
+      color: "var(--color-primary)",
+    },
+    applications: {
+      label: t("applications"),
+      color: "var(--color-sky)",
+    },
+  } satisfies ChartConfig;
+
+  const topCandidatesRaw = t.raw("topCandidates") as Array<{
+    initials: string;
+    name: string;
+    role: string;
+  }>;
+  const topATS = topCandidatesRaw.map((c, i) => ({
+    ...c,
+    score: topCandidateScores[i],
+    color: topCandidateColors[i],
+  }));
+
+  const topMatch = t.raw("topMatchCandidate") as {
+    name: string;
+    role: string;
+    tags: string[];
+  };
+
+  const matchStats = [
+    { label: t("avgAtsScore"), value: `${n(87)}/${digits("100")}` },
+    { label: t("timeToHire"), value: digits("4.2 days") },
+  ];
+
   return (
     <section className="relative w-full overflow-hidden bg-background py-20 px-4 sm:px-6 [--chart-accent:var(--color-primary)] dark:[--chart-accent:var(--color-sky)]">
       {/* subtle background glow */}
@@ -170,13 +200,13 @@ export default function GridDescription() {
         {/* section heading */}
         <div className="mb-10 text-center">
           <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
-            <IconSparkles className="size-3" /> Platform Overview
+            <IconSparkles className="size-3" /> {t("badge")}
           </span>
           <h2 className="font-heading mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Everything you need to hire smarter
+            {t("title")}
           </h2>
           <p className="mt-3 text-sm text-muted-foreground sm:text-base">
-            AI-powered ATS for job seekers &amp; companies — from resume scoring to bulk candidate screening.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -188,19 +218,19 @@ export default function GridDescription() {
             <div className="relative h-full w-full">
               <Image
                 src="/ats.png"
-                alt="ATS AI platform"
+                alt={t("altAts")}
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 768px) 100vw, 25vw"
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
               <div className="absolute top-3 left-3">
-                <LiveBadge label="AI Active" />
+                <LiveBadge label={t("aiActive")} />
               </div>
               <div className="absolute bottom-3 left-3">
                 <IconRobot className="mb-1 size-5 text-white/80" />
-                <p className="text-xs font-bold text-white">AI-Powered</p>
-                <p className="text-[10px] text-white/70">Resume Engine</p>
+                <p className="text-xs font-bold text-white">{t("aiPowered")}</p>
+                <p className="text-[10px] text-white/70">{t("resumeEngine")}</p>
               </div>
             </div>
           </BentoCard>
@@ -210,35 +240,35 @@ export default function GridDescription() {
             <div className="relative h-full w-full">
               <Image
                 src="/comapny.png"
-                alt="Company hiring platform"
+                alt={t("altCompany")}
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 768px) 100vw, 75vw"
               />
               <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/50 to-black/20" />
               <div className="absolute top-3 right-3">
-                <LiveBadge />
+                <LiveBadge label={t("liveStats")} />
               </div>
               <div className="absolute inset-0 flex flex-col justify-center pl-7 pr-4">
                 <p className="text-xs font-semibold uppercase tracking-widest text-white/60">
-                  Platform Performance
+                  {t("platformPerformance")}
                 </p>
                 <p className="mt-1 text-4xl font-extrabold text-white">
-                  94<span className="text-2xl">%</span>
+                  {n(94)}<span className="text-2xl">%</span>
                 </p>
                 <p className="mt-1 text-sm text-emerald-400 font-medium">
-                  +7% improvement this month
+                  {t("improvement")}
                 </p>
                 <div className="mt-3 flex items-center gap-2">
-                  {["B2C", "B2B", "ATS"].map((tag) => (
+                  {gridTags.map((key) => (
                     <span
-                      key={tag}
+                      key={key}
                       className="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm"
                     >
-                      {tag}
+                      {t(`tags.${key}`)}
                     </span>
                   ))}
-                  <span className="ml-2 text-xs text-white/60">Top Clients Active</span>
+                  <span className="ml-2 text-xs text-white/60">{t("topClients")}</span>
                 </div>
               </div>
             </div>
@@ -248,8 +278,8 @@ export default function GridDescription() {
           <BentoCard className="col-span-1 row-span-1 flex flex-col justify-between p-5">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs font-semibold text-muted-foreground">Resumes Today</p>
-                <p className="mt-1 text-3xl font-extrabold text-foreground">1,247</p>
+                <p className="text-xs font-semibold text-muted-foreground">{t("resumesToday")}</p>
+                <p className="mt-1 text-3xl font-extrabold text-foreground">{n(1247)}</p>
               </div>
               <div className="rounded-lg bg-primary/10 p-2 dark:bg-sky/10">
                 <IconChartBar className="size-4 text-primary dark:text-sky" />
@@ -257,7 +287,7 @@ export default function GridDescription() {
             </div>
             <div>
               <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-500">
-                <IconTrendingUp className="size-3" /> +15% from yesterday
+                <IconTrendingUp className="size-3" /> {t("fromYesterday")}
               </span>
               <MiniLine />
             </div>
@@ -267,19 +297,19 @@ export default function GridDescription() {
           <BentoCard className="col-span-2 row-span-1 flex flex-col p-5">
             <div className="mb-3 flex items-center justify-between">
               <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                <IconTarget className="size-3.5 text-primary dark:text-sky" /> AI Matches
+                <IconTarget className="size-3.5 text-primary dark:text-sky" /> {t("aiMatches")}
               </span>
-              <LiveBadge label="Real-time" />
+              <LiveBadge label={t("realtime")} />
             </div>
             <div className="flex items-end gap-4">
               <div>
-                <p className="text-4xl font-extrabold text-primary dark:text-sky">3,842</p>
-                <p className="mt-1 text-xs text-muted-foreground">candidates matched this week</p>
+                <p className="text-4xl font-extrabold text-primary dark:text-sky">{n(3842)}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t("candidatesMatched")}</p>
               </div>
               <div className="flex-1">
                 <Image
                   src="/ats.png"
-                  alt="ATS matching"
+                  alt={t("altMatching")}
                   width={120}
                   height={80}
                   className="ml-auto h-16 w-auto rounded-lg object-cover opacity-60"
@@ -287,10 +317,7 @@ export default function GridDescription() {
               </div>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2">
-              {[
-                { label: "Avg ATS Score", value: "87/100" },
-                { label: "Time-to-Hire", value: "4.2 days" },
-              ].map((s) => (
+              {matchStats.map((s) => (
                 <div key={s.label} className="rounded-lg bg-muted/60 px-3 py-2">
                   <p className="text-[10px] text-muted-foreground">{s.label}</p>
                   <p className="text-sm font-bold text-foreground">{s.value}</p>
@@ -302,17 +329,17 @@ export default function GridDescription() {
           {/* ── Cell 5 — Hiring Pipeline (col 4, row 2) ── */}
           <BentoCard className="col-span-1 row-span-1 flex flex-col p-5">
             <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              Hiring Pipeline
+              {t("hiringPipeline")}
             </p>
             <div className="flex flex-col gap-2.5">
               {stages.map((s) => (
-                <div key={s.label} className="flex items-center justify-between">
+                <div key={s.key} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className={cn("size-2 rounded-full", s.color)} />
                     <span className="text-xs text-foreground">{s.label}</span>
                   </div>
                   <span className="text-xs font-semibold text-muted-foreground">
-                    {s.count.toLocaleString()}
+                    {n(s.count)}
                   </span>
                 </div>
               ))}
@@ -334,11 +361,11 @@ export default function GridDescription() {
           <BentoCard className="col-span-2 row-span-1 p-5">
             <div className="mb-3 flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-foreground">Weekly Activity</p>
-                <p className="text-xs text-muted-foreground">Active searches &amp; applications trend</p>
+                <p className="text-sm font-semibold text-foreground">{t("weeklyActivity")}</p>
+                <p className="text-xs text-muted-foreground">{t("weeklySubtitle")}</p>
               </div>
               <span className="flex items-center gap-1 text-xs font-semibold text-emerald-500">
-                <IconArrowUpRight className="size-3.5" /> +12%
+                <IconArrowUpRight className="size-3.5" /> {digits("+12%")}
               </span>
             </div>
 
@@ -391,13 +418,13 @@ export default function GridDescription() {
             <div className="mt-2 flex items-center gap-4">
               <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
                 <span className="size-2 rounded-full bg-primary dark:bg-sky" />
-                Active Searches
+                {t("activeSearches")}
               </span>
               <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
                 <span className="size-2 rounded-full bg-sky" />
-                Applications
+                {t("applications")}
               </span>
-              <span className="ml-auto text-[10px] font-medium text-emerald-500">● Live</span>
+              <span className="ml-auto text-[10px] font-medium text-emerald-500">● {t("live")}</span>
             </div>
           </BentoCard>
 
@@ -405,10 +432,10 @@ export default function GridDescription() {
           <BentoCard className="col-span-1 row-span-1 p-5">
             <div className="mb-3 flex items-center justify-between">
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                Top ATS Score
+                {t("topAtsScore")}
               </p>
               <span className="rounded-full bg-amber-400/15 px-2 py-0.5 text-[9px] font-bold text-amber-500">
-                This Week
+                {t("thisWeek")}
               </span>
             </div>
             <div className="flex flex-col gap-3">
@@ -425,7 +452,7 @@ export default function GridDescription() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between">
                       <p className="truncate text-[11px] font-semibold text-foreground">{c.name}</p>
-                      <span className="text-[10px] font-bold text-primary dark:text-sky">{c.score}</span>
+                      <span className="text-[10px] font-bold text-primary dark:text-sky">{n(c.score)}</span>
                     </div>
                     <div className="mt-0.5 h-1 w-full overflow-hidden rounded-full bg-muted">
                       <div
@@ -446,10 +473,10 @@ export default function GridDescription() {
           <BentoCard className="col-span-1 row-span-1 p-5">
             <div className="mb-2 flex items-center justify-between">
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                Top Match
+                {t("topMatch")}
               </p>
               <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-semibold text-primary dark:bg-sky/10 dark:text-sky">
-                <IconSearch className="size-2.5" /> Company Search
+                <IconSearch className="size-2.5" /> {t("companySearch")}
               </span>
             </div>
 
@@ -461,15 +488,15 @@ export default function GridDescription() {
                 </span>
               </div>
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-foreground">Sara K.</p>
-                <p className="text-xs text-muted-foreground">ML Engineer</p>
+                <p className="truncate text-sm font-semibold text-foreground">{topMatch.name}</p>
+                <p className="text-xs text-muted-foreground">{topMatch.role}</p>
               </div>
             </div>
 
             <div className="mt-2">
               <div className="mb-1 flex justify-between text-[10px]">
-                <span className="text-muted-foreground">Match score</span>
-                <span className="font-bold text-primary dark:text-sky">91%</span>
+                <span className="text-muted-foreground">{t("matchScore")}</span>
+                <span className="font-bold text-primary dark:text-sky">{n(91)}%</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div
@@ -480,12 +507,12 @@ export default function GridDescription() {
             </div>
 
             <div className="mt-2 flex flex-wrap gap-1">
-              {["Python", "ML", "AWS"].map((t) => (
+              {topMatch.tags.map((tag) => (
                 <span
-                  key={t}
+                  key={tag}
                   className="rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-medium text-primary dark:bg-sky/10 dark:text-sky"
                 >
-                  {t}
+                  {tag}
                 </span>
               ))}
             </div>
@@ -497,8 +524,8 @@ export default function GridDescription() {
                 <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
               </span>
               <IconBuilding className="size-3 text-primary dark:text-sky" />
-              <span className="text-[9px] font-semibold text-muted-foreground">Actively Searching</span>
-              <span className="ml-auto text-[9px] font-bold text-emerald-500">+24</span>
+              <span className="text-[9px] font-semibold text-muted-foreground">{t("activelySearching")}</span>
+              <span className="ml-auto text-[9px] font-bold text-emerald-500">{digits("+24")}</span>
             </div>
           </BentoCard>
 

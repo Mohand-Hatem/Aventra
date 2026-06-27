@@ -1,12 +1,15 @@
-import Link from "next/link";
+"use client";
+
 import Image from "next/image";
 import React from "react";
+import { useTranslations } from "next-intl";
+import { useLocaleFormat } from "@/hooks/useLocaleFormat";
+import { Link } from "@/i18n/routing";
 import Marqee from "@/components/shared/marqee";
 import {
   IconBrandX,
   IconBrandLinkedin,
   IconBrandGithub,
-  IconArrowUp,
   IconMail,
   IconShieldCheck,
   IconLock,
@@ -18,20 +21,6 @@ import {
   IconSparkles,
 } from "@tabler/icons-react";
 import ScrollTop from "../feature/scrollTop";
-
-const marqueeItems = [
-  { icon: <IconRobot className="size-3.5" />, label: "AI-Powered Hiring" },
-  { icon: <IconChartBar className="size-3.5" />, label: "ATS Score Analysis" },
-  {
-    icon: <IconSearch className="size-3.5" />,
-    label: "Smart Candidate Search",
-  },
-  { icon: <IconShieldCheck className="size-3.5" />, label: "Secure & Private" },
-  { icon: <IconUsers className="size-3.5" />, label: "47,300+ Users" },
-  { icon: <IconSparkles className="size-3.5" />, label: "AI Bullet Rewriter" },
-  { icon: <IconStar className="size-3.5" />, label: "4.9 / 5 Reviews" },
-  { icon: <IconLock className="size-3.5" />, label: "Data Protected" },
-];
 
 function MarqueeItem({
   icon,
@@ -53,70 +42,6 @@ function MarqueeSeparator() {
   return <span className="mx-5 h-4 w-px bg-border opacity-30" aria-hidden />;
 }
 
-const trustBadges = [
-  {
-    icon: <IconShieldCheck className="size-6 text-primary dark:text-sky" />,
-    title: "Secure Platform",
-    sub: "End-to-end encrypted",
-  },
-  {
-    icon: <IconLock className="size-6 text-primary dark:text-sky" />,
-    title: "Privacy First",
-    sub: "GDPR compliant",
-  },
-  {
-    icon: <IconRobot className="size-6 text-primary dark:text-sky" />,
-    title: "AI Certified",
-    sub: "Responsible AI use",
-  },
-  {
-    icon: <IconStar className="size-6 text-amber-400" />,
-    title: "Top Rated",
-    sub: "4.9 / 5 on G2",
-  },
-];
-
-const columns = [
-  {
-    heading: "Product",
-    links: [
-      { href: "/features", label: "Features" },
-      { href: "/pricing", label: "Pricing" },
-      { href: "/demo", label: "Demo" },
-      { href: "/integrations", label: "Integrations" },
-      { href: "/changelog", label: "Changelog" },
-    ],
-  },
-  {
-    heading: "Resources",
-    links: [
-      { href: "/docs", label: "Documentation" },
-      { href: "/docs/api", label: "API Reference" },
-      { href: "/blog", label: "Blog" },
-      { href: "/case-studies", label: "Case Studies" },
-      { href: "/webinars", label: "Webinars" },
-    ],
-  },
-  {
-    heading: "Company",
-    links: [
-      { href: "/about", label: "About Us" },
-      { href: "/careers", label: "Careers" },
-      { href: "/press", label: "Press Kit" },
-      { href: "/contact", label: "Contact" },
-      { href: "/partners", label: "Partners" },
-    ],
-  },
-  {
-    heading: "Legal",
-    links: [
-      { href: "/terms", label: "Terms of Service" },
-      { href: "/privacy", label: "Privacy Policy" },
-      { href: "/cookies", label: "Cookie Policy" },
-    ],
-  },
-];
-
 const socials = [
   { href: "https://x.com", icon: IconBrandX, label: "X / Twitter" },
   { href: "https://linkedin.com", icon: IconBrandLinkedin, label: "LinkedIn" },
@@ -124,8 +49,86 @@ const socials = [
 ];
 
 export default function Footer() {
+  const t = useTranslations("footer");
+  const { n } = useLocaleFormat();
+
+  const marqueeItems = [
+    { icon: <IconRobot className="size-3.5" />, label: t("marquee.aiHiring") },
+    { icon: <IconChartBar className="size-3.5" />, label: t("marquee.atsAnalysis") },
+    { icon: <IconSearch className="size-3.5" />, label: t("marquee.candidateSearch") },
+    { icon: <IconShieldCheck className="size-3.5" />, label: t("marquee.securePrivate") },
+    { icon: <IconUsers className="size-3.5" />, label: t("marquee.users") },
+    { icon: <IconSparkles className="size-3.5" />, label: t("marquee.aiRewriter") },
+    { icon: <IconStar className="size-3.5" />, label: t("marquee.reviews") },
+    { icon: <IconLock className="size-3.5" />, label: t("marquee.dataProtected") },
+  ];
+
+  const trustBadges = [
+    {
+      icon: <IconShieldCheck className="size-6 text-primary dark:text-sky" />,
+      title: t("trust.secureTitle"),
+      sub: t("trust.secureSub"),
+    },
+    {
+      icon: <IconLock className="size-6 text-primary dark:text-sky" />,
+      title: t("trust.privacyTitle"),
+      sub: t("trust.privacySub"),
+    },
+    {
+      icon: <IconRobot className="size-6 text-primary dark:text-sky" />,
+      title: t("trust.aiTitle"),
+      sub: t("trust.aiSub"),
+    },
+    {
+      icon: <IconStar className="size-6 text-amber-400" />,
+      title: t("trust.ratedTitle"),
+      sub: t("trust.ratedSub"),
+    },
+  ];
+
+  const columns = [
+    {
+      heading: t("columns.product"),
+      links: [
+        { href: "/features", label: t("links.features") },
+        { href: "/pricing", label: t("links.pricing") },
+        { href: "/demo", label: t("links.demo") },
+        { href: "/integrations", label: t("links.integrations") },
+        { href: "/changelog", label: t("links.changelog") },
+      ],
+    },
+    {
+      heading: t("columns.resources"),
+      links: [
+        { href: "/docs", label: t("links.documentation") },
+        { href: "/docs/api", label: t("links.apiReference") },
+        { href: "/blog", label: t("links.blog") },
+        { href: "/case-studies", label: t("links.caseStudies") },
+        { href: "/webinars", label: t("links.webinars") },
+      ],
+    },
+    {
+      heading: t("columns.company"),
+      links: [
+        { href: "/about", label: t("links.aboutUs") },
+        { href: "/careers", label: t("links.careers") },
+        { href: "/press", label: t("links.pressKit") },
+        { href: "/contact", label: t("links.contact") },
+        { href: "/partners", label: t("links.partners") },
+      ],
+    },
+    {
+      heading: t("columns.legal"),
+      links: [
+        { href: "/terms", label: t("links.terms") },
+        { href: "/privacy", label: t("links.privacy") },
+        { href: "/cookies", label: t("links.cookies") },
+      ],
+    },
+  ];
+
   return (
-    <footer className="w-full  border-t border-border/60 ">
+    <footer className="w-full border-t border-border/60">
       <div className="border-b border-border/50 bg-background/80 py-3 backdrop-blur-sm">
         <Marqee>
           <div className="flex items-center">
@@ -160,28 +163,27 @@ export default function Footer() {
             </Link>
 
             <p className="text-sm leading-relaxed text-muted-foreground">
-              AI-powered resume optimization and candidate discovery — built for
-              both job seekers and hiring teams.
+              {t("description")}
             </p>
 
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                Stay Updated
+                {t("stayUpdated")}
               </p>
               <form className="flex gap-2">
                 <div className="relative flex-1">
-                  <IconMail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <IconMail className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                   <input
                     type="email"
-                    placeholder="your@email.com"
-                    className="h-9 w-full rounded-lg border border-border bg-muted/40 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-sky/50"
+                    placeholder={t("emailPlaceholder")}
+                    className="h-9 w-full rounded-lg border border-border bg-muted/40 ps-9 pe-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-sky/50"
                   />
                 </div>
                 <button
                   type="submit"
                   className="h-9 rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90 dark:bg-sky dark:text-foreground dark:hover:bg-sky/90"
                 >
-                  Join
+                  {t("join")}
                 </button>
               </form>
             </div>
@@ -224,10 +226,9 @@ export default function Footer() {
             ))}
           </div>
 
-          {/* Right — trust / compliance badges */}
           <div className="flex flex-col gap-3">
             <p className="mb-1 text-xs font-bold uppercase tracking-widest text-foreground">
-              Compliance
+              {t("compliance")}
             </p>
             {trustBadges.map((b) => (
               <div
@@ -238,9 +239,7 @@ export default function Footer() {
                   {b.icon}
                 </span>
                 <div>
-                  <p className="text-xs font-semibold text-foreground">
-                    {b.title}
-                  </p>
+                  <p className="text-xs font-semibold text-foreground">{b.title}</p>
                   <p className="text-[10px] text-muted-foreground">{b.sub}</p>
                 </div>
               </div>
@@ -252,7 +251,7 @@ export default function Footer() {
       <div className="border-t border-border/40">
         <div className="mx-auto flex max-w-360 items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <p className="text-xs text-muted-foreground">
-            {`© ${new Date().getFullYear()} Aventra\u00A0\u00A0|\u00A0\u00A0All rights reserved`}
+            {`© ${n(new Date().getFullYear())} Aventra | ${t("copyright")}`}
           </p>
           <ScrollTop />
         </div>

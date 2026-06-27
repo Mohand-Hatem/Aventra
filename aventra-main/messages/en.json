@@ -1,0 +1,282 @@
+{
+  "navbar": {
+    "home": "Home",
+    "pricing": "Pricing",
+    "about": "About",
+    "contact": "Contact",
+    "signIn": "Sign in",
+    "getStarted": "Get started",
+    "toggleMenu": "Toggle menu",
+    "language": "Language"
+  },
+  "footer": {
+    "description": "AI-powered resume optimization and candidate discovery — built for both job seekers and hiring teams.",
+    "stayUpdated": "Stay Updated",
+    "emailPlaceholder": "your@email.com",
+    "join": "Join",
+    "compliance": "Compliance",
+    "copyright": "All rights reserved",
+    "marquee": {
+      "aiHiring": "AI-Powered Hiring",
+      "atsAnalysis": "ATS Score Analysis",
+      "candidateSearch": "Smart Candidate Search",
+      "securePrivate": "Secure & Private",
+      "users": "47,300+ Users",
+      "aiRewriter": "AI Bullet Rewriter",
+      "reviews": "4.9 / 5 Reviews",
+      "dataProtected": "Data Protected"
+    },
+    "trust": {
+      "secureTitle": "Secure Platform",
+      "secureSub": "End-to-end encrypted",
+      "privacyTitle": "Privacy First",
+      "privacySub": "GDPR compliant",
+      "aiTitle": "AI Certified",
+      "aiSub": "Responsible AI use",
+      "ratedTitle": "Top Rated",
+      "ratedSub": "4.9 / 5 on G2"
+    },
+    "columns": {
+      "product": "Product",
+      "resources": "Resources",
+      "company": "Company",
+      "legal": "Legal"
+    },
+    "links": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "demo": "Demo",
+      "integrations": "Integrations",
+      "changelog": "Changelog",
+      "documentation": "Documentation",
+      "apiReference": "API Reference",
+      "blog": "Blog",
+      "caseStudies": "Case Studies",
+      "webinars": "Webinars",
+      "aboutUs": "About Us",
+      "careers": "Careers",
+      "pressKit": "Press Kit",
+      "contact": "Contact",
+      "partners": "Partners",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "cookies": "Cookie Policy"
+    }
+  },
+  "landing": {
+    "badge": "NOW SCORING WITH AVENTRA'S ATS 2026 CRITERIA",
+    "titleLine1": "Beat the ATS",
+    "titleAccent": "Land more",
+    "titleLine2": "interviews",
+    "subtitle": "Upload your resume. Get an instant ATS score, fixable issues, and AI-rewritten bullets — built for engineers, by engineers.",
+    "uploadResume": "Upload your resume →",
+    "seeHowItWorks": "▶ See how it works",
+    "trust": {
+      "noCard": "No credit card required",
+      "freeAnalysis": "Free ATS analysis",
+      "resumesAnalyzed": "47,300+ resumes analyzed"
+    },
+    "whoWeServe": "Who We Serve",
+    "jobSeekers": "Job Seekers",
+    "companies": "Companies",
+    "b2cLabel": "B2C",
+    "b2bLabel": "B2B",
+    "b2cDesc": "Resume scoring, ATS fixes & rewritten bullets to land more interviews.",
+    "b2bDesc": "AI-ranked candidate search, smart filters & bulk screening at scale.",
+    "forJobSeekers": "For Job Seekers",
+    "forCompanies": "For Companies",
+    "atsReadiness": "ATS Readiness",
+    "strong": "Strong",
+    "vsV1": "vs V1",
+    "pointsGain": "+18 pts",
+    "issues": "Issues",
+    "strengths": "Strengths",
+    "suggestions": "Suggestions",
+    "candidateSearch": "Candidate Search",
+    "searchPlaceholder": "Search by major, skills, experience…",
+    "aiRankedResults": "AI Ranked Results",
+    "matches": "3 matches",
+    "issuesList": [
+      "Weak action verbs",
+      "Missing: React, AWS",
+      "Inconsistent dates"
+    ],
+    "strengthsList": [
+      "Strong metrics",
+      "Clear outcomes",
+      "Relevant stack"
+    ],
+    "suggestionsList": [
+      "Add CI/CD experience",
+      "Include open source",
+      "Add certifications"
+    ],
+    "tags": ["React", "TypeScript", "AWS"],
+    "searchTags": ["Senior FE", "React", "AWS", "5+ yrs"],
+    "candidates": [
+      { "name": "Ahmed M.", "role": "Senior FE" },
+      { "name": "Sara K.", "role": "React Dev" },
+      { "name": "Omar H.", "role": "Full Stack" }
+    ],
+    "altAts": "ATS resume scoring dashboard",
+    "altCompany": "Company building"
+  },
+  "marquee": {
+    "items": [
+      { "label": "ATS Score Analysis", "variant": "ats" },
+      { "label": "47,300+ Resumes Analyzed", "variant": "stat" },
+      { "label": "B2C · Resume ATS Scoring", "variant": "b2c" },
+      { "label": "AI Bullet Rewriter", "variant": "b2c" },
+      { "label": "Keyword Gap Analysis", "variant": "b2c" },
+      { "label": "+18 pts Average Score Lift", "variant": "stat" },
+      { "label": "B2B · Company Hiring Suite", "variant": "b2b" },
+      { "label": "Smart Candidate Search", "variant": "b2b" },
+      { "label": "AI-Ranked Talent Pipeline", "variant": "b2b" },
+      { "label": "Bulk Resume Screening", "variant": "b2b" },
+      { "label": "4.9 / 5 — 2,400+ Reviews", "variant": "stat" },
+      { "label": "ATS 2026 Criteria", "variant": "ats" },
+      { "label": "Free ATS Scan — No Card Needed", "variant": "b2c" },
+      { "label": "500+ Companies Trust Aventra", "variant": "b2b" }
+    ]
+  },
+  "grid": {
+    "badge": "Platform Overview",
+    "title": "Everything you need to hire smarter",
+    "subtitle": "AI-powered ATS for job seekers & companies — from resume scoring to bulk candidate screening.",
+    "liveStats": "Live Stats",
+    "aiActive": "AI Active",
+    "aiPowered": "AI-Powered",
+    "resumeEngine": "Resume Engine",
+    "platformPerformance": "Platform Performance",
+    "improvement": "+7% improvement this month",
+    "topClients": "Top Clients Active",
+    "resumesToday": "Resumes Today",
+    "fromYesterday": "+15% from yesterday",
+    "aiMatches": "AI Matches",
+    "realtime": "Real-time",
+    "candidatesMatched": "candidates matched this week",
+    "avgAtsScore": "Avg ATS Score",
+    "timeToHire": "Time-to-Hire",
+    "hiringPipeline": "Hiring Pipeline",
+    "stages": {
+      "applied": "Applied",
+      "scored": "Scored",
+      "searched": "Searched",
+      "recommended": "Recommended"
+    },
+    "weeklyActivity": "Weekly Activity",
+    "weeklySubtitle": "Active searches & applications trend",
+    "activeSearches": "Active Searches",
+    "applications": "Applications",
+    "live": "Live",
+    "topAtsScore": "Top ATS Score",
+    "thisWeek": "This Week",
+    "topMatch": "Top Match",
+    "companySearch": "Company Search",
+    "matchScore": "Match score",
+    "activelySearching": "Actively Searching",
+    "weekDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    "topCandidates": [
+      { "initials": "AM", "name": "Ahmed M.", "role": "Senior Frontend" },
+      { "initials": "LK", "name": "Layla K.", "role": "Backend Eng." },
+      { "initials": "OH", "name": "Omar H.", "role": "Full Stack" },
+      { "initials": "NS", "name": "Nour S.", "role": "Data Engineer" }
+    ],
+    "topMatchCandidate": {
+      "name": "Sara K.",
+      "role": "ML Engineer",
+      "tags": ["Python", "ML", "AWS"]
+    },
+    "altAts": "ATS AI platform",
+    "altCompany": "Company hiring platform",
+    "altMatching": "ATS matching",
+    "tags": {
+      "b2c": "B2C",
+      "b2b": "B2B",
+      "ats": "ATS"
+    }
+  },
+  "whatServe": {
+    "badge": "What We Serve",
+    "title": "One platform.",
+    "titleAccent": "Two powerful sides.",
+    "subtitle": "Whether you're a job seeker looking to beat the ATS or a company searching for top talent — Aventra's AI engine works for both sides of the hiring equation.",
+    "b2cBadge": "B2C · For Job Seekers",
+    "b2cTitle": "Know exactly what your CV is missing — and fix it with AI",
+    "b2cDesc": "Upload your resume and get an instant AI-powered breakdown. See your ATS score, every weakness flagged with precision, what to add, what to replace, and get AI-rewritten bullets that actually land interviews.",
+    "b2cFeatures": {
+      "upload": { "title": "Upload Any CV Format", "desc": "PDF, DOCX or plain text — our parser handles all formats and extracts every detail instantly." },
+      "score": { "title": "Instant ATS Score", "desc": "Get a 0–100 readiness score based on 2026 ATS criteria used by top hiring systems." },
+      "issues": { "title": "Issues & Gaps Detected", "desc": "Weak verbs, missing keywords, inconsistent formatting — every red flag surfaces with a fix." },
+      "rewrites": { "title": "AI-Powered Rewrites", "desc": "One click to replace weak lines with impactful, role-specific bullet points written by AI." }
+    },
+    "analyzeCv": "Analyze My CV",
+    "seePricing": "See Pricing",
+    "b2cTrust": ["Free first analysis", "No credit card", "Results in seconds"],
+    "cvsScored": "47,300+ CVs Scored",
+    "b2bBadge": "B2B · For Companies",
+    "b2bTitle": "Find your next hire with AI-ranked candidate search",
+    "b2bDesc": "Search across thousands of qualified candidates by major, skills, experience level, and more. Our AI engine ranks and filters every CV against your job requirements — so you spend time interviewing, not screening.",
+    "b2bFeatures": {
+      "search": { "title": "Search by Major & Skills", "desc": "Query candidates by degree, field of study, tech stack, certifications, and soft skills simultaneously." },
+      "filters": { "title": "Smart CV Filters", "desc": "Filter by experience, location, availability, ATS score threshold, and custom role criteria." },
+      "scoring": { "title": "AI Match Scoring", "desc": "Every candidate gets a role-specific match percentage so you instantly know who fits best." },
+      "bulk": { "title": "Bulk Screening at Scale", "desc": "Screen hundreds of CVs at once, export shortlists, and share candidate profiles with your team." }
+    },
+    "startHiring": "Start Hiring",
+    "viewPlans": "View Plans",
+    "b2bTrust": ["14-day free trial", "No setup fee", "Cancel anytime"],
+    "aiRankedRealtime": "AI-Ranked in Real-time",
+    "cvCard": {
+      "title": "CV Analysis",
+      "complete": "Complete",
+      "readiness": "ATS Readiness Score",
+      "needsImprovement": "Needs improvement",
+      "issuesFound": "Issues Found",
+      "strengths": "Strengths",
+      "aiRewrites": "AI Rewrites",
+      "improveNow": "Improve Now →",
+      "issues": [
+        "Weak action verbs (×4 instances)",
+        "Missing keywords: AWS, Docker",
+        "Inconsistent date formatting"
+      ],
+      "strengthsList": [
+        "Quantified impact metrics",
+        "Clear tech stack listed",
+        "Strong project outcomes"
+      ],
+      "rewrites": [
+        { "from": "\"worked on\"", "to": "\"Engineered & shipped\"" },
+        { "from": "\"helped team\"", "to": "\"Led cross-functional team\"" }
+      ]
+    },
+    "searchCard": {
+      "query": "React Developer, 5+ years…",
+      "smartFilters": "Smart Filters",
+      "filters": ["Computer Science", "React", "5+ yrs", "Remote", "B.Sc+"],
+      "aiResults": "AI-Ranked Results",
+      "matches": "3 matches",
+      "viewAll": "View All Candidates →",
+      "candidates": [
+        { "initials": "AM", "name": "Ahmed M.", "role": "Senior Frontend", "exp": "6 yrs" },
+        { "initials": "SK", "name": "Sara K.", "role": "ML Engineer", "exp": "4 yrs" },
+        { "initials": "OH", "name": "Omar H.", "role": "Full Stack", "exp": "5 yrs" }
+      ]
+    },
+    "altJobSeeker": "Job seeker analyzing their CV",
+    "altHrTeam": "HR team searching for candidates"
+  },
+  "siteStats": {
+    "badge": "See It in Action",
+    "title": "Built for every step of the hiring journey",
+    "subtitle": "A single platform for job seekers and companies — intuitive, AI-powered, and ready to scale.",
+    "browserLabel": "aventra.app — AI-Powered ATS",
+    "altLight": "Aventra platform – light mode",
+    "altDark": "Aventra platform – dark mode"
+  },
+  "language": {
+    "en": "English",
+    "ar": "العربية"
+  }
+}

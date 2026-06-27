@@ -1,27 +1,30 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from "./theme-toggle";
+import { ThemeToggle } from "../feature/theme-toggle";
+import LanguageSwitcher from "../feature/LanguageSwitcher";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-];
-
-const authLinks = [
-  { href: "/login", label: "Sign in", variant: "ghost" as const },
-  { href: "/register", label: "Get started", variant: "primary" as const },
-];
-
 export default function Navbar() {
+  const t = useTranslations("navbar");
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  const navLinks = [
+    { href: "/", label: t("home") },
+    { href: "/pricing", label: t("pricing") },
+    { href: "/about", label: t("about") },
+    { href: "/contact", label: t("contact") },
+  ] as const;
+
+  const authLinks = [
+    { href: "/login", label: t("signIn"), variant: "ghost" as const },
+    { href: "/register", label: t("getStarted"), variant: "primary" as const },
+  ] as const;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,18 +40,17 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="fixed top-2 md:top-4 z-50 flex w-full justify-center px-2 sm:px-6">
+    <header className="fixed top-2 z-50 flex w-full justify-center px-2 sm:px-6 md:top-4">
       <nav
         className={cn(
           "flex w-full flex-col justify-center rounded-2xl border transition-all duration-300 ease-out",
           isScrolled
             ? "border-border/70 bg-background/80 shadow-lg shadow-foreground/5 backdrop-blur-xl md:w-[85%]"
             : "border-transparent bg-transparent md:w-full",
-          isOpen && "border-border/70 bg-background/95 backdrop-blur-xl"
+          isOpen && "border-border/70 bg-background/95 backdrop-blur-xl",
         )}
       >
-        {/* Main Navbar Row */}
-        <div className="flex h-14 md:h-16 items-center justify-between px-4 sm:px-6">
+        <div className="flex h-14 items-center justify-between px-4 sm:px-6 md:h-16">
           <Link href="/" className="flex items-center gap-3">
             <Image
               src="/Aventra-logo.png"
@@ -68,8 +70,8 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden items-center gap-6 md:flex">
+          <div className="hidden items-center gap-4 md:flex">
+            <LanguageSwitcher />
             <ThemeToggle />
 
             {navLinks.map((item) => (
@@ -100,22 +102,26 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Mobile Nav Actions */}
-          <div className="flex items-center gap-3 md:hidden">
+          <div className="flex items-center gap-2 md:hidden">
+            <LanguageSwitcher />
             <ThemeToggle />
             <button
+              type="button"
               onClick={() => setIsOpen(!isOpen)}
               className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              aria-label="Toggle menu"
+              aria-label={t("toggleMenu")}
             >
-              {isOpen ? <IconX className="size-5" /> : <IconMenu2 className="size-5" />}
+              {isOpen ? (
+                <IconX className="size-5" />
+              ) : (
+                <IconMenu2 className="size-5" />
+              )}
             </button>
           </div>
         </div>
 
-        {/* Mobile Dropdown Menu */}
         {isOpen && (
-          <div className="flex flex-col gap-4 border-t border-border/40 px-6 py-5 md:hidden animate-in fade-in slide-in-from-top-5 duration-200">
+          <div className="flex animate-in flex-col gap-4 border-t border-border/40 px-6 py-5 duration-200 fade-in slide-in-from-top-5 md:hidden">
             <div className="flex flex-col gap-3">
               {navLinks.map((item) => (
                 <Link
@@ -128,7 +134,7 @@ export default function Navbar() {
                 </Link>
               ))}
             </div>
-            <div className="h-px bg-border/40 w-full" />
+            <div className="h-px w-full bg-border/40" />
             <div className="flex flex-col gap-2">
               {authLinks.map((item) => (
                 <Link

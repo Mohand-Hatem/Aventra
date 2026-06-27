@@ -1,16 +1,19 @@
-import type { Metadata } from "next";
-import {  Geist_Mono, Inter, Geist } from "next/font/google";
-import "./globals.css";
+import { Geist_Mono, Inter, Geist, Cairo } from "next/font/google";
+import { cookies } from "next/headers";
 import { cn } from "@/lib/utils";
-import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
 import { AppProviders } from "@/providers/app-providers";
+import { routing } from "@/i18n/routing";
+import "./globals.css";
 
+const interHeading = Inter({
+  subsets: ["latin"],
+  variable: "--font-heading",
+});
 
-
-const interHeading = Inter({subsets:['latin'],variable:'--font-heading'});
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 const geistInter = Inter({
   variable: "--font-inter",
@@ -22,35 +25,44 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Aventra",
-  description: "Aventra helps job seekers optimize their resumes with AI-powered ATS analysis and enables companies to discover the best candidates efficiently."
-};
+const cairo = Cairo({
+  subsets: ["arabic", "latin"],
+  weight: ["400", "700"],
+  variable: "--font-cairo",
+});
 
-export default function RootLayout({
+function resolveLocale(raw?: string) {
+  return routing.locales.includes(raw as (typeof routing.locales)[number])
+    ? (raw as (typeof routing.locales)[number])
+    : routing.defaultLocale;
+}
+
+export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  const cookieStore = await cookies();
+  const locale = resolveLocale(cookieStore.get("NEXT_LOCALE")?.value);
+  const isRTL = locale === "ar";
+
   return (
     <html
       suppressHydrationWarning
-      lang="en"
+      lang={locale}
+      dir={isRTL ? "rtl" : "ltr"}
       className={cn(
         "h-full",
         geistInter.className,
         geistMono.variable,
-        "font-sans",
         geist.variable,
         interHeading.variable,
+        cairo.variable,
+        isRTL ? "font-arabic" : "font-sans",
       )}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        <AppProviders>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </AppProviders>
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   );

@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { useLocaleFormat } from "@/hooks/useLocaleFormat";
+import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -74,21 +76,15 @@ function FeatureItem({
    B2C — CV Analysis Mockup Card
 ───────────────────────────────────────────────────── */
 
+const candidateScores = [96, 91, 87];
+
 function CVAnalysisCard() {
-  const issues = [
-    "Weak action verbs (×4 instances)",
-    "Missing keywords: AWS, Docker",
-    "Inconsistent date formatting",
-  ];
-  const strengths = [
-    "Quantified impact metrics",
-    "Clear tech stack listed",
-    "Strong project outcomes",
-  ];
-  const suggestions = [
-    { from: '"worked on"', to: '"Engineered & shipped"' },
-    { from: '"helped team"', to: '"Led cross-functional team"' },
-  ];
+  const t = useTranslations("whatServe");
+  const { n, digits } = useLocaleFormat();
+
+  const issues = t.raw("cvCard.issues") as string[];
+  const strengths = t.raw("cvCard.strengthsList") as string[];
+  const suggestions = t.raw("cvCard.rewrites") as Array<{ from: string; to: string }>;
 
   return (
     <div className="w-full max-w-xs overflow-hidden rounded-2xl border border-border/60 bg-card shadow-card dark:border-border/40">
@@ -97,11 +93,11 @@ function CVAnalysisCard() {
         <div className="flex items-center gap-2">
           <IconFileText className="size-4 text-primary dark:text-sky" />
           <span className="text-xs font-semibold text-foreground">
-            CV Analysis
+            {t("cvCard.title")}
           </span>
         </div>
         <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-          Complete
+          {t("cvCard.complete")}
         </span>
       </div>
 
@@ -132,8 +128,8 @@ function CVAnalysisCard() {
               />
             </svg>
             <div className="flex flex-col items-center leading-none">
-              <span className="text-sm font-extrabold text-foreground">68</span>
-              <span className="text-[8px] text-muted-foreground">/100</span>
+              <span className="text-sm font-extrabold text-foreground">{n(68)}</span>
+              <span className="text-[8px] text-muted-foreground">{digits("/100")}</span>
             </div>
           </div>
           <div>
@@ -141,10 +137,10 @@ function CVAnalysisCard() {
               Senior_Dev_2024.pdf
             </p>
             <p className="text-[10px] text-muted-foreground">
-              ATS Readiness Score
+              {t("cvCard.readiness")}
             </p>
             <p className="mt-1 text-[10px] font-semibold text-amber-500">
-              Needs improvement
+              {t("cvCard.needsImprovement")}
             </p>
           </div>
         </div>
@@ -152,14 +148,14 @@ function CVAnalysisCard() {
         {/* issues */}
         <div>
           <p className="mb-1.5 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-destructive">
-            <IconAlertTriangle className="size-3" /> Issues Found
+            <IconAlertTriangle className="size-3" /> {t("cvCard.issuesFound")}
           </p>
           <ul className="space-y-1">
-            {issues.map((i) => (
-              <li key={i} className="flex items-start gap-1.5">
+            {issues.map((issue) => (
+              <li key={issue} className="flex items-start gap-1.5">
                 <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-destructive" />
                 <span className="text-[10px] leading-tight text-muted-foreground">
-                  {i}
+                  {issue}
                 </span>
               </li>
             ))}
@@ -169,14 +165,14 @@ function CVAnalysisCard() {
         {/* strengths */}
         <div>
           <p className="mb-1.5 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-500">
-            <IconCheck className="size-3" /> Strengths
+            <IconCheck className="size-3" /> {t("cvCard.strengths")}
           </p>
           <ul className="space-y-1">
-            {strengths.map((s) => (
-              <li key={s} className="flex items-start gap-1.5">
+            {strengths.map((strength) => (
+              <li key={strength} className="flex items-start gap-1.5">
                 <IconCheck className="mt-0.5 size-3 shrink-0 text-emerald-500" />
                 <span className="text-[10px] leading-tight text-muted-foreground">
-                  {s}
+                  {strength}
                 </span>
               </li>
             ))}
@@ -186,7 +182,7 @@ function CVAnalysisCard() {
         {/* AI suggestions */}
         <div>
           <p className="mb-1.5 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-primary dark:text-sky">
-            <IconSparkles className="size-3" /> AI Rewrites
+            <IconSparkles className="size-3" /> {t("cvCard.aiRewrites")}
           </p>
           <div className="space-y-1.5">
             {suggestions.map((s) => (
@@ -205,7 +201,7 @@ function CVAnalysisCard() {
         </div>
 
         <button className="w-full rounded-xl bg-primary py-2 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90 dark:bg-sky dark:text-foreground">
-          Improve Now →
+          {t("cvCard.improveNow")}
         </button>
       </div>
     </div>
@@ -216,31 +212,18 @@ function CVAnalysisCard() {
    B2B — Candidate Search Mockup Card
 ───────────────────────────────────────────────────── */
 
-const mockCandidates = [
-  {
-    initials: "AM",
-    name: "Ahmed M.",
-    role: "Senior Frontend",
-    exp: "6 yrs",
-    score: 96,
-  },
-  {
-    initials: "SK",
-    name: "Sara K.",
-    role: "ML Engineer",
-    exp: "4 yrs",
-    score: 91,
-  },
-  {
-    initials: "OH",
-    name: "Omar H.",
-    role: "Full Stack",
-    exp: "5 yrs",
-    score: 87,
-  },
-];
-
 function CandidateSearchCard() {
+  const t = useTranslations("whatServe");
+  const { n } = useLocaleFormat();
+
+  const filters = t.raw("searchCard.filters") as string[];
+  const candidates = t.raw("searchCard.candidates") as Array<{
+    initials: string;
+    name: string;
+    role: string;
+    exp: string;
+  }>;
+
   return (
     <div className="w-full max-w-xs overflow-hidden rounded-2xl border border-border/60 bg-card shadow-card dark:border-border/40">
       {/* header */}
@@ -248,7 +231,7 @@ function CandidateSearchCard() {
         <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-background px-3 py-2">
           <IconSearch className="size-3.5 shrink-0 text-muted-foreground" />
           <span className="text-[11px] text-muted-foreground">
-            React Developer, 5+ years…
+            {t("searchCard.query")}
           </span>
           <IconSparkles className="ml-auto size-3.5 text-primary dark:text-sky" />
         </div>
@@ -258,19 +241,17 @@ function CandidateSearchCard() {
         {/* filter chips */}
         <div>
           <p className="mb-2 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            <IconAdjustments className="size-3" /> Smart Filters
+            <IconAdjustments className="size-3" /> {t("searchCard.smartFilters")}
           </p>
           <div className="flex flex-wrap gap-1.5">
-            {["Computer Science", "React", "5+ yrs", "Remote", "B.Sc+"].map(
-              (f) => (
-                <span
-                  key={f}
-                  className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-medium text-primary dark:bg-sky/10 dark:text-sky"
-                >
-                  {f}
-                </span>
-              ),
-            )}
+            {filters.map((filter) => (
+              <span
+                key={filter}
+                className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-medium text-primary dark:bg-sky/10 dark:text-sky"
+              >
+                {filter}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -278,14 +259,14 @@ function CandidateSearchCard() {
         <div>
           <div className="mb-2 flex items-center justify-between">
             <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              AI-Ranked Results
+              {t("searchCard.aiResults")}
             </p>
             <span className="text-[10px] font-semibold text-primary dark:text-sky">
-              3 matches
+              {t("searchCard.matches")}
             </span>
           </div>
           <div className="space-y-2.5">
-            {mockCandidates.map((c, i) => (
+            {candidates.map((c, i) => (
               <div
                 key={c.name}
                 className="flex items-center gap-2.5 rounded-xl border border-border/40 bg-muted/30 px-3 py-2"
@@ -304,7 +285,7 @@ function CandidateSearchCard() {
                       {c.name}
                     </p>
                     <span className="text-[10px] font-bold text-primary dark:text-sky">
-                      {c.score}%
+                      {n(candidateScores[i])}%
                     </span>
                   </div>
                   <p className="text-[10px] text-muted-foreground">
@@ -313,7 +294,7 @@ function CandidateSearchCard() {
                   <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-muted">
                     <div
                       className="h-full rounded-full bg-primary transition-all dark:bg-sky"
-                      style={{ width: `${c.score}%` }}
+                      style={{ width: `${candidateScores[i]}%` }}
                     />
                   </div>
                 </div>
@@ -323,7 +304,7 @@ function CandidateSearchCard() {
         </div>
 
         <button className="w-full rounded-xl bg-primary py-2 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90 dark:bg-sky dark:text-foreground">
-          View All Candidates →
+          {t("searchCard.viewAll")}
         </button>
       </div>
     </div>
@@ -337,6 +318,11 @@ function CandidateSearchCard() {
 ───────────────────────────────────────────────────── */
 
 export default function WhatServe() {
+  const t = useTranslations("whatServe");
+
+  const b2cTrust = t.raw("b2cTrust") as string[];
+  const b2bTrust = t.raw("b2bTrust") as string[];
+
   return (
     <section className="relative w-full overflow-hidden bg-background px-4 py-24 sm:px-6 [--chart-accent:var(--color-primary)] dark:[--chart-accent:var(--color-sky)]">
       {/* ambient glows */}
@@ -353,18 +339,16 @@ export default function WhatServe() {
         {/* ── Section header ── */}
         <div className="text-center">
           <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
-            <IconSparkles className="size-3" /> What We Serve
+            <IconSparkles className="size-3" /> {t("badge")}
           </Badge>
           <h2 className="font-heading mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-            One platform.{" "}
+            {t("title")}{" "}
             <span className="text-primary dark:text-sky">
-              Two powerful sides.
+              {t("titleAccent")}
             </span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-muted-foreground sm:text-base">
-            Whether you&apos;re a job seeker looking to beat the ATS or a
-            company searching for top talent — Aventra&apos;s AI engine works
-            for both sides of the hiring equation.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -373,47 +357,44 @@ export default function WhatServe() {
           {/* Left: copy */}
           <div className="flex flex-col">
             <Badge className="w-fit border-primary/30 bg-primary/10 text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
-              <IconUsers className="size-3" /> B2C · For Job Seekers
+              <IconUsers className="size-3" /> {t("b2cBadge")}
             </Badge>
 
             <h3 className="font-heading mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              Know exactly what your CV is missing — and fix it with AI
+              {t("b2cTitle")}
             </h3>
 
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Upload your resume and get an instant AI-powered breakdown. See
-              your ATS score, every weakness flagged with precision, what to
-              add, what to replace, and get AI-rewritten bullets that actually
-              land interviews.
+              {t("b2cDesc")}
             </p>
 
             <div className="mt-8 space-y-5">
               <FeatureItem
                 icon={IconUpload}
-                title="Upload Any CV Format"
-                description="PDF, DOCX or plain text — our parser handles all formats and extracts every detail instantly."
+                title={t("b2cFeatures.upload.title")}
+                description={t("b2cFeatures.upload.desc")}
               />
               <FeatureItem
                 icon={IconChartBar}
-                title="Instant ATS Score"
-                description="Get a 0–100 readiness score based on 2026 ATS criteria used by top hiring systems."
+                title={t("b2cFeatures.score.title")}
+                description={t("b2cFeatures.score.desc")}
               />
               <FeatureItem
                 icon={IconAlertTriangle}
-                title="Issues & Gaps Detected"
-                description="Weak verbs, missing keywords, inconsistent formatting — every red flag surfaces with a fix."
+                title={t("b2cFeatures.issues.title")}
+                description={t("b2cFeatures.issues.desc")}
               />
               <FeatureItem
                 icon={IconBulb}
-                title="AI-Powered Rewrites"
-                description="One click to replace weak lines with impactful, role-specific bullet points written by AI."
+                title={t("b2cFeatures.rewrites.title")}
+                description={t("b2cFeatures.rewrites.desc")}
               />
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg" className="rounded-xl px-6">
                 <Link href="/register">
-                  Analyze My CV <IconArrowRight className="ml-1 size-4" />
+                  {t("analyzeCv")} <IconArrowRight className="ml-1 size-4" />
                 </Link>
               </Button>
               <Button
@@ -422,19 +403,15 @@ export default function WhatServe() {
                 size="lg"
                 className="rounded-xl px-6"
               >
-                <Link href="/pricing">See Pricing</Link>
+                <Link href="/pricing">{t("seePricing")}</Link>
               </Button>
             </div>
 
             <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
-              {[
-                "Free first analysis",
-                "No credit card",
-                "Results in seconds",
-              ].map((t) => (
-                <span key={t} className="flex items-center gap-1">
+              {b2cTrust.map((item) => (
+                <span key={item} className="flex items-center gap-1">
                   <IconCheck className="size-3 text-primary dark:text-sky" />{" "}
-                  {t}
+                  {item}
                 </span>
               ))}
             </div>
@@ -445,7 +422,7 @@ export default function WhatServe() {
             <div className="relative h-[520px] w-full overflow-hidden rounded-3xl">
               <Image
                 src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&q=80"
-                alt="Job seeker analyzing their CV"
+                alt={t("altJobSeeker")}
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -461,7 +438,7 @@ export default function WhatServe() {
             <div className="absolute right-4 top-4 flex items-center gap-2 rounded-full border border-border/60 bg-card/90 px-3 py-2 shadow-card backdrop-blur-sm">
               <IconStarFilled className="size-4 text-amber-400" />
               <span className="text-xs font-semibold text-foreground">
-                47,300+ CVs Scored
+                {t("cvsScored")}
               </span>
             </div>
           </div>
@@ -474,7 +451,7 @@ export default function WhatServe() {
             <div className="relative h-[520px] w-full overflow-hidden rounded-3xl">
               <Image
                 src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80"
-                alt="HR team searching for candidates"
+                alt={t("altHrTeam")}
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -490,7 +467,7 @@ export default function WhatServe() {
             <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-border/60 bg-card/90 px-3 py-2 shadow-card backdrop-blur-sm">
               <IconRobot className="size-4 text-primary dark:text-sky" />
               <span className="text-xs font-semibold text-foreground">
-                AI-Ranked in Real-time
+                {t("aiRankedRealtime")}
               </span>
             </div>
           </div>
@@ -498,47 +475,44 @@ export default function WhatServe() {
           {/* Right: copy */}
           <div className="flex flex-col">
             <Badge className="w-fit border-primary/30 bg-primary/10 text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
-              <IconBuilding className="size-3" /> B2B · For Companies
+              <IconBuilding className="size-3" /> {t("b2bBadge")}
             </Badge>
 
             <h3 className="font-heading mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              Find your next hire with AI-ranked candidate search
+              {t("b2bTitle")}
             </h3>
 
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Search across thousands of qualified candidates by major, skills,
-              experience level, and more. Our AI engine ranks and filters every
-              CV against your job requirements — so you spend time interviewing,
-              not screening.
+              {t("b2bDesc")}
             </p>
 
             <div className="mt-8 space-y-5">
               <FeatureItem
                 icon={IconSearch}
-                title="Search by Major & Skills"
-                description="Query candidates by degree, field of study, tech stack, certifications, and soft skills simultaneously."
+                title={t("b2bFeatures.search.title")}
+                description={t("b2bFeatures.search.desc")}
               />
               <FeatureItem
                 icon={IconFilter}
-                title="Smart CV Filters"
-                description="Filter by experience, location, availability, ATS score threshold, and custom role criteria."
+                title={t("b2bFeatures.filters.title")}
+                description={t("b2bFeatures.filters.desc")}
               />
               <FeatureItem
                 icon={IconRobot}
-                title="AI Match Scoring"
-                description="Every candidate gets a role-specific match percentage so you instantly know who fits best."
+                title={t("b2bFeatures.scoring.title")}
+                description={t("b2bFeatures.scoring.desc")}
               />
               <FeatureItem
                 icon={IconBriefcase}
-                title="Bulk Screening at Scale"
-                description="Screen hundreds of CVs at once, export shortlists, and share candidate profiles with your team."
+                title={t("b2bFeatures.bulk.title")}
+                description={t("b2bFeatures.bulk.desc")}
               />
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg" className="rounded-xl px-6">
                 <Link href="/company">
-                  Start Hiring <IconArrowRight className="ml-1 size-4" />
+                  {t("startHiring")} <IconArrowRight className="ml-1 size-4" />
                 </Link>
               </Button>
               <Button
@@ -547,19 +521,17 @@ export default function WhatServe() {
                 size="lg"
                 className="rounded-xl px-6"
               >
-                <Link href="/pricing">View Plans</Link>
+                <Link href="/pricing">{t("viewPlans")}</Link>
               </Button>
             </div>
 
             <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
-              {["14-day free trial", "No setup fee", "Cancel anytime"].map(
-                (t) => (
-                  <span key={t} className="flex items-center gap-1">
-                    <IconCheck className="size-3 text-primary dark:text-sky" />{" "}
-                    {t}
-                  </span>
-                ),
-              )}
+              {b2bTrust.map((item) => (
+                <span key={item} className="flex items-center gap-1">
+                  <IconCheck className="size-3 text-primary dark:text-sky" />{" "}
+                  {item}
+                </span>
+              ))}
             </div>
           </div>
         </div>

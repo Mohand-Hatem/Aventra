@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils"
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const
 
-const INITIAL_DIMENSION = { width: 200020, height: 200 } as const
+const INITIAL_DIMENSION = { width: 520, height: 200 } as const
 type TooltipNameType = number | string
 
 export type ChartConfig = Record<
