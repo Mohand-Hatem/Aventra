@@ -1,3 +1,4 @@
+// layout.tsx
 import type { Metadata } from "next";
 import {  Geist_Mono, Inter, Geist } from "next/font/google";
 import "./globals.css";
@@ -5,7 +6,7 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { ThemeProvider } from "@/providers/theme-provider";
-
+import QueryProvider from "@/providers/QueryProvider";
 
 
 const interHeading = Inter({subsets:['latin'],variable:'--font-heading'});
@@ -46,11 +47,13 @@ export default function RootLayout({
       )}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        <ThemeProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </ThemeProvider>
+        <QueryProvider>
+  <ThemeProvider>
+    <Navbar />
+    <main className="flex-1">{children}</main>
+    <Footer />
+  </ThemeProvider>
+</QueryProvider>
       </body>
     </html>
   );

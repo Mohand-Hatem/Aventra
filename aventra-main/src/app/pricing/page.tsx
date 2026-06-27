@@ -1,3 +1,4 @@
+// pricing/page.tsx
 import PricingSection from "@/components/feature/pricing/PricingSection";
 
 export const metadata = {
