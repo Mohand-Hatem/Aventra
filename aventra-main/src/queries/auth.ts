@@ -48,7 +48,7 @@ const refreshToken = async (): Promise<void> => {
 };
 
 export function useLoginMutation() {
-  return useMutation({ mutationFn: login });
+  return useMutation({ mutationFn: login ,onSuccess: (data) => console.log (data)});
 }
 
 export function useForgotPasswordMutation() {

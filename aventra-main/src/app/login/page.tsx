@@ -39,12 +39,8 @@ export default function LoginPage() {
     loginMutate(data, {
       onSuccess: (res) => {
         const role = res.data.user.role;
-        if (role === ROLES.company) {
-          router.push(APP_ROUTES.companyDashboard);
-        } else {
-          router.push(APP_ROUTES.userDashboard);
-        }
       },
+
       onError: (err) => {
         const axiosErr = err as AxiosError<{ message?: string }>;
         setServerError(
