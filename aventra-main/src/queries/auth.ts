@@ -19,10 +19,12 @@ interface MeResponse {
     user: CurrentUser;
   };
 }
-
+export const authKeys = {
+  me: ["current-user"] as const,
+};
 export function useCurrentUser() {
   return useQuery({
-    queryKey: ["current-user"],
+     queryKey: authKeys.me,
 
     queryFn: async () => {
       const { data } = await apiClient.get<MeResponse>("/auth/me");
