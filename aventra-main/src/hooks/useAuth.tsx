@@ -1,5 +1,4 @@
 import axiosInstance from "@/lib/axios";
-import { logAuth, logAuthError, logAuthWarn } from "@/lib/auth-debug";
 import { queryKeys } from "@/constants/query-keys";
 import {  RegisterPayload } from "@/types/auth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,37 +11,12 @@ import { APP_ROUTES } from "@/constants/routes";
 export const GOOGLE_LOGIN_PENDING_KEY = "googleLogin";
 
 export function fetchAuthUser() {
-  logAuth("fetchAuthUser", "calling GET /auth/me", {
-    baseURL: process.env.NEXT_PUBLIC_BASE_URL,
-    withCredentials: true,
-  });
-
   return axiosInstance
     .get("/auth/me")
-    .then((r) => {
-      const user = r.data.data?.user ?? null;
-      logAuth("fetchAuthUser", "success", {
-        status: r.status,
-        user: user ? { id: user.id, email: user.email } : null,
-        rawData: r.data,
-      });
-      return user;
-    })
+    .then((r) => r.data.data?.user ?? null)
     .catch((err: AxiosError) => {
-      if (err.response?.status === 401) {
-        logAuthWarn("fetchAuthUser", "unauthenticated (401) — no session cookie or expired token", {
-          status: err.response.status,
-          data: err.response.data,
-        });
-        return null;
-      }
-
-      logAuthError("fetchAuthUser", "request failed", {
-        status: err.response?.status,
-        data: err.response?.data,
-        message: err.message,
-      });
       throw err;
+      
     });
 }
 
@@ -70,24 +44,14 @@ export const useLogin = () => {
     mutationFn: (credentials: { email: string; password: string }) =>
       axiosInstance.post("/auth/login", credentials).then((r) => r.data),
     onSuccess: (data) => {
-      logAuth("login", "success", {
-        response: data,
-        user: data.data?.user,
-        queryCacheValue: data,
-      });
-      logAuth("login", "AuthProvider will re-fetch /auth/me after navigation");
       queryClient.setQueryData(queryKeys.auth.user, data);
       toast.success("Logged Successfully: Welcome back!");
-      setUserInfo(data.data.user);
+      console.log(data);
+      setUserInfo(data.user);
       router.push("/");
     },
     onError: (err) => {
       const axiosErr = err as AxiosError<{ message?: string }>;
-      logAuthError("login", "failed", {
-        status: axiosErr.response?.status,
-        data: axiosErr.response?.data,
-        message: axiosErr.message,
-      });
       toast.error(
         axiosErr.response?.data?.message ??
           "Something went wrong. Please try again."
@@ -98,7 +62,6 @@ export const useLogin = () => {
 
 export const useRegister = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (credentials: RegisterPayload) => {
       try {
@@ -109,23 +72,20 @@ export const useRegister = () => {
         return { data: response.data, isExistingAccount: false as const };
       } catch (error) {
         const axiosErr = error as AxiosError<{ message?: string }>;
-
+        console.log(axiosErr);
         const response = await axiosInstance.post("/auth/login", {
           email: credentials.email,
           password: credentials.password,
-        });
-
+        })
         return { data: response.data, isExistingAccount: true as const };
       }
     },
     onSuccess: ({ data, isExistingAccount }) => {
       queryClient.setQueryData(queryKeys.auth.user, data);
-
       if (isExistingAccount) {
         toast.success("Welcome back! Signed in with your existing account.");
         return;
       }
-
       toast.success("Account created successfully");
     },
     onError: (err) => {
