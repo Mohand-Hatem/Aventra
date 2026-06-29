@@ -46,10 +46,7 @@ export const useLogin = () => {
     onSuccess: (data) => {
       queryClient.setQueryData(queryKeys.auth.user, data);
       toast.success("Logged Successfully: Welcome back!");
-      console.log("Auth data", data);
-      console.log("Auth data user", data.user);
-      console.log("Auth data data user", data.data.user);
-      setUserInfo(data.data.user);
+      setUserInfo(data?.data?.user);
       router.push("/");
     },
     onError: (err) => {
