@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/providers/theme-provider";
 import { useEffect, useState } from "react";
 import { AiOutlineMoon, AiOutlineSun } from "react-icons/ai";
 

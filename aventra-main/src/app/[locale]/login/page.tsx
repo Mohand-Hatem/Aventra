@@ -1,10 +1,12 @@
+import { LoginForm } from "@/components/auth/login-form";
+import { LoginHero } from "@/components/auth/login-hero";
+import { AuthPageShell } from "@/components/auth/auth-page-shell";
+
 export default function LoginPage() {
   return (
-    <section className="mx-auto w-full max-w-md px-4 py-24 sm:px-6">
-      <h1 className="text-3xl font-semibold tracking-tight">Sign in</h1>
-      <p className="mt-2 text-muted-foreground">
-        Welcome back. Sign in to continue to your account.
-      </p>
-    </section>
+    <AuthPageShell>
+      <LoginHero />
+      <LoginForm />
+    </AuthPageShell>
   );
 }

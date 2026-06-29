@@ -38,7 +38,10 @@
     --sidebar-border: oklch(0.92 0.004 286.32);
     --sidebar-ring: oklch(0.705 0.015 286.067);
     --sky: oklch(0.755 0.154 232);
+    --canvas: #EAF2FD;
     --shadow-card-value: 0 4px 20px -2px rgba(0,0,0,0.10), 0 2px 8px -2px rgba(0,0,0,0.07);
+    --toast-success-border: var(--primary);
+    --toast-error-border: var(--destructive);
 }
 
 .dark {
@@ -74,7 +77,10 @@
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.552 0.016 285.938);
     --sky: oklch(0.780 0.170 232);
+    --canvas: #090C14;
     --shadow-card-value: 0 4px 24px -2px rgba(0,0,0,0.45), 0 2px 10px -2px rgba(0,0,0,0.30);
+    --toast-success-border: var(--sky);
+    --toast-error-border: var(--destructive);
 }
 
 @theme inline {
@@ -112,6 +118,7 @@
     --color-foreground: var(--foreground);
     --color-background: var(--background);
     --color-sky: var(--sky);
+    --color-canvas: var(--canvas);
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -184,3 +191,12 @@ html[dir="rtl"] .pl-4  { padding-left: 0;  padding-right: 1rem; }
 html[dir="rtl"] .pr-4  { padding-right: 0; padding-left: 1rem; }
 html[dir="rtl"] .text-left  { text-align: right; }
 html[dir="rtl"] .text-right { text-align: left;  }
+
+/* react-hot-toast — type borders (inline styles lose to goober/Tailwind base) */
+[data-rht-toaster] .toast-success {
+  border: 1px solid var(--toast-success-border) !important;
+}
+
+[data-rht-toaster] .toast-error {
+  border: 1px solid var(--toast-error-border) !important;
+}

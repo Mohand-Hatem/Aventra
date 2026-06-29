@@ -1,5 +1,5 @@
 "use client";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/providers/theme-provider";
 
 export function useIsDark() {
   const { resolvedTheme } = useTheme();

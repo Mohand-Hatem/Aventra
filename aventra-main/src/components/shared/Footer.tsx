@@ -128,7 +128,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="w-full border-t border-border/60">
+    <footer dir="ltr" className="w-full border-t border-border/60">
       <div className="border-b border-border/50 bg-background/80 py-3 backdrop-blur-sm">
         <Marqee>
           <div className="flex items-center">

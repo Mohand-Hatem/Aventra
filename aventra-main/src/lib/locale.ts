@@ -1,0 +1,7 @@
+import { routing } from "@/i18n/routing";
+
+export type AppLocale = (typeof routing.locales)[number];
+
+export function isRtlLocale(locale: string) {
+  return locale === "ar";
+}

@@ -5,6 +5,9 @@
     "about": "About",
     "contact": "Contact",
     "signIn": "Sign in",
+    "signOut": "Sign out",
+    "profile": "Profile",
+    "userMenu": "User menu",
     "getStarted": "Get started",
     "toggleMenu": "Toggle menu",
     "language": "Language"
@@ -278,5 +281,85 @@
   "language": {
     "en": "English",
     "ar": "العربية"
+  },
+  "callback": {
+    "loading": "Loading...",
+    "error": "An error occurred while logging in. Please try again.",
+    "success": "Login successful. Congratulations!"
+  },
+  "login": {
+    "backToWebsite": "Back to website",
+    "title": "Welcome back",
+    "email": "Email",
+    "emailPlaceholder": "name@firm.com",
+    "password": "Password",
+    "show": "Show",
+    "hide": "Hide",
+    "forgotPassword": "Forgot password?",
+    "signingIn": "Signing in…",
+    "signIn": "Sign In",
+    "orContinueWith": "Or continue with",
+    "signInWithGoogle": "Sign in with Google",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "hero": {
+      "badge": "AI CV Intelligence Platform",
+      "titleLine1": "AI-Powered CV Analysis",
+      "titleLine2": "Smart Matching",
+      "cardTitle": "Better Connections",
+      "cardDescription": "Leverage artificial intelligence to analyze CVs, match candidates with the right opportunities, and help companies hire smarter.",
+      "alt": "Aventra AI CV Intelligence"
+    },
+    "validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email address",
+      "passwordRequired": "Password is required"
+    }
+  },
+  "register": {
+    "backToWebsite": "Back to website",
+    "title": "Create an account",
+    "accountType": "Account type",
+    "candidate": "Candidate",
+    "company": "Company",
+    "englishName": "English name",
+    "englishNamePlaceholder": "Enter your English name",
+    "arabicName": "Arabic name",
+    "arabicNamePlaceholder": "Enter your Arabic name",
+    "email": "Email",
+    "emailPlaceholder": "name@firm.com",
+    "password": "Password",
+    "show": "Show",
+    "hide": "Hide",
+    "passwordChecks": {
+      "minLength": "At least 8 characters",
+      "uppercase": "One uppercase letter",
+      "number": "One number"
+    },
+    "creatingAccount": "Creating account…",
+    "createAccount": "Create account",
+    "orContinueWith": "Or continue with",
+    "continueWithGoogle": "Continue with Google",
+    "alreadyHaveAccount": "Already have an account?",
+    "logIn": "Log in",
+    "genericError": "Something went wrong. Please try again.",
+    "hero": {
+      "badge": "B2C & B2B · AI CV Intelligence",
+      "candidateLine": "Candidates: stand out and get matched to the right role.",
+      "companyLine": "Companies: hire smarter with AI-driven talent matching.",
+      "cardTitle": "Better Connections",
+      "cardDescription": "Leverage artificial intelligence to analyze CVs, match candidates with the right opportunities, and help companies hire smarter.",
+      "alt": "Aventra AI CV Intelligence"
+    },
+    "validation": {
+      "englishNameRequired": "English name is required",
+      "arabicNameRequired": "Arabic name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Enter a valid email",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 8 characters",
+      "passwordUppercase": "Password must contain one uppercase letter",
+      "passwordNumber": "Password must contain one number"
+    }
   }
 }

@@ -20,7 +20,7 @@ import {
   IconArrowRight,
   IconBulb,
 } from "@tabler/icons-react";
-import { useLogin, useUser } from "@/hooks/clientAuth";
+import { useLogin, useUser } from "@/hooks/useAuth";
 
 /*
   --chart-accent is set on the root section:
@@ -233,7 +233,7 @@ function B2BCards() {
             </div>
             <p className="text-sm text-muted-foreground">{t("b2bDesc")}</p>
           </div>
-          <div className="relative w-60 -end-5 shrink-0">
+          <div className="relative w-60 -inset-e-5 shrink-0">
             <Image
               src="/comapny.png"
               alt={t("altCompany")}
@@ -248,7 +248,7 @@ function B2BCards() {
   );
 }
 
-/* ── user cards ──────────────────────────────────── */
+
 
 function UserCards() {
   const t = useTranslations("landing");
@@ -425,11 +425,11 @@ export default function Landing() {
       {/* glow blobs */}
       <div
         aria-hidden
-        className="pointer-events-none absolute end-0 top-0 z-0 h-[50vh] w-[45vw] rounded-full bg-primary/10 blur-3xl dark:bg-sky/15"
+        className="pointer-events-none absolute inset-e-0 top-0 z-0 h-[50vh] w-[45vw] rounded-full bg-primary/10 blur-3xl dark:bg-sky/15"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute bottom-0 start-0 z-0 h-[30vh] w-[30vw] rounded-full bg-primary/10 blur-3xl dark:bg-sky/10"
+        className="pointer-events-none absolute bottom-0 inset-s-0 z-0 h-[30vh] w-[30vw] rounded-full bg-primary/10 blur-3xl dark:bg-sky/10"
       />
 
       <div className="relative z-10 mx-auto grid h-auto lg:h-full w-full max-w-360 grid-cols-1 items-center gap-8 px-4 pt-24 pb-12 sm:px-6 lg:grid-cols-2 lg:gap-14">

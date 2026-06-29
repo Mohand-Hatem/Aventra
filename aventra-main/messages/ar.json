@@ -5,9 +5,17 @@
     "about": "من نحن",
     "contact": "تواصل معنا",
     "signIn": "تسجيل الدخول",
+    "signOut": "تسجيل الخروج",
+    "profile": "الملف الشخصي",
+    "userMenu": "قائمة المستخدم",
     "getStarted": "ابدأ الآن",
     "toggleMenu": "فتح القائمة",
     "language": "اللغة"
+  },
+  "callback": {
+    "loading": "جاري تسجيل الدخول...",
+    "error": "حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.",
+    "success": "تم تسجيل الدخول بنجاح. تهانينا!"
   },
   "footer": {
     "description": "تحسين السيرة الذاتية بالذكاء الاصطناعي واكتشاف المرشحين — مصمم لباحثي العمل وفرق التوظيف.",
@@ -278,5 +286,80 @@
   "language": {
     "en": "English",
     "ar": "العربية"
+  },
+  "login": {
+    "backToWebsite": "العودة إلى الموقع",
+    "title": "مرحباً بعودتك",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "name@firm.com",
+    "password": "كلمة المرور",
+    "show": "إظهار",
+    "hide": "إخفاء",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "signingIn": "جاري تسجيل الدخول…",
+    "signIn": "تسجيل الدخول",
+    "orContinueWith": "أو تابع باستخدام",
+    "signInWithGoogle": "تسجيل الدخول بجوجل",
+    "noAccount": "ليس لديك حساب؟",
+    "signUp": "إنشاء حساب",
+    "hero": {
+      "badge": "منصة الذكاء الاصطناعي للسيرة الذاتية",
+      "titleLine1": "تحليل السيرة الذاتية بالذكاء الاصطناعي",
+      "titleLine2": "مطابقة ذكية",
+      "cardTitle": "روابط أفضل",
+      "cardDescription": "استفد من الذكاء الاصطناعي لتحليل السير الذاتية ومطابقة المرشحين مع الفرص المناسبة ومساعدة الشركات على التوظيف بذكاء.",
+      "alt": "Aventra AI CV Intelligence"
+    },
+    "validation": {
+      "emailRequired": "البريد الإلكتروني مطلوب",
+      "emailInvalid": "يرجى إدخال بريد إلكتروني صالح",
+      "passwordRequired": "كلمة المرور مطلوبة"
+    }
+  },
+  "register": {
+    "backToWebsite": "العودة إلى الموقع",
+    "title": "إنشاء حساب",
+    "accountType": "نوع الحساب",
+    "candidate": "مرشح",
+    "company": "شركة",
+    "englishName": "الاسم بالإنجليزية",
+    "englishNamePlaceholder": "أدخل اسمك بالإنجليزية",
+    "arabicName": "الاسم بالعربية",
+    "arabicNamePlaceholder": "ادخل اسمك بالعربية",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "name@firm.com",
+    "password": "كلمة المرور",
+    "show": "إظهار",
+    "hide": "إخفاء",
+    "passwordChecks": {
+      "minLength": "8 أحرف على الأقل",
+      "uppercase": "حرف كبير واحد",
+      "number": "رقم واحد"
+    },
+    "creatingAccount": "جاري إنشاء الحساب…",
+    "createAccount": "إنشاء حساب",
+    "orContinueWith": "أو تابع باستخدام",
+    "continueWithGoogle": "المتابعة مع جوجل",
+    "alreadyHaveAccount": "لديك حساب بالفعل؟",
+    "logIn": "تسجيل الدخول",
+    "genericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "hero": {
+      "badge": "أفراد وشركات · ذكاء السيرة بالذكاء الاصطناعي",
+      "candidateLine": "المرشحون: تميّز واحصل على الدور المناسب.",
+      "companyLine": "الشركات: توظّف بذكاء مع مطابقة المواهب بالذكاء الاصطناعي.",
+      "cardTitle": "روابط أفضل",
+      "cardDescription": "استفد من الذكاء الاصطناعي لتحليل السير الذاتية ومطابقة المرشحين مع الفرص المناسبة ومساعدة الشركات على التوظيف بذكاء.",
+      "alt": "Aventra AI CV Intelligence"
+    },
+    "validation": {
+      "englishNameRequired": "الاسم بالإنجليزية مطلوب",
+      "arabicNameRequired": "الاسم بالعربية مطلوب",
+      "emailRequired": "البريد الإلكتروني مطلوب",
+      "emailInvalid": "يرجى إدخال بريد إلكتروني صالح",
+      "passwordRequired": "كلمة المرور مطلوبة",
+      "passwordMinLength": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+      "passwordUppercase": "يجب أن تحتوي كلمة المرور على حرف كبير واحد",
+      "passwordNumber": "يجب أن تحتوي كلمة المرور على رقم واحد"
+    }
   }
 }

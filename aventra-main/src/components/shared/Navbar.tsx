@@ -8,11 +8,17 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "../feature/theme-toggle";
 import LanguageSwitcher from "../feature/LanguageSwitcher";
 import { IconMenu2, IconX } from "@tabler/icons-react";
+import { useAuthStore } from "@/stores/auth-store";
+import { useLogout } from "@/hooks/useAuth";
+import { UserAvatarMenu } from "./UserAvatarMenu";
 
 export default function Navbar() {
   const t = useTranslations("navbar");
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const userInfo = useAuthStore((state) => state.userInfo);
+  const isLoggedIn = !!userInfo;
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
 
   const navLinks = [
     { href: "/", label: t("home") },
@@ -30,6 +36,7 @@ export default function Navbar() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 12);
     };
+   
 
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -40,7 +47,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="fixed top-2 z-50 flex w-full justify-center px-2 sm:px-6 md:top-4">
+    <header dir="ltr" className="fixed top-2 z-50 flex w-full justify-center px-2 sm:px-6 md:top-4">
       <nav
         className={cn(
           "flex w-full flex-col justify-center rounded-2xl border transition-all duration-300 ease-out",
@@ -85,20 +92,28 @@ export default function Navbar() {
             ))}
 
             <div className="flex items-center gap-2 border-s border-border/60 ps-4">
-              {authLinks.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "rounded-xl px-3 py-2 text-sm font-medium transition-colors",
-                    item.variant === "primary"
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                  )}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {isLoggedIn && userInfo ? (
+                <UserAvatarMenu
+                  user={userInfo}
+                  onLogout={() => logout()}
+                  isLoggingOut={isLoggingOut}
+                />
+              ) : (
+                authLinks.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "rounded-xl px-3 py-2 text-sm font-medium transition-colors",
+                      item.variant === "primary"
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                ))
+              )}
             </div>
           </div>
 
@@ -136,21 +151,33 @@ export default function Navbar() {
             </div>
             <div className="h-px w-full bg-border/40" />
             <div className="flex flex-col gap-2">
-              {authLinks.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className={cn(
-                    "w-full rounded-xl py-2.5 text-center text-sm font-medium transition-colors",
-                    item.variant === "primary"
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "border border-border text-muted-foreground hover:bg-muted hover:text-foreground",
-                  )}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {isLoggedIn && userInfo ? (
+                <UserAvatarMenu
+                  user={userInfo}
+                  onLogout={() => {
+                    setIsOpen(false);
+                    logout();
+                  }}
+                  isLoggingOut={isLoggingOut}
+                  size="lg"
+                />
+              ) : (
+                authLinks.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className={cn(
+                      "w-full rounded-xl py-2.5 text-center text-sm font-medium transition-colors",
+                      item.variant === "primary"
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                        : "border border-border text-muted-foreground hover:bg-muted hover:text-foreground",
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                ))
+              )}
             </div>
           </div>
         )}
