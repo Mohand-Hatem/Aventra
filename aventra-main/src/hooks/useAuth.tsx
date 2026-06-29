@@ -13,7 +13,7 @@ export const GOOGLE_LOGIN_PENDING_KEY = "googleLogin";
 export function fetchAuthUser() {
   return axiosInstance
     .get("/auth/me")
-    .then((r) => r.data.data?.user ?? null)
+    .then((r) => r.data?.user ?? null)
     .catch((err: AxiosError) => {
       throw err;
       

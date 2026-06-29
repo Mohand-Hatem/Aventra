@@ -7,6 +7,7 @@ import { APP_ROUTES } from "@/constants/routes";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/constants/query-keys";
 import { AxiosError } from "axios";
+import { error } from "console";
 
 const MAX_RETRIES = 5;
 const RETRY_DELAY_MS = 800;
@@ -19,21 +20,15 @@ export const useGoogleCallback = () => {
   const hasRun = useRef(false);
 
   useEffect(() => {
-    // Prevent double-invocation in React StrictMode
     if (hasRun.current) return;
     hasRun.current = true;
-
     const pendingGoogle = sessionStorage.getItem(GOOGLE_LOGIN_PENDING_KEY);
-
     let attempt = 0;
-
     const tryFetch = async () => {
       while (attempt < MAX_RETRIES) {
         try {
-          // Small delay on every attempt to give the backend session time to
-          // propagate the cookie — especially important on first attempt.
-          await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
 
+          await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
           const user = await fetchAuthUser();
 
           if (user) {
@@ -62,21 +57,17 @@ export const useGoogleCallback = () => {
             break;
           }
         }
-
         attempt++;
       }
-
-      // All retries exhausted
       sessionStorage.removeItem(GOOGLE_LOGIN_PENDING_KEY);
       if (pendingGoogle) {
         toast.error("Failed to login with Google. Please try again.");
+        console.error(error);
       }
       setIsPending(false);
       router.replace(APP_ROUTES.login);
     };
-
     tryFetch();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { isPending };
