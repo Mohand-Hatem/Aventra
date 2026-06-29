@@ -8,14 +8,22 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "@/stores/auth-store";
 import { APP_ROUTES } from "@/constants/routes";
 
+export const GOOGLE_LOGIN_PENDING_KEY = "googleLogin";
+
 export function fetchAuthUser() {
-  return axiosInstance.get("/auth/me").then((r) => r.data.data?.user);
+  return axiosInstance
+    .get("/auth/me")
+    .then((r) => r.data.data?.user ?? null)
+    .catch((err: AxiosError) => {
+      if (err.response?.status === 401) return null;
+      throw err;
+    });
 }
 
 export const useGoogleLogin = () => {
   return {
     login: (role: "user" | "company" = "user") => {
-      sessionStorage.setItem("googleLogin", "1");
+      sessionStorage.setItem(GOOGLE_LOGIN_PENDING_KEY, "1");
       window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/google?role=${role}`;
     },
   };
@@ -113,7 +121,7 @@ export const useLogout = () => {
     mutationFn: () => axiosInstance.post("/auth/logout"),
     onSuccess: () => {
       useAuthStore.getState().clearAuth();
-      sessionStorage.removeItem("googleLogin");
+      sessionStorage.removeItem(GOOGLE_LOGIN_PENDING_KEY);
       toast.success("Logged out successfully");
       queryClient.removeQueries({ queryKey: queryKeys.auth.user });
       router.push(APP_ROUTES.login);
