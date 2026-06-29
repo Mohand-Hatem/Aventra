@@ -8,6 +8,19 @@
     "signOut": "تسجيل الخروج",
     "profile": "الملف الشخصي",
     "userMenu": "قائمة المستخدم",
+    "signingOut": "جاري تسجيل الخروج…",
+    "roles": {
+      "user": "مرشح",
+      "company": "شركة",
+      "admin": "مسؤول"
+    },
+    "plans": {
+      "free": "مجاني",
+      "basic": "أساسي",
+      "pro": "احترافي",
+      "enterprise": "مؤسسات",
+      "unlimited": "غير محدود"
+    },
     "getStarted": "ابدأ الآن",
     "toggleMenu": "فتح القائمة",
     "language": "اللغة"

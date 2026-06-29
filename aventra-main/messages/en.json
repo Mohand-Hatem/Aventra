@@ -8,6 +8,19 @@
     "signOut": "Sign out",
     "profile": "Profile",
     "userMenu": "User menu",
+    "signingOut": "Signing out…",
+    "roles": {
+      "user": "Candidate",
+      "company": "Company",
+      "admin": "Admin"
+    },
+    "plans": {
+      "free": "Free",
+      "basic": "Basic",
+      "pro": "Pro",
+      "enterprise": "Enterprise",
+      "unlimited": "Unlimited"
+    },
     "getStarted": "Get started",
     "toggleMenu": "Toggle menu",
     "language": "Language"
