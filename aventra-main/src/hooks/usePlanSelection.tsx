@@ -30,17 +30,19 @@ export function usePlanSelection() {
       {
         
         onSuccess: async (data) => {
- 
           if (!data.url) {
              await queryClient.invalidateQueries({ queryKey: queryKeys.auth.user });
+             toast.success("Payment successful");
             router.push("/user/profile");
             return;
           }
+          localStorage.setItem("paymobOrderId", data.orderId!);
           window.location.href = data.url;
         },
 
-        onError: () => {
-          alert("Unable to start payment.");
+        onError: (error) => {
+          console.error(error);
+          toast.error("Unable to start payment.");
         },
       }
     );

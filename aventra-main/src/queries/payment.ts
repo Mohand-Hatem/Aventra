@@ -14,6 +14,7 @@ interface PayResponse {
   success: boolean;
   message?: string;
   url?: string;
+  orderId?: string;
 }
 
 export function usePayWithPaymob() {
