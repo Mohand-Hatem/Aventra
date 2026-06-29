@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "@/i18n/routing";
 import { queryKeys } from "@/constants/query-keys";
 import { useQueryClient } from "@tanstack/react-query";
+import { APP_ROUTES } from "@/constants/routes";
 
 export default function PaymentResult() {
     const router = useRouter();
@@ -20,11 +21,11 @@ export default function PaymentResult() {
             if (data.status === "Paid") {
                 clearInterval(interval);
                 localStorage.removeItem("paymobOrderId");
-                toast.success("Payment Successful");
+                toast.success("Payment Successful ");
                 await queryClient.invalidateQueries({
                     queryKey: queryKeys.auth.user,
                 });
-                router.push("/user/profile");
+                router.push(APP_ROUTES.home);
             }
             if (data.status === "Failed") {
                 clearInterval(interval);
