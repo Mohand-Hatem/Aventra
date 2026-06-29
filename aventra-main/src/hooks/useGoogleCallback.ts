@@ -24,7 +24,7 @@ export const useGoogleCallback = () => {
     const pendingGoogle = sessionStorage.getItem(GOOGLE_LOGIN_PENDING_KEY);
     if (query.data) {
       sessionStorage.removeItem(GOOGLE_LOGIN_PENDING_KEY);
-      console.log(query.data);
+      console.log("query.data", query.data);
       setUserInfo(query.data.user);
       queryClient.setQueryData(queryKeys.auth.user, query.data.user);
       if (pendingGoogle) {
