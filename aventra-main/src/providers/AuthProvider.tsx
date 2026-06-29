@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       })
       .catch((error) => {
         sessionStorage.removeItem("googleLogin");
-        toast.error("Failed to login with Google");
         console.log(error);
         clearAuth(); 
       });
