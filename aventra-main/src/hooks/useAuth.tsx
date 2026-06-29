@@ -44,9 +44,10 @@ export const useLogin = () => {
     mutationFn: (credentials: { email: string; password: string }) =>
       axiosInstance.post("/auth/login", credentials).then((r) => r.data),
     onSuccess: (data) => {
-      queryClient.setQueryData(queryKeys.auth.user, data);
+      const user = data?.data?.user;
+      queryClient.setQueryData(queryKeys.auth.user, user);
       toast.success("Logged Successfully: Welcome back!");
-      setUserInfo(data?.data?.user);
+      setUserInfo(user);
       router.push("/");
     },
     onError: (err) => {
@@ -61,6 +62,8 @@ export const useLogin = () => {
 
 export const useRegister = () => {
   const queryClient = useQueryClient();
+  const setUserInfo = useAuthStore((state) => state.setUserInfo);
+  const router = useRouter();
   return useMutation({
     mutationFn: async (credentials: RegisterPayload) => {
       try {
@@ -75,17 +78,20 @@ export const useRegister = () => {
         const response = await axiosInstance.post("/auth/login", {
           email: credentials.email,
           password: credentials.password,
-        })
+        });
         return { data: response.data, isExistingAccount: true as const };
       }
     },
     onSuccess: ({ data, isExistingAccount }) => {
-      queryClient.setQueryData(queryKeys.auth.user, data);
+      const user = data?.data?.user;
+      queryClient.setQueryData(queryKeys.auth.user, user);
+      setUserInfo(user);
       if (isExistingAccount) {
         toast.success("Welcome back! Signed in with your existing account.");
-        return;
+      } else {
+        toast.success("Account created successfully");
       }
-      toast.success("Account created successfully");
+      router.push("/");
     },
     onError: (err) => {
       const axiosErr = err as AxiosError<{ message?: string }>;
