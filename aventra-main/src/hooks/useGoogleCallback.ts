@@ -7,7 +7,6 @@ import { APP_ROUTES } from "@/constants/routes";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/constants/query-keys";
 import { AxiosError } from "axios";
-import { error } from "console";
 
 const MAX_RETRIES = 5;
 const RETRY_DELAY_MS = 800;
@@ -51,8 +50,7 @@ export const useGoogleCallback = () => {
             axiosErr?.message
           );
 
-          // If it's explicitly a 401 AND we've used up retries, give up.
-          // For network errors or 5xx keep retrying.
+    
           if (status === 401 && attempt >= MAX_RETRIES - 1) {
             break;
           }
@@ -62,7 +60,6 @@ export const useGoogleCallback = () => {
       sessionStorage.removeItem(GOOGLE_LOGIN_PENDING_KEY);
       if (pendingGoogle) {
         toast.error("Failed to login with Google. Please try again.");
-        console.error(error);
       }
       setIsPending(false);
       router.replace(APP_ROUTES.login);
