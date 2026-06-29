@@ -9,13 +9,9 @@ import { useAuthStore } from "@/stores/auth-store";
 import { APP_ROUTES } from "@/constants/routes";
 
 export function fetchAuthUser() {
-  return axiosInstance.get("/auth/me").then((r) => r.data.user);
+  return axiosInstance.get("/auth/me").then((r) => r.data.data?.user);
 }
 
-
-
-
-/** OAuth must use a full-page redirect — axios/fetch cannot follow Google's auth URL (CORS). */
 export const useGoogleLogin = () => {
   return {
     login: (role: "user" | "company" = "user") => {
