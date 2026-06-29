@@ -1,61 +1,83 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/stores/auth-store";
 import { fetchAuthUser, GOOGLE_LOGIN_PENDING_KEY } from "@/hooks/useAuth";
 import { useRouter } from "@/i18n/routing";
 import { APP_ROUTES } from "@/constants/routes";
+import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/constants/query-keys";
+import { AxiosError } from "axios";
 
-
+const MAX_RETRIES = 5;
+const RETRY_DELAY_MS = 800;
 
 export const useGoogleCallback = () => {
   const setUserInfo = useAuthStore((state) => state.setUserInfo);
   const router = useRouter();
   const queryClient = useQueryClient();
-  const query = useQuery({
-    queryKey: queryKeys.auth.googleCallback,
-    queryFn: fetchAuthUser,
-    retry: false,
-  });
+  const [isPending, setIsPending] = useState(true);
+  const hasRun = useRef(false);
 
   useEffect(() => {
-    if (query.isPending) return;
+    // Prevent double-invocation in React StrictMode
+    if (hasRun.current) return;
+    hasRun.current = true;
+
     const pendingGoogle = sessionStorage.getItem(GOOGLE_LOGIN_PENDING_KEY);
-    if (query.data) {
-      sessionStorage.removeItem(GOOGLE_LOGIN_PENDING_KEY);
-      console.log("query.data", query.data);
-      setUserInfo(query.data);
-      queryClient.setQueryData(queryKeys.auth.user, query.data);
-      if (pendingGoogle) {
-        toast.success("Logged Successfully: Welcome back!");
-      }
-      router.replace(APP_ROUTES.home);
-      return;
-    }
 
+    let attempt = 0;
 
-    if (query.isError || query.isSuccess) {
+    const tryFetch = async () => {
+      while (attempt < MAX_RETRIES) {
+        try {
+          // Small delay on every attempt to give the backend session time to
+          // propagate the cookie — especially important on first attempt.
+          await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+
+          const user = await fetchAuthUser();
+
+          if (user) {
+            sessionStorage.removeItem(GOOGLE_LOGIN_PENDING_KEY);
+            setUserInfo(user);
+            queryClient.setQueryData(queryKeys.auth.user, user);
+            if (pendingGoogle) {
+              toast.success("Logged in successfully with Google!");
+            }
+            router.replace(APP_ROUTES.home);
+            setIsPending(false);
+            return;
+          }
+        } catch (err) {
+          const axiosErr = err as AxiosError;
+          const status = axiosErr?.response?.status;
+          console.warn(
+            `Google callback attempt ${attempt + 1}/${MAX_RETRIES} failed:`,
+            status,
+            axiosErr?.message
+          );
+
+          // If it's explicitly a 401 AND we've used up retries, give up.
+          // For network errors or 5xx keep retrying.
+          if (status === 401 && attempt >= MAX_RETRIES - 1) {
+            break;
+          }
+        }
+
+        attempt++;
+      }
+
+      // All retries exhausted
       sessionStorage.removeItem(GOOGLE_LOGIN_PENDING_KEY);
       if (pendingGoogle) {
-        toast.error("Failed to login with Google");
-        console.log(query.error);
+        toast.error("Failed to login with Google. Please try again.");
       }
+      setIsPending(false);
       router.replace(APP_ROUTES.login);
-    }
+    };
 
-  }, [
+    tryFetch();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    query.data,
-    query.isError,
-    query.isSuccess,
-    query.isPending,
-    query.error,
-    queryClient,
-    router,
-    setUserInfo,
-  ]);
-  return query;
-
+  return { isPending };
 };
-
