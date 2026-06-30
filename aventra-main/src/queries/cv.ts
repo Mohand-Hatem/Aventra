@@ -6,6 +6,6 @@
  * - Owns server-state for CV upload/search/result endpoints.
  *
  * Example (when implementing later):
- * - useUploadCvMutation -> POST /cv/upload.
+ * - useUploadCvMutation -> POST /users/upload-file.
  * - useRagSearchMutation -> POST /rag/search.
  */

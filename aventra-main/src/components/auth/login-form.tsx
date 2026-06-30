@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { GoArrowRight } from "react-icons/go";
 import { FcGoogle } from "react-icons/fc";
 import { createLoginSchema, type LoginSchema } from "@/schemas/auth";
+import { ScaleLoader } from "@/components/shared/scale-loader";
 import { Button } from "@/components/ui/button";
 import { APP_ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
@@ -171,7 +172,14 @@ export function LoginForm() {
             disabled={isPending}
             className="h-12 w-full rounded-xl bg-primary text-[0.78rem] font-bold uppercase tracking-[0.16em] text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
           >
-            {isPending ? t("signingIn") : t("signIn")}
+            {isPending ? (
+              <span className="inline-flex items-center gap-2">
+                <ScaleLoader size="sm" />
+                {t("signingIn")}
+              </span>
+            ) : (
+              t("signIn")
+            )}
           </Button>
         </form>
 

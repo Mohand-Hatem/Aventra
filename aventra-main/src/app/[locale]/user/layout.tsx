@@ -6,7 +6,7 @@ type UserLayoutProps = {
 
 export default function UserLayout({ children }: UserLayoutProps) {
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
+    <section className="flex min-h-screen w-full flex-col bg-canvas px-4 py-8 sm:px-6 lg:pt-20">
       {children}
     </section>
   );

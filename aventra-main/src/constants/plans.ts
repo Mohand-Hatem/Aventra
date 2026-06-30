@@ -1,6 +1,5 @@
 export const PLANS = {
   free: "free",
-  basic: "basic",
   pro: "pro",
   enterprise: "enterprise",
   unlimited: "unlimited",

@@ -2,7 +2,7 @@
 "use client";
 
 
-import { usePayWithPaymob } from "@/queries/payment";
+
 import type { PlanName } from "@/types/pricing";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/constants/query-keys";
@@ -10,6 +10,7 @@ import { useUser } from "./useAuth";
 import { useRouter } from "@/i18n/routing";
 import { APP_ROUTES } from "@/constants/routes";
 import { toast } from "react-hot-toast";
+import { usePayWithPaymob } from "./usePay";
 
 export function usePlanSelection() {
   const router = useRouter();

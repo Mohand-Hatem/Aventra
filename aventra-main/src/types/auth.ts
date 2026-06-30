@@ -4,6 +4,17 @@ export type LocalizedName = {
   ar: string;
 };
 
+export function normalizeLocalizedName(name: string | LocalizedName): LocalizedName {
+  if (typeof name === "string") {
+    return { en: name, ar: name };
+  }
+
+  return {
+    en: name.en ?? "",
+    ar: name.ar ?? "",
+  };
+}
+
 export function getUserDisplayName(
   name: string | LocalizedName,
   locale: string,

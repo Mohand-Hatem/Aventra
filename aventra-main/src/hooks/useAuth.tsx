@@ -7,13 +7,13 @@ import { useRouter } from "@/i18n/routing";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/stores/auth-store";
 import { APP_ROUTES } from "@/constants/routes";
+import { GOOGLE_LOGIN_PENDING_KEY } from "@/constants/query-keys";
 
-export const GOOGLE_LOGIN_PENDING_KEY = "googleLogin";
 
 export function fetchAuthUser() {
   return axiosInstance
     .get("/auth/me")
-    .then((r) => r.data?.user ?? null)
+    .then((r) => r.data?.data?.user ?? r.data?.user ?? null)
     .catch((err: AxiosError) => {
       throw err;
       
@@ -99,18 +99,6 @@ export const useRegister = () => {
         axiosErr.response?.data?.message ??
           "Something went wrong. Please try again."
       );
-    },
-  });
-};
-
-export const useUpdateProfile = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: { name: string; email: string }) =>
-      axiosInstance.put("/user/profile", data).then((r) => r.data),
-    onSuccess: (data) => {
-      queryClient.setQueryData(queryKeys.auth.user, data);
     },
   });
 };

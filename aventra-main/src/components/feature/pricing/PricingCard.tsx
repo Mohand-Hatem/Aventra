@@ -1,5 +1,7 @@
 "use client";
 import { IconCheck } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
+import { ScaleLoader } from "@/components/shared/scale-loader";
 import { cn } from "@/lib/utils";
 import type { PricingCardProps } from "@/types/pricing";
 import { usePlanSelection } from "@/hooks/usePlanSelection";
@@ -8,7 +10,8 @@ import { hasUnlimitedAccess } from "@/constants/pricing";
 
 
 export default function PricingCard({ plan, isActivePlan = false }: PricingCardProps) {
-  const { name, price, description, tokens, featured, features, cta } = plan;
+  const t = useTranslations("pricing");
+  const { name, displayName, price, description, tokens, featured, features, cta } = plan;
   const { handlePlanSelection, isPending } = usePlanSelection();
   const { userInfo } = useAuthStore();
   const { plan: userPlan } = userInfo || {};
@@ -42,34 +45,30 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
               isGoldCard ? "text-amber-600" : "text-primary",
             )}
           >
-            {isGoldCard ? "FULL ACCESS" : "MOST POPULAR"}
+            {isGoldCard ? t("fullAccess") : t("mostPopular")}
           </span>
         </div>
       )}
 
-      {isCurrentPlan ? (<>
+      {isCurrentPlan ? (
         <p
-        className={cn(
-          "text-sm font-bold uppercase tracking-widest",
-          isHighlighted ? "text-white/80" : "text-primary dark:text-sky",
-        )}
-      >
-       Your Current Plan is {name}
-      </p>
-      
-      </>) : (
-        <>
+          className={cn(
+            "text-sm font-bold uppercase tracking-widest",
+            isHighlighted ? "text-white/80" : "text-primary dark:text-sky",
+          )}
+        >
+          {t("currentPlan", { plan: displayName })}
+        </p>
+      ) : (
         <p
-        className={cn(
-          "text-sm font-bold uppercase tracking-widest",
-          isHighlighted ? "text-white/80" : "text-primary dark:text-sky",
-        )}
-      >
-        {name}
-      </p>
-        </>
+          className={cn(
+            "text-sm font-bold uppercase tracking-widest",
+            isHighlighted ? "text-white/80" : "text-primary dark:text-sky",
+          )}
+        >
+          {displayName}
+        </p>
       )}
-    
 
       {/* Price */}
       <div className="mt-4 flex items-end gap-1">
@@ -92,7 +91,7 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
             isHighlighted ? "text-white/70" : "text-muted-foreground",
           )}
         >
-          per month
+          {t("perMonth")}
         </p>
       )}
 
@@ -173,7 +172,14 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
                 : "border-2 border-primary dark:border-sky text-primary dark:text-sky hover:bg-primary dark:hover:bg-sky hover:text-white dark:hover:text-white",
           )}
         >
-          {isPending ? "Redirecting..." : cta}
+          {isPending ? (
+            <span className="inline-flex items-center justify-center gap-2">
+              <ScaleLoader size="sm" />
+              {t("redirecting")}
+            </span>
+          ) : (
+            cta
+          )}
         </button>
       )}
     </div>

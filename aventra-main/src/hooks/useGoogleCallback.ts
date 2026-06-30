@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/stores/auth-store";
-import { fetchAuthUser, GOOGLE_LOGIN_PENDING_KEY } from "@/hooks/useAuth";
+import { fetchAuthUser } from "@/hooks/useAuth";
 import { useRouter } from "@/i18n/routing";
 import { APP_ROUTES } from "@/constants/routes";
 import { useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/constants/query-keys";
+import { GOOGLE_LOGIN_PENDING_KEY, queryKeys } from "@/constants/query-keys";
 import { AxiosError } from "axios";
 
 const MAX_RETRIES = 5;

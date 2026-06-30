@@ -12,6 +12,7 @@ import { GoArrowRight } from "react-icons/go";
 import { createRegisterSchema, type RegisterFormValues } from "@/schemas/auth";
 import { Link } from "@/i18n/routing";
 import { APP_ROUTES } from "@/constants/routes";
+import { ScaleLoader } from "@/components/shared/scale-loader";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { RegisterRole } from "@/types/auth";
@@ -325,7 +326,14 @@ export function RegisterForm() {
             disabled={isSubmitting}
             className="h-12 w-full rounded-xl bg-primary text-[0.78rem] font-bold uppercase tracking-[0.16em] text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
           >
-            {isSubmitting ? t("creatingAccount") : t("createAccount")}
+            {isSubmitting ? (
+              <span className="inline-flex items-center gap-2">
+                <ScaleLoader size="sm" />
+                {t("creatingAccount")}
+              </span>
+            ) : (
+              t("createAccount")
+            )}
           </Button>
         </form>
 

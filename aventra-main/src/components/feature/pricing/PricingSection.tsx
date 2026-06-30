@@ -1,38 +1,39 @@
 "use client";
 
 import { IconSparkles } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
 import PricingCard from "@/components/feature/pricing/PricingCard";
-import {
-  hasUnlimitedAccess,
-  PRICING_PLANS,
-  UNLIMITED_PLAN,
-} from "@/constants/pricing";
+import { hasUnlimitedAccess } from "@/constants/pricing";
+import { usePricingPlans } from "@/hooks/usePricingPlans";
 import { useAuthStore } from "@/stores/auth-store";
 
 export default function PricingSection() {
+  const t = useTranslations("pricing");
   const userInfo = useAuthStore((state) => state.userInfo);
   const showUnlimitedOnly = hasUnlimitedAccess(userInfo);
+  const { plans, unlimitedPlan } = usePricingPlans();
 
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6">
+    <section className="min-h-screen w-full bg-background dark:bg-canvas">
+      <div className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6">
 
       {/* Header */}
       <div className="mb-16 text-center">
         <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 dark:border-sky/30 dark:bg-sky/10 px-4 py-1.5 text-sm font-medium text-primary dark:text-sky">
           <IconSparkles size={14} />
-          {showUnlimitedOnly ? "Your access" : "Simple, transparent pricing"}
+          {showUnlimitedOnly ? t("badgeUnlimited") : t("badge")}
         </div>
         <h1 className="font-heading mt-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-          {showUnlimitedOnly ? "Unlimited plan" : "Choose your plan"}
+          {showUnlimitedOnly ? t("titleUnlimited") : t("title")}
         </h1>
         <p className="mt-4 text-lg text-muted-foreground">
           {showUnlimitedOnly ? (
-            <>You have full access to every feature with no limits.</>
+            t("subtitleUnlimited")
           ) : (
             <>
-              Simple plans for job seekers and companies.
+              {t("subtitle")}
               <br />
-              Start free, upgrade when you need more.
+              {t("subtitleLine2")}
             </>
           )}
         </p>
@@ -41,11 +42,11 @@ export default function PricingSection() {
       {/* Cards */}
       {showUnlimitedOnly ? (
         <div className="mx-auto max-w-md">
-          <PricingCard plan={UNLIMITED_PLAN} isActivePlan />
+          <PricingCard plan={unlimitedPlan} isActivePlan />
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:items-start">
-          {PRICING_PLANS.map((plan) => (
+          {plans.map((plan) => (
             <PricingCard key={plan.name} plan={plan} />
           ))}
         </div>
@@ -53,13 +54,16 @@ export default function PricingSection() {
 
       {!showUnlimitedOnly && (
         <p className="mt-12 text-center text-sm text-muted-foreground">
-          All plans include a{" "}
-          <span className="font-semibold text-primary dark:text-sky">
-            7-day free trial
-          </span>
-          . No credit card required.
+          {t.rich("trialNote", {
+            trial: (chunks) => (
+              <span className="font-semibold text-primary dark:text-sky">
+                {chunks}
+              </span>
+            ),
+          })}
         </p>
       )}
+      </div>
     </section>
   );
 }

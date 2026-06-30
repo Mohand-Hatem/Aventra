@@ -11,4 +11,11 @@ const axiosInstance = axios.create({
   },
 });
 
+axiosInstance.interceptors.request.use((config) => {
+  if (config.data instanceof FormData) {
+    config.headers.set("Content-Type", "multipart/form-data");
+  }
+  return config;
+});
+
 export default axiosInstance;

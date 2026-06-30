@@ -14,7 +14,8 @@ import "../globals.css";
 
 export const metadata: Metadata = {
   title: "Aventra",
-  description: "Aventra helps job seekers optimize their resumes with AI-powered ATS analysis and enables companies to discover the best candidates efficiently.",
+  description:
+    "Aventra helps job seekers optimize their resumes with AI-powered ATS analysis and enables companies to discover the best candidates efficiently.",
 };
 
 export function generateStaticParams() {
@@ -56,10 +57,10 @@ export default async function LocaleLayout({
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <ThemeInitScript />
-        <NextIntlClientProvider locale={locale} messages={messages}> {/* ✅ برا */}
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <AppProviders>
             <Navbar />
-            <main className="flex-1">{children}</main>
+            <main className="flex  flex-col">{children}</main>
             <Footer />
           </AppProviders>
         </NextIntlClientProvider>

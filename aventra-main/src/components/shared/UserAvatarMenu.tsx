@@ -5,11 +5,11 @@ import { useTranslations, useLocale } from "next-intl";
 import {
   IconBuilding,
   IconChevronDown,
-  IconLoader2,
   IconLogout,
   IconStar,
   IconUser,
 } from "@tabler/icons-react";
+import { ScaleLoader } from "@/components/shared/scale-loader";
 import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { getUserDisplayName, type AuthUser } from "@/types/auth";
@@ -113,7 +113,11 @@ export function UserAvatarMenu({
       >
         <Avatar size={size} className="shrink-0">
           {user.avatar ? (
-            <AvatarImage src={user.avatar} alt={displayName} />
+            <AvatarImage
+              key={user.avatar}
+              src={user.avatar}
+              alt={displayName}
+            />
           ) : null}
           <AvatarFallback className="bg-primary text-sm font-medium text-primary-foreground">
             {initials}
@@ -140,7 +144,11 @@ export function UserAvatarMenu({
           <div className="flex items-center gap-2.5">
             <Avatar size="default" className="shrink-0">
               {user.avatar ? (
-                <AvatarImage src={user.avatar} alt={displayName} />
+                <AvatarImage
+                  key={user.avatar}
+                  src={user.avatar}
+                  alt={displayName}
+                />
               ) : null}
               <AvatarFallback className="bg-primary text-xs font-medium text-primary-foreground">
                 {initials}
@@ -179,7 +187,7 @@ export function UserAvatarMenu({
           }}
         >
           {isLoggingOut ? (
-            <IconLoader2 className="animate-spin" />
+            <ScaleLoader size="sm" />
           ) : (
             <IconLogout />
           )}
