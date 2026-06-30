@@ -3,8 +3,6 @@ import { routing } from '@/i18n/routing';
 import { NextRequest, NextResponse } from 'next/server';
 
 const intlMiddleware = createMiddleware(routing);
-const protectedRoutes = ['/', '/profile',];
-const authRoutes = ['/login', '/register'];
 function getPathnameWithoutLocale(pathname: string): string {
   const locales = routing.locales; // ['en', 'ar'] مثلاً
   for (const locale of locales) {
@@ -15,22 +13,25 @@ function getPathnameWithoutLocale(pathname: string): string {
   return pathname;
 }
 
+const protectedRoutes = ['/profile'];
+const authRoutes = ['/login', '/register'];
+
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const pathnameWithoutLocale = getPathnameWithoutLocale(pathname);
   const token = request.cookies.get('accessToken')?.value;
   const isAuthenticated = !!token;
+
   const isProtectedRoute = protectedRoutes.some((route) =>
-    pathnameWithoutLocale.startsWith(route)
+    pathnameWithoutLocale === route || pathnameWithoutLocale.startsWith(`${route}/`)
   );
   const isAuthRoute = authRoutes.some((route) =>
-    pathnameWithoutLocale.startsWith(route)
+    pathnameWithoutLocale === route || pathnameWithoutLocale.startsWith(`${route}/`)
   );
-
 
   if (isProtectedRoute && !isAuthenticated) {
     const locale = pathname.split('/')[1] || routing.defaultLocale;
-    const loginUrl = new URL(`/${locale}/auth/login`, request.url);
+    const loginUrl = new URL(`/${locale}/login`, request.url);
     loginUrl.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(loginUrl);
   }
