@@ -27,7 +27,7 @@ export default function Navbar() {
        ?[{ href : "/user/cv-analysis", label : "CV Analysis"}]
     :[]),
      ...(userInfo?.role === "company" 
-      ?[{ href : "/company/search", label : "Companyp-Search"}]
+      ?[{ href : "/company/search", label : "Candidate Search"}]
     :[]),
     
     { href: "/pricing", label: t("pricing") },
