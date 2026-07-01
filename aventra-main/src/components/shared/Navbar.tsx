@@ -20,12 +20,29 @@ export default function Navbar() {
   const isLoggedIn = !!userInfo;
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
 
+  // const navLinks = [
+  //   { href: "/", label: t("home") },
+  //   { href: "/pricing", label: t("pricing") },
+  //   { href: "/about", label: t("about") },
+  //   { href: "/contact", label: t("contact") },
+  // ] as const;
+
   const navLinks = [
-    { href: "/", label: t("home") },
-    { href: "/pricing", label: t("pricing") },
-    { href: "/about", label: t("about") },
-    { href: "/contact", label: t("contact") },
-  ] as const;
+  { href: "/", label: t("home") },
+
+  ...(userInfo?.role === "user"
+    ? [{ href: "/user/cv-analysis", label: "CV Analysis" }]
+    : []),
+
+  ...(userInfo?.role === "company"
+    ? [{ href: "/company", label: "Company" }]
+    : []),
+
+  { href: "/pricing", label: t("pricing") },
+  { href: "/about", label: t("about") },
+  { href: "/contact", label: t("contact") },
+];
+
 
   const authLinks = [
     { href: "/login", label: t("signIn"), variant: "ghost" as const },
