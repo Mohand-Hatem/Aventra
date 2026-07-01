@@ -300,6 +300,87 @@
     "error": "An error occurred while logging in. Please try again.",
     "success": "Login successful. Congratulations!"
   },
+  "contact": {
+    "header": {
+      "help": "Need support?",
+      "titlePrefix": "Let's talk",
+      "brand": "Aventra",
+      "description": "Reach our team for product questions, partnerships, and technical support."
+    },
+    "cards": {
+      "email": {
+        "title": "Email us",
+        "line1": "support@aventra.app",
+        "line2": "Response within 24 hours"
+      },
+      "phone": {
+        "title": "Call us",
+        "line1": "+1 (555) 123-4567",
+        "line2": "Mon–Fri, 9AM–5PM"
+      },
+      "address": {
+        "title": "Office address",
+        "line1": "123 Aventra Ave.",
+        "line2": "San Francisco, CA 94103"
+      }
+    },
+    "connect": {
+      "title": "Connect with us",
+      "description": "Follow Aventra on social media for updates, product news, and community events."
+    },
+    "socials": {
+      "linkedin": "LinkedIn",
+      "github": "GitHub",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "youtube": "YouTube"
+    },
+    "faq": {
+      "heading": "Frequently asked questions",
+      "description": "Answers to common questions about Aventra, ATS scoring, and support.",
+      "items": {
+        "whatIsAventra": "What is Aventra?",
+        "atsScore": "How is the ATS score calculated?",
+        "dataSecure": "Is my data secure?",
+        "contactDirectly": "Can I contact support directly?",
+        "enterprisePlans": "Do you offer enterprise plans?",
+        "deleteAccount": "How do I delete my account?"
+      }
+    },
+    "support": {
+      "heading": "Still need help?",
+      "description": "Our support team is available to answer any questions and help you get started.",
+      "cta": "Start a conversation"
+    },
+    "form": {
+      "title": "Send us a message",
+      "nameLabel": "Your name",
+      "namePlaceholder": "Enter your name",
+      "emailLabel": "Your email",
+      "emailPlaceholder": "Enter your email",
+      "subjectLabel": "Subject",
+      "subjectPlaceholder": "How can we help you?",
+      "subjects": {
+        "candidateSupport": "Candidate support",
+        "companySupport": "Company support",
+        "pricing": "Pricing",
+        "technicalIssue": "Technical issue",
+        "partnership": "Partnership",
+        "other": "Other"
+      },
+      "messageLabel": "Message",
+      "messagePlaceholder": "Write your message here...",
+      "privacyAgreement": "By sending this message, you agree to our",
+      "privacyPolicy": "Privacy Policy",
+      "sendMessage": "Send message",
+      "sending": "Sending..."
+    },
+    "notifications": {
+      "successSent": "Message sent successfully!",
+      "errorGeneric": "Something went wrong.",
+      "errorFailed": "Failed to send message. Please try again."
+    }
+  },
   "profile": {
     "title": "Profile",
     "description": "View your account details and update your photo or name.",
