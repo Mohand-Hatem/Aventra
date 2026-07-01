@@ -17,11 +17,19 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const userInfo = useAuthStore((state) => state.userInfo);
+  console.log(userInfo);
   const isLoggedIn = !!userInfo;
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
 
   const navLinks = [
     { href: "/", label: t("home") },
+    ...(userInfo?.role === "user"
+       ?[{ href : "/user/cv-analysis", label : "CV Analysis"}]
+    :[]),
+     ...(userInfo?.role === "company" 
+      ?[{ href : "/company/search", label : "Companyp-Search"}]
+    :[]),
+    
     { href: "/pricing", label: t("pricing") },
     { href: "/about", label: t("about") },
     { href: "/contact", label: t("contact") },
