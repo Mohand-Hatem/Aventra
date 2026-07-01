@@ -64,7 +64,7 @@ export function RegisterHero() {
                 }}
               >
                 <p className="mb-2 text-base font-bold text-sky">{t("cardTitle")}</p>
-                <p className="max-w-[280px] text-[0.78rem] leading-relaxed">
+                <p className="max-w-70 text-[0.78rem] leading-relaxed">
                   {t("cardDescription")}
                 </p>
               </div>

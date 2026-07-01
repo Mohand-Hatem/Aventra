@@ -21,6 +21,7 @@ import {
   IconBulb,
 } from "@tabler/icons-react";
 import { useLogin, useUser } from "@/hooks/useAuth";
+import { useAuthStore } from "@/stores/auth-store";
 
 /*
   --chart-accent is set on the root section:
@@ -403,6 +404,8 @@ function CompanyCards() {
 
 export default function Landing() {
   const t = useTranslations("landing");
+  const user = useAuthStore((state) => state.userInfo);
+  console.log(user);
   const trustItems = [
     t("trust.noCard"),
     t("trust.freeAnalysis"),

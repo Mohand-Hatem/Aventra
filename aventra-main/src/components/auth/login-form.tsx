@@ -1,5 +1,4 @@
 "use client";
-
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -58,7 +57,7 @@ export function LoginForm() {
 
   return (
     <div className="relative flex w-full flex-col items-center justify-center bg-background px-6 py-10 lg:w-[54%]">
-      <div className="w-full max-w-[500px] shadow-card dark:shadow-none">
+      <div className="w-full max-w-125  ">
         <div className="mb-10 flex justify-end">
           <Link
             href={APP_ROUTES.home}
@@ -196,7 +195,7 @@ export function LoginForm() {
           onClick={() => login()}
           className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-border bg-card text-sm font-medium text-foreground transition-colors hover:bg-muted"
         >
-          <FcGoogle className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
+          <FcGoogle className="h-4.5 w-4.5 shrink-0" aria-hidden="true" />
           {t("signInWithGoogle")}
         </button>
 
