@@ -540,72 +540,6 @@
     }
   }
   ,
-    "candidateSearch": {
-  "candidateDetail": {
-    "unknown": "غير معروف",
-    "matchScore": "درجة المطابقة",
-    "atsScore": "درجة ATS",
-    "topSkills": "أهم المهارات",
-    "aiSummary": "ملخص الذكاء الاصطناعي",
-    "resumePreview": "معاينة السيرة الذاتية",
-    "download": "تنزيل",
-    "noPreview": "لا توجد معاينة متاحة"
-  },
-  "resultsTable": {
-  "searching": "جارٍ البحث عن المرشحين...",
-  "empty": "لا توجد نتائج بعد. استخدم مساعد البحث للعثور على المرشحين.",
-  "searchResults": "نتائج البحث",
-  "candidates": "مرشح",
-  "export": "تصدير",
-  "filter": "تصفية",
-  "rank": "الترتيب",
-  "candidate": "المرشح",
-  "skills": "المهارات",
-  "match": "التطابق",
-  "atsScore": "درجة ATS",
-  "lastUpdated": "آخر تحديث",
-  "showing": "عرض",
-  "to": "إلى",
-  "of": "من أصل",
-  "results": "نتيجة"
-},
-"assistant": {
-  "title": "مساعد أفينترا للتوظيف",
-  "subtitle": "مساعد ذكي للبحث عن المرشحين.",
-  "welcomeTitle": "مرحبًا!",
-  "welcome": "أنا مساعد أفينترا للتوظيف. أستطيع مساعدتك في البحث داخل قاعدة بيانات المرشحين باستخدام اللغة الطبيعية. فقط صف المرشح الذي تبحث عنه وسأعرض أفضل النتائج.",
-  "thinking": "جارٍ البحث عن المرشحين...",
-  "placeholder": "صف المرشح الذي تبحث عنه...",
-  "poweredBy": "مدعوم بواسطة Aventra AI",
-
-  "suggestions": {
-    "frontend": "مطور Frontend باستخدام React و Next.js",
-    "backend": "مطور Backend باستخدام Node.js و Express",
-    "flutter": "مطور تطبيقات Flutter",
-    "data": "محلل بيانات باستخدام Power BI و SQL"
-  }
-},
-"searchPanel": {
-  "title": "البحث عن المرشحين",
-  "subtitle": "ابحث باستخدام اللغة الطبيعية وسيقوم الذكاء الاصطناعي بعرض أفضل المرشحين المطابقين.",
-  "placeholder": "مثال: أبحث عن مطور React لديه خبرة 3 سنوات في Next.js...",
-  "search": "بحث",
-  "searching": "جارٍ البحث...",
-  "clear": "مسح",
-  "filters": "الفلاتر",
-  "advancedFilters": "فلاتر متقدمة",
-  "experience": "سنوات الخبرة",
-  "location": "الموقع",
-  "skills": "المهارات",
-  "education": "المؤهل",
-  "jobTitle": "المسمى الوظيفي",
-  "all": "الكل",
-  "remote": "عن بُعد",
-  "hybrid": "هجين",
-  "onsite": "من مقر الشركة",
-  "resetFilters": "إعادة تعيين الفلاتر"
-},
-
 "candidateSearch": {
   "candidateDetail": {
     "unknown": "غير معروف",
@@ -658,6 +592,26 @@
       "data": "محلل بيانات باستخدام Power BI و SQL"
     }
   }
+  ,
+"searchPanel": {
+  "title": "البحث عن المرشحين",
+  "subtitle": "ابحث باستخدام اللغة الطبيعية وسيقوم الذكاء الاصطناعي بعرض أفضل المرشحين المطابقين.",
+  "placeholder": "مثال: أبحث عن مطور React لديه خبرة 3 سنوات في Next.js...",
+  "search": "بحث",
+  "searching": "جارٍ البحث...",
+  "clear": "مسح",
+  "filters": "الفلاتر",
+  "advancedFilters": "فلاتر متقدمة",
+  "experience": "سنوات الخبرة",
+  "location": "الموقع",
+  "skills": "المهارات",
+  "education": "المؤهل",
+  "jobTitle": "المسمى الوظيفي",
+  "all": "الكل",
+  "remote": "عن بُعد",
+  "hybrid": "هجين",
+  "onsite": "من مقر الشركة",
+  "resetFilters": "إعادة تعيين الفلاتر"
 }
 }
 }
