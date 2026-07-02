@@ -421,7 +421,7 @@ export default function WhatServe() {
           <div className="relative flex items-center justify-center">
             <div className="relative h-[520px] w-full overflow-hidden rounded-3xl">
               <Image
-                src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&q=80"
+                src="/serve1.jfif"
                 alt={t("altJobSeeker")}
                 fill
                 className="object-cover object-center"
@@ -450,7 +450,7 @@ export default function WhatServe() {
           <div className="relative flex items-center justify-center order-last lg:order-first">
             <div className="relative h-[520px] w-full overflow-hidden rounded-3xl">
               <Image
-                src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80"
+                src="/serve2.jfif"
                 alt={t("altHrTeam")}
                 fill
                 className="object-cover object-center"

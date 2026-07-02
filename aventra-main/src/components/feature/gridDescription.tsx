@@ -189,7 +189,7 @@ export default function GridDescription() {
   ];
 
   return (
-    <section className="relative w-full overflow-hidden bg-background py-20 px-4 sm:px-6 [--chart-accent:var(--color-primary)] dark:[--chart-accent:var(--color-sky)]">
+    <section className="relative w-full overflow-hidden bg-background py-12 px-4 sm:px-6 sm:py-16 lg:py-20 [--chart-accent:var(--color-primary)] dark:[--chart-accent:var(--color-sky)]">
       {/* subtle background glow */}
       <div
         aria-hidden
@@ -198,7 +198,7 @@ export default function GridDescription() {
 
       <div className="relative z-10 mx-auto max-w-6xl">
         {/* section heading */}
-        <div className="mb-10 text-center">
+        <div className="mb-8 text-center sm:mb-10">
           <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
             <IconSparkles className="size-3" /> {t("badge")}
           </span>
@@ -211,11 +211,11 @@ export default function GridDescription() {
         </div>
 
         {/* ── bento grid ── */}
-        <div className="grid grid-cols-4 gap-4 grid-rows-[repeat(3,minmax(180px,1fr))]">
+        <div className="grid auto-rows-auto grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:grid-rows-[repeat(3,minmax(180px,1fr))]">
 
           {/* ── Cell 1 — AI Powered badge card (col 1, row 1) ── */}
-          <BentoCard className="col-span-1 row-span-1">
-            <div className="relative h-full w-full">
+          <BentoCard className="order-1 col-span-1 min-h-[160px] sm:order-1 lg:order-0 lg:min-h-0">
+            <div className="relative h-full min-h-[160px] w-full lg:min-h-0">
               <Image
                 src="/ats.png"
                 alt={t("altAts")}
@@ -236,8 +236,8 @@ export default function GridDescription() {
           </BentoCard>
 
           {/* ── Cell 2 — ATS Performance (col 2-4, row 1) ── */}
-          <BentoCard className="col-span-3 row-span-1">
-            <div className="relative h-full w-full">
+          <BentoCard className="order-2 col-span-1 min-h-[200px] sm:order-3 sm:col-span-2 lg:order-0 lg:col-span-3 lg:min-h-0">
+            <div className="relative h-full min-h-[200px] w-full lg:min-h-0">
               <Image
                 src="/comapny.png"
                 alt={t("altCompany")}
@@ -249,17 +249,17 @@ export default function GridDescription() {
               <div className="absolute top-3 right-3">
                 <LiveBadge label={t("liveStats")} />
               </div>
-              <div className="absolute inset-0 flex flex-col justify-center pl-7 pr-4">
-                <p className="text-xs font-semibold uppercase tracking-widest text-white/60">
+              <div className="absolute inset-0 flex flex-col justify-center px-4 py-6 sm:pl-7 sm:pr-4 sm:py-0">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-white/60 sm:text-xs">
                   {t("platformPerformance")}
                 </p>
-                <p className="mt-1 text-4xl font-extrabold text-white">
-                  {n(94)}<span className="text-2xl">%</span>
+                <p className="mt-1 text-3xl font-extrabold text-white sm:text-4xl">
+                  {n(94)}<span className="text-xl sm:text-2xl">%</span>
                 </p>
-                <p className="mt-1 text-sm text-emerald-400 font-medium">
+                <p className="mt-1 text-xs text-emerald-400 font-medium sm:text-sm">
                   {t("improvement")}
                 </p>
-                <div className="mt-3 flex items-center gap-2">
+                <div className="mt-3 flex flex-wrap items-center gap-2">
                   {gridTags.map((key) => (
                     <span
                       key={key}
@@ -268,14 +268,14 @@ export default function GridDescription() {
                       {t(`tags.${key}`)}
                     </span>
                   ))}
-                  <span className="ml-2 text-xs text-white/60">{t("topClients")}</span>
+                  <span className="text-xs text-white/60 sm:ml-2">{t("topClients")}</span>
                 </div>
               </div>
             </div>
           </BentoCard>
 
           {/* ── Cell 3 — Resumes Today (col 1, row 2) ── */}
-          <BentoCard className="col-span-1 row-span-1 flex flex-col justify-between p-5">
+          <BentoCard className="order-3 col-span-1 flex flex-col justify-between p-4 sm:order-2 sm:p-5 lg:order-0">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-xs font-semibold text-muted-foreground">{t("resumesToday")}</p>
@@ -294,19 +294,19 @@ export default function GridDescription() {
           </BentoCard>
 
           {/* ── Cell 4 — Matches Found (col 2-3, row 2) ── */}
-          <BentoCard className="col-span-2 row-span-1 flex flex-col p-5">
-            <div className="mb-3 flex items-center justify-between">
+          <BentoCard className="order-4 col-span-1 flex flex-col p-4 sm:col-span-2 sm:p-5 lg:order-0 lg:col-span-2">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 <IconTarget className="size-3.5 text-primary dark:text-sky" /> {t("aiMatches")}
               </span>
               <LiveBadge label={t("realtime")} />
             </div>
-            <div className="flex items-end gap-4">
-              <div>
-                <p className="text-4xl font-extrabold text-primary dark:text-sky">{n(3842)}</p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
+              <div className="shrink-0">
+                <p className="text-3xl font-extrabold text-primary sm:text-4xl dark:text-sky">{n(3842)}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{t("candidatesMatched")}</p>
               </div>
-              <div className="flex-1">
+              <div className="hidden flex-1 sm:block">
                 <Image
                   src="/ats.png"
                   alt={t("altMatching")}
@@ -327,7 +327,7 @@ export default function GridDescription() {
           </BentoCard>
 
           {/* ── Cell 5 — Hiring Pipeline (col 4, row 2) ── */}
-          <BentoCard className="col-span-1 row-span-1 flex flex-col p-5">
+          <BentoCard className="order-5 col-span-1 flex flex-col p-4 sm:col-span-2 sm:p-5 lg:order-0 lg:col-span-1">
             <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
               {t("hiringPipeline")}
             </p>
@@ -358,19 +358,19 @@ export default function GridDescription() {
           </BentoCard>
 
           {/* ── Cell 6 — Weekly Activity line chart (col 1-2, row 3) ── */}
-          <BentoCard className="col-span-2 row-span-1 p-5">
-            <div className="mb-3 flex items-center justify-between">
+          <BentoCard className="order-6 col-span-1 p-4 sm:col-span-2 sm:p-5 lg:order-0 lg:col-span-2">
+            <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
               <div>
                 <p className="text-sm font-semibold text-foreground">{t("weeklyActivity")}</p>
                 <p className="text-xs text-muted-foreground">{t("weeklySubtitle")}</p>
               </div>
-              <span className="flex items-center gap-1 text-xs font-semibold text-emerald-500">
+              <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-emerald-500">
                 <IconArrowUpRight className="size-3.5" /> {digits("+12%")}
               </span>
             </div>
 
-            <ChartContainer config={weeklyChartConfig} className="h-24 w-full">
-              <AreaChart data={weekData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
+            <ChartContainer config={weeklyChartConfig} className="h-28 w-full sm:h-24">
+              <AreaChart data={weekData} margin={{ top: 4, right: 4, left: -12, bottom: 0 }}>
                 <defs>
                   <linearGradient id="gradSearches" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.3} />
@@ -415,7 +415,7 @@ export default function GridDescription() {
               </AreaChart>
             </ChartContainer>
 
-            <div className="mt-2 flex items-center gap-4">
+            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
               <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
                 <span className="size-2 rounded-full bg-primary dark:bg-sky" />
                 {t("activeSearches")}
@@ -424,12 +424,12 @@ export default function GridDescription() {
                 <span className="size-2 rounded-full bg-sky" />
                 {t("applications")}
               </span>
-              <span className="ml-auto text-[10px] font-medium text-emerald-500">● {t("live")}</span>
+              <span className="text-[10px] font-medium text-emerald-500 sm:ml-auto">● {t("live")}</span>
             </div>
           </BentoCard>
 
           {/* ── Cell 7 — Top ATS Score (col 3, row 3) ── */}
-          <BentoCard className="col-span-1 row-span-1 p-5">
+          <BentoCard className="order-7 col-span-1 p-4 sm:p-5 lg:order-0">
             <div className="mb-3 flex items-center justify-between">
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                 {t("topAtsScore")}
@@ -470,12 +470,12 @@ export default function GridDescription() {
           </BentoCard>
 
           {/* ── Cell 8 — Top Match for Company Search (col 4, row 3) ── */}
-          <BentoCard className="col-span-1 row-span-1 p-5">
-            <div className="mb-2 flex items-center justify-between">
+          <BentoCard className="order-8 col-span-1 p-4 sm:p-5 lg:order-0">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                 {t("topMatch")}
               </p>
-              <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-semibold text-primary dark:bg-sky/10 dark:text-sky">
+              <span className="flex shrink-0 items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-semibold text-primary dark:bg-sky/10 dark:text-sky">
                 <IconSearch className="size-2.5" /> {t("companySearch")}
               </span>
             </div>
@@ -518,14 +518,14 @@ export default function GridDescription() {
             </div>
 
             {/* Active company search indicator */}
-            <div className="mt-2 flex items-center gap-1.5 rounded-lg bg-muted/50 px-2.5 py-1.5 border-t border-border/40">
+            <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 rounded-lg bg-muted/50 px-2.5 py-1.5 border-t border-border/40">
               <span className="relative flex size-1.5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
               </span>
-              <IconBuilding className="size-3 text-primary dark:text-sky" />
-              <span className="text-[9px] font-semibold text-muted-foreground">{t("activelySearching")}</span>
-              <span className="ml-auto text-[9px] font-bold text-emerald-500">{digits("+24")}</span>
+              <IconBuilding className="size-3 shrink-0 text-primary dark:text-sky" />
+              <span className="min-w-0 flex-1 text-[9px] font-semibold text-muted-foreground">{t("activelySearching")}</span>
+              <span className="text-[9px] font-bold text-emerald-500 sm:ml-auto">{digits("+24")}</span>
             </div>
           </BentoCard>
 

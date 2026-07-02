@@ -41,7 +41,7 @@ function getInitials(name: string) {
 
 function SectionBadge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold text-primary dark:border-sky/25 dark:bg-sky/10 dark:text-sky">
+    <span className="inline-flex items-center w-fit gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold text-primary dark:border-sky/25 dark:bg-sky/10 dark:text-sky">
       <span className="size-1.5 shrink-0 rounded-full bg-primary dark:bg-sky" />
       {children}
     </span>
@@ -98,7 +98,7 @@ export default function AboutSection() {
               {t("hero.titlePart2")}
               <br />
               {t("hero.titlePre")}{" "}
-              <span className="text-primary dark:text-sky bg-clip-text text-transparent">
+              <span className="dark:text-sky bg-clip-text text-transparent">
                 {t("hero.titleAccent")}
               </span>
             </h1>
@@ -184,7 +184,7 @@ export default function AboutSection() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 bg-gradient-to-br from-primary to-sky text-primary-foreground ring-0">
+            <Card className="border-0 bg-linear-to-br from-primary to-sky text-primary-foreground ring-0">
               <CardContent className="flex flex-col gap-4">
                 <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-semibold">
                   <IconCircleCheck className="size-3.5" />
@@ -263,7 +263,7 @@ export default function AboutSection() {
               return (
                 <Card key={key}>
                   <CardContent className="flex flex-col gap-4">
-                    <span className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-sky text-primary-foreground">
+                    <span className="flex size-12 items-center justify-center rounded-2xl bg-linear-to-br from-primary to-sky text-primary-foreground">
                       <Icon className="size-5" />
                     </span>
                     <p className="text-xs font-bold tracking-widest text-primary uppercase dark:text-sky">
@@ -287,7 +287,7 @@ export default function AboutSection() {
       <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="mx-auto max-w-360">
           <div className="rounded-3xl border border-border/50 bg-card
-border border-border
+border
 shadow-card p-6 sm:p-10">
             <div className="mb-8 flex flex-col gap-4">
               <SectionBadge>{t("aiStack.badge")}</SectionBadge>
@@ -305,7 +305,7 @@ shadow-card p-6 sm:p-10">
                   key={key}
                   className="flex items-start gap-4 rounded-2xl border border-border/50 bg-card/80 p-4"
                 >
-                  <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-sky text-primary-foreground">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-primary to-sky text-primary-foreground">
                     <Icon className="size-5" />
                   </span>
                   <div className="min-w-0 flex-1">

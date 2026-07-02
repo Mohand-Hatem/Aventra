@@ -65,7 +65,7 @@ export default function Navbar() {
               width={130}
               height={130}
               priority
-              className="block dark:hidden md:w-[150px]"
+              className="block h-auto dark:hidden md:h-auto md:w-[150px]"
             />
             <Image
               src="/Aventra-logo-white1.png"
@@ -73,7 +73,7 @@ export default function Navbar() {
               width={130}
               height={130}
               priority
-              className="hidden dark:block md:w-[150px]"
+              className="hidden h-auto dark:block md:h-auto md:w-[150px]"
             />
           </Link>
 
