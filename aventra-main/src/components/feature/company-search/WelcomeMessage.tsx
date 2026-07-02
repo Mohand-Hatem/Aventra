@@ -8,7 +8,7 @@ export default function WelcomeMessage() {
   const t = useTranslations("candidateSearch.assistant");
 
   return (
-    <div className="rounded-xl border border-border bg-muted/40 p-4">
+    <div className="rounded-xl border border-border/70 bg-gradient-to-br from-muted/50 to-muted/20 p-4">
 
       <div className="mb-3 flex items-center gap-2">
 

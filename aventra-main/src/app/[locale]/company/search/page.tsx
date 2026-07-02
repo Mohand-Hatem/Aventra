@@ -1,8 +1,4 @@
-/**
- * Folder: src/app/[locale]/company/search
- * File: page.tsx
- * Purpose: Route entry point for /company/search
- */
+
 
 import CompanySearchSection from "@/components/feature/company-search/CompanySearchSection";
 

@@ -23,7 +23,9 @@
     },
     "getStarted": "Get started",
     "toggleMenu": "Toggle menu",
-    "language": "Language"
+    "language": "Language",
+    "candidateSearch": "Candidate Search",
+    "cvAnalysis": "CV Analysis"
   },
   "footer": {
     "description": "AI-powered resume optimization and candidate discovery — built for both job seekers and hiring teams.",
@@ -776,7 +778,9 @@
 
   "resultsTable": {
     "searching": "Searching candidates...",
-    "empty": "No results yet. Use the search assistant to find candidates.",
+    "searchingHint": "Analyzing your query against the candidate database",
+    "emptyTitle": "No candidates yet",
+    "empty": "Use the AI assistant on the left to describe who you're looking for.",
     "searchResults": "Search Results",
     "candidates": "Candidates",
     "export": "Export",
@@ -815,6 +819,7 @@
     }
   },
   "searchPanel": {
+  "badge": "AI-Powered Recruitment",
   "title": "Candidate Search",
   "subtitle": "Search using natural language and let AI find the best matching candidates.",
   "placeholder": "Example: Looking for a React Developer with 3+ years of Next.js experience...",

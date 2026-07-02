@@ -43,10 +43,10 @@ export default function CandidateDetail({ candidate }: CandidateDetailProps) {
   const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
   return (
-    <div className="grid h-full grid-cols-2 gap-4">
+    <div className="grid h-full grid-cols-1 gap-4 xl:grid-cols-2">
 
       {/* Left — Candidate Info */}
-      <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 overflow-y-auto">
+      <div className="flex flex-col gap-4 overflow-y-auto rounded-2xl border border-border/80 bg-card p-5 shadow-card">
         
         {/* Header */}
         <div className="flex items-start gap-4">
@@ -95,7 +95,7 @@ export default function CandidateDetail({ candidate }: CandidateDetailProps) {
       </div>
 
       {/* Right — Resume Preview */}
-      <div className="flex flex-col rounded-2xl border border-border bg-card overflow-hidden">
+      <div className="flex min-h-[240px] flex-col overflow-hidden rounded-2xl border border-border/80 bg-card shadow-card xl:min-h-0">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
          <p className="text-sm font-semibold text-foreground">
   {t("candidateDetail.resumePreview")}

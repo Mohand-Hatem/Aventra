@@ -30,7 +30,7 @@ export default function ChatInput({
   }
 
   return (
-    <div className="border-t border-border bg-background p-4">
+    <div className="border-t border-border/80 bg-muted/20 p-4">
 
       <div className="flex items-center gap-2">
 

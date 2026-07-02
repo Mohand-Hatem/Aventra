@@ -8,27 +8,30 @@ export default function ChatHeader() {
   const t = useTranslations("candidateSearch.assistant");
 
   return (
-    <div className="border-b border-border px-5 py-4">
-      <div className="flex items-center gap-2">
-        <IconRobot
-  size={18}
-  className="text-primary dark:text-sky"
-/>
-        <h2 className="text-sm font-semibold">
-          {t("title")}
-        </h2>
+    <div className="border-b border-border/80 bg-muted/30 px-5 py-4">
+      <div className="flex items-center gap-2.5">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 dark:bg-sky/10">
+          <IconRobot
+            size={18}
+            className="text-primary dark:text-sky"
+          />
+        </div>
+        <div className="min-w-0 flex-1">
+          <h2 className="text-sm font-semibold text-foreground">
+            {t("title")}
+          </h2>
+          <p className="truncate text-xs text-muted-foreground">
+            {t("subtitle")}
+          </p>
+        </div>
 
         <Badge
           variant="secondary"
-          className="ml-auto"
+          className="shrink-0 border border-primary/20 bg-primary/5 text-primary dark:border-sky/20 dark:bg-sky/10 dark:text-sky"
         >
           AI
         </Badge>
       </div>
-
-      <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-        {t("subtitle")}
-      </p>
     </div>
   );
 }

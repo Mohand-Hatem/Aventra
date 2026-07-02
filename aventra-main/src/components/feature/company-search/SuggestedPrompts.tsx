@@ -31,7 +31,7 @@ export default function SuggestedPrompts({
           onClick={() => {
     void onSelect(t(`suggestions.${key}`));
 }}
-          className="flex w-full items-center gap-3 rounded-xl border border-border bg-muted/40 p-3 text-left transition-colors hover:bg-muted"
+          className="flex w-full items-center gap-3 rounded-xl border border-border/70 bg-background/80 p-3 text-left transition-all hover:border-primary/30 hover:bg-muted/60 hover:shadow-sm dark:hover:border-sky/30"
         >
           <IconSparkles
             size={18}

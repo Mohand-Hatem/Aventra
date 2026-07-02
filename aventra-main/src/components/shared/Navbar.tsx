@@ -31,10 +31,10 @@ export default function Navbar() {
   const navLinks = [
     { href: "/", label: t("home") },
     ...(userInfo?.role === "user"
-       ?[{ href : "/user/cv-analysis", label : "CV Analysis"}]
+       ?[{ href : "/user/cv-analysis", label : t("cvAnalysis")}]
     :[]),
      ...(userInfo?.role === "company" 
-      ?[{ href : "/company/search", label : "Candidate Search"}]
+      ?[{ href : "/company/search", label : t("candidateSearch")}]
     :[]),
     
     { href: "/pricing", label: t("pricing") },

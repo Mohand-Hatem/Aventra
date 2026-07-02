@@ -31,7 +31,7 @@ export default function SearchPanel({ onSearch }: SearchPanelProps) {
   }, [messages, isThinking]);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border/80 bg-card shadow-card">
 
       <ChatHeader />
 

@@ -7,7 +7,7 @@
 "use client";
 
 import { useState } from "react";
-import { IconDownload, IconFilter, IconEye } from "@tabler/icons-react";
+import { IconDownload, IconFilter, IconEye, IconUsers } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { CandidateResult } from "@/types/company";
@@ -87,12 +87,18 @@ export default function ResultsTable({
 
   if (isPending) {
     return (
-      <div className="flex h-full items-center justify-center rounded-2xl border border-border bg-card">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary dark:border-sky border-t-transparent" />
-          <p className="text-sm text-muted-foreground">
-            {t("resultsTable.searching")}
-          </p>
+      <div className="flex h-full items-center justify-center rounded-2xl border border-border/80 bg-card shadow-card">
+        <div className="flex flex-col items-center gap-4 px-6 text-center">
+          <div className="relative flex h-14 w-14 items-center justify-center">
+            <div className="absolute inset-0 animate-ping rounded-full bg-primary/20 dark:bg-sky/20" />
+            <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 dark:bg-sky/10">
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent dark:border-sky" />
+            </div>
+          </div>
+          <div>
+            <p className="font-medium text-foreground">{t("resultsTable.searching")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{t("resultsTable.searchingHint")}</p>
+          </div>
         </div>
       </div>
     );
@@ -100,16 +106,20 @@ export default function ResultsTable({
 
   if (!candidates.length) {
     return (
-      <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-border bg-card">
-        <p className="text-sm text-muted-foreground">
-          {t("resultsTable.empty")}
-        </p>
+      <div className="flex h-full flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border/80 bg-card/60 px-8 py-12 text-center shadow-card">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 dark:bg-sky/10">
+          <IconUsers size={32} className="text-primary dark:text-sky" />
+        </div>
+        <div className="max-w-sm">
+          <p className="font-medium text-foreground">{t("resultsTable.emptyTitle")}</p>
+          <p className="mt-1.5 text-sm text-muted-foreground">{t("resultsTable.empty")}</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-border bg-card overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border/80 bg-card shadow-card">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
         <p className="text-sm font-semibold text-foreground">
