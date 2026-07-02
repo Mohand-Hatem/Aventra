@@ -105,6 +105,12 @@
       "sendMessage": "أرسل الرسالة",
       "sending": "جاري الإرسال..."
     },
+    "validation": {
+      "nameMin": "يجب أن يكون الاسم حرفين على الأقل",
+      "emailInvalid": "يرجى إدخال بريد إلكتروني صالح",
+      "subjectRequired": "يرجى اختيار موضوع",
+      "messageMin": "يجب أن تكون الرسالة 10 أحرف على الأقل"
+    },
     "notifications": {
       "successSent": "تم إرسال الرسالة بنجاح!",
       "errorGeneric": "حدث خطأ ما.",
@@ -454,6 +460,9 @@
     "myCvsHint": "جميع السير الذاتية المرتبطة بحسابك.",
     "details": "التفاصيل",
     "noSummary": "لا يوجد ملخص لهذه السيرة الذاتية بعد.",
+    "readFullSummary": "قراءة الملخص كاملاً",
+    "fullSummaryTitle": "ملخص السيرة الذاتية",
+    "viewAll": "عرض الكل",
     "processingCv": "لا تزال هذه السيرة الذاتية قيد التحليل.",
     "status": {
       "uploaded": "تم الرفع",

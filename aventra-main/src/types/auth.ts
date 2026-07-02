@@ -1,3 +1,4 @@
+import type { UserCv } from "@/types/cv";
 
 export type LocalizedName = {
   en: string;
@@ -40,7 +41,7 @@ export interface LoginRequest {
     tokenUsage?: number;
     googleId?: string | null;
   
-    cvs?: unknown[];
+    cvs?: UserCv[];
   
     createdAt?: string;
     updatedAt?: string;

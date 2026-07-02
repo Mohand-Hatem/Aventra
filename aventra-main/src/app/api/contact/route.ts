@@ -28,6 +28,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true });
     }
 
+    if (!process.env.RESEND_API_KEY) {
+      return NextResponse.json(
+        { success: false, message: "Email service is not configured" },
+        { status: 500 }
+      );
+    }
+
     if (!process.env.CONTACT_EMAIL) {
       return NextResponse.json(
         { success: false, message: "Contact email is not configured" },
@@ -35,7 +42,7 @@ export async function POST(request: Request) {
       );
     }
 
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: "Aventra Contact <onboarding@resend.dev>",
       to: process.env.CONTACT_EMAIL,
       replyTo: email,
@@ -47,6 +54,14 @@ export async function POST(request: Request) {
         message,
       }),
     });
+
+    if (error) {
+      console.error("CONTACT_RESEND_ERROR:", error);
+      return NextResponse.json(
+        { success: false, message: "Failed to send message" },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       success: true,

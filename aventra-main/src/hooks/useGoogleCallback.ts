@@ -1,18 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-import { useAuthStore } from "@/stores/auth-store";
-import { fetchAuthUser } from "@/hooks/useAuth";
+import { fetchAuthUser, syncAuthUser } from "@/hooks/useAuth";
 import { useRouter } from "@/i18n/routing";
 import { APP_ROUTES } from "@/constants/routes";
 import { useQueryClient } from "@tanstack/react-query";
-import { GOOGLE_LOGIN_PENDING_KEY, queryKeys } from "@/constants/query-keys";
+import { GOOGLE_LOGIN_PENDING_KEY } from "@/constants/query-keys";
 import { AxiosError } from "axios";
 
 const MAX_RETRIES = 5;
 const RETRY_DELAY_MS = 800;
 
 export const useGoogleCallback = () => {
-  const setUserInfo = useAuthStore((state) => state.setUserInfo);
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isPending, setIsPending] = useState(true);
@@ -32,8 +30,7 @@ export const useGoogleCallback = () => {
 
           if (user) {
             sessionStorage.removeItem(GOOGLE_LOGIN_PENDING_KEY);
-            setUserInfo(user);
-            queryClient.setQueryData(queryKeys.auth.user, user);
+            syncAuthUser(queryClient, user);
             if (pendingGoogle) {
               toast.success("Logged in successfully with Google!");
             }

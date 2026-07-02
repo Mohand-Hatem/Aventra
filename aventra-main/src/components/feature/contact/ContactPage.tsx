@@ -98,7 +98,7 @@ export function ContactPage() {
           </div>
 
           <div className="relative hidden h-64 lg:block">
-            <div className="absolute right-24 top-8 h-28 w-44 rotate-[-8deg] rounded-3xl bg-gradient-to-br from-blue-600 to-cyan-400 shadow-2xl shadow-blue-600/30 dark:from-blue-700 dark:to-cyan-400" />
+            <div className="absolute right-24 top-8 h-28 w-44 rotate-[-8deg] rounded-3xl bg-linear-to-br from-blue-600 to-cyan-400 shadow-2xl shadow-blue-600/30 dark:from-blue-700 dark:to-cyan-400" />
 
             <div className="absolute right-32 top-14 h-16 w-32 rotate-[-8deg] rounded-b-3xl border-t border-white/40 bg-white/20" />
 
@@ -196,7 +196,7 @@ export function ContactPage() {
             ))}
           </div>
 
-          <div className="mt-10 flex flex-col items-center justify-center rounded-3xl border border-dashed border-blue-300/50 bg-gradient-to-r from-blue-50 to-cyan-50 p-8 text-center dark:border-cyan-400/20 dark:from-cyan-500/5 dark:to-blue-500/5">
+          <div className="mt-10 flex flex-col items-center justify-center rounded-3xl border border-dashed border-blue-300/50 bg-linear-to-r from-blue-50 to-cyan-50 p-8 text-center dark:border-cyan-400/20 dark:from-cyan-500/5 dark:to-blue-500/5">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600/10 text-blue-700 dark:bg-cyan-400/10 dark:text-cyan-300">
               <FiMessageCircle className="text-3xl" />
             </div>

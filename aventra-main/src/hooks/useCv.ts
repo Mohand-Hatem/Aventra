@@ -1,25 +1,22 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
 import { queryKeys } from "@/constants/query-keys";
-import type { UserCv } from "@/types/cv";
-
-export async function fetchUserCvs(): Promise<UserCv[]> {
-  const response = await axiosInstance.get("/cv/my-cvs");
-  const data = response.data?.data;
-
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(response.data?.cvs)) return response.data.cvs;
-
-  return [];
-}
+import { useUser } from "@/hooks/useAuth";
 
 export function useUserCvs() {
-  return useQuery({
-    queryKey: queryKeys.cv.mine,
-    queryFn: fetchUserCvs,
-  });
+  const { data: user, isLoading, isError, isFetching, refetch, error } =
+    useUser();
+
+  return {
+    data: user?.cvs ?? [],
+    isLoading,
+    isError,
+    isFetching,
+    refetch,
+    error,
+  };
 }
 
 async function uploadUserCv(file: File) {
@@ -38,8 +35,8 @@ export function useUploadCv() {
 
   return useMutation({
     mutationFn: uploadUserCv,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.cv.mine });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.auth.user });
       toast.success("CV uploaded successfully");
     },
     onError: (err) => {

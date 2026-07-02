@@ -1,11 +1,25 @@
 import { z } from "zod";
 
-export const contactSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email"),
-  subject: z.string().min(2, "Subject is required"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
-  website: z.string().optional(), // honeypot ضد السبام
+export function createContactSchema(messages: {
+  nameMin: string;
+  emailInvalid: string;
+  subjectRequired: string;
+  messageMin: string;
+}) {
+  return z.object({
+    name: z.string().min(2, messages.nameMin),
+    email: z.string().email(messages.emailInvalid),
+    subject: z.string().min(2, messages.subjectRequired),
+    message: z.string().min(10, messages.messageMin),
+    website: z.string().optional(),
+  });
+}
+
+export const contactSchema = createContactSchema({
+  nameMin: "Name must be at least 2 characters",
+  emailInvalid: "Please enter a valid email",
+  subjectRequired: "Subject is required",
+  messageMin: "Message must be at least 10 characters",
 });
 
 export type ContactSchema = z.infer<typeof contactSchema>;

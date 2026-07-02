@@ -3,7 +3,7 @@ export const queryKeys = {
     user: ["user"] as const,
   },
   cv: {
-    mine: ["cv", "mine"] as const,
+    mine: ["cv", "mine"] as const, // deprecated: CVs now come from queryKeys.auth.user
   },
   profile: {
     update: ["profile", "update"] as const,

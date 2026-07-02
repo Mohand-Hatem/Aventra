@@ -4,8 +4,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
 import { queryKeys } from "@/constants/query-keys";
-import { fetchAuthUser } from "@/hooks/useAuth";
-import { useAuthStore } from "@/stores/auth-store";
+import { fetchAuthUser, syncAuthUser } from "@/hooks/useAuth";
 import type { AuthUser } from "@/types/auth";
 import type { UpdateProfilePayload } from "@/schemas/profile";
 
@@ -103,7 +102,6 @@ async function updateUserProfile(
 
 export function useUpdateUserProfile() {
   const queryClient = useQueryClient();
-  const setUserInfo = useAuthStore((state) => state.setUserInfo);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   const mutation = useMutation({
@@ -145,8 +143,7 @@ export function useUpdateUserProfile() {
       }
 
       if (user) {
-        queryClient.setQueryData(queryKeys.auth.user, user);
-        setUserInfo(user);
+        syncAuthUser(queryClient, user);
       } else {
         await queryClient.invalidateQueries({ queryKey: queryKeys.auth.user });
       }

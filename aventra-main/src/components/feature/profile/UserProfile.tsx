@@ -29,12 +29,17 @@ import {
 } from "@/schemas/profile";
 import {
   getCvAnalysis,
+  getCvAtsScore,
   getCvFileType,
   getCvId,
   getCvTitle,
   getCvUrl,
+  type CvInsightItem,
   type UserCv,
 } from "@/types/cv";
+import { AtsScoreChart } from "@/components/feature/profile/AtsScoreChart";
+import { CvInsightDialog } from "@/components/feature/profile/CvInsightDialog";
+import { ProfilePageSkeleton } from "@/components/feature/profile/ProfilePageSkeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScaleLoader } from "@/components/shared/scale-loader";
 import { Badge } from "@/components/ui/badge";
@@ -113,38 +118,119 @@ function InsightCard({
   icon: Icon,
   items,
   emptyText,
+  viewAllLabel,
   className,
   iconClassName,
+  iconWrapClassName,
+  itemAccentClassName,
 }: {
   title: string;
   icon: ComponentType<{ className?: string }>;
-  items: string[];
+  items: CvInsightItem[];
   emptyText: string;
+  viewAllLabel: string;
   className?: string;
   iconClassName?: string;
+  iconWrapClassName?: string;
+  itemAccentClassName?: string;
 }) {
+  const previewItems = items.slice(0, 2);
+
   return (
     <div
       className={cn(
-        "flex h-full min-h-0 flex-col rounded-2xl border border-border/40 p-4 shadow-sm",
+        "flex h-full min-h-0 flex-col rounded-2xl border border-border/50 p-4 shadow-sm",
         className,
       )}
     >
-      <div className="mb-3 flex shrink-0 items-center gap-2">
-        <Icon className={cn("size-4 shrink-0", iconClassName)} />
-        <h3 className="text-xs font-bold uppercase tracking-wide">{title}</h3>
+      <div className="mb-4 flex shrink-0 items-center gap-2.5">
+        <div
+          className={cn(
+            "flex size-8 items-center justify-center rounded-xl",
+            iconWrapClassName,
+          )}
+        >
+          <Icon className={cn("size-4 shrink-0", iconClassName)} />
+        </div>
+        <h3 className="text-sm font-bold tracking-tight text-foreground">{title}</h3>
       </div>
-      {items.length > 0 ? (
-        <ul className="min-h-0 flex-1 space-y-1.5 overflow-y-auto">
-          {items.slice(0, 4).map((item) => (
-            <li key={item} className="flex items-start gap-2 text-xs leading-relaxed text-foreground/80">
-              <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-current opacity-60" />
-              <span>{item}</span>
+
+      {previewItems.length > 0 ? (
+        <ul className="min-h-0 flex-1 space-y-2.5 overflow-y-auto">
+          {previewItems.map((item, index) => (
+            <li
+              key={`${item.title}-${index}`}
+              className={cn(
+                "rounded-xl border border-border/40 border-l-[3px] bg-background/80 p-3",
+                itemAccentClassName,
+              )}
+            >
+              {item.title ? (
+                <p className="text-sm font-semibold leading-snug text-foreground">
+                  {item.title}
+                </p>
+              ) : null}
+              <p
+                className={cn(
+                  "text-sm leading-relaxed text-muted-foreground",
+                  item.title ? "mt-1.5" : "",
+                )}
+              >
+                {item.detail}
+              </p>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="flex flex-1 items-start text-xs leading-relaxed text-muted-foreground">{emptyText}</p>
+        <p className="flex flex-1 items-start text-sm leading-relaxed text-muted-foreground">
+          {emptyText}
+        </p>
+      )}
+
+      {items.length > 0 ? (
+        <CvInsightDialog
+          title={title}
+          triggerLabel={viewAllLabel}
+          items={items}
+          variant="footer"
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function AtsInsightCard({
+  title,
+  score,
+  emptyText,
+  className,
+}: {
+  title: string;
+  score?: number;
+  emptyText: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex h-full min-h-0 flex-col rounded-2xl border border-border/50 p-4 shadow-sm",
+        className,
+      )}
+    >
+      <div className="mb-3 flex items-center gap-2.5">
+        <div className="flex size-8 items-center justify-center rounded-xl bg-emerald-500/10">
+          <IconSparkles className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+        </div>
+        <h3 className="text-sm font-bold tracking-tight text-foreground">{title}</h3>
+      </div>
+      {score !== undefined ? (
+        <div className="flex flex-1 flex-col items-center justify-center py-2">
+          <AtsScoreChart score={score} size="lg" />
+        </div>
+      ) : (
+        <p className="flex flex-1 items-start text-sm leading-relaxed text-muted-foreground">
+          {emptyText}
+        </p>
       )}
     </div>
   );
@@ -270,7 +356,7 @@ export function UserProfile() {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [selectedCvId, setSelectedCvId] = useState<string | null>(null);
 
-  const { data: user, isLoading, isError } = useUser();
+  const { data: user, isLoading, isFetching, isError } = useUser();
   const { data: cvs = [], isLoading: isCvsLoading } = useUserCvs();
   const { mutate: updateProfile, isPending, uploadProgress } =
     useUpdateUserProfile();
@@ -361,10 +447,8 @@ export function UserProfile() {
     [selectedCv],
   );
 
-  const selectedAtsScore =
-    selectedCv && typeof selectedCv.atsScore === "number" && selectedCv.atsScore > 0
-      ? String(selectedCv.atsScore)
-      : "—";
+  const selectedAts = selectedCv ? getCvAtsScore(selectedCv) : undefined;
+  const selectedAtsScore = selectedAts !== undefined ? String(selectedAts) : "—";
 
   const submitProfileUpdate = (
     values: UpdateProfileFormValues,
@@ -419,15 +503,11 @@ export function UserProfile() {
     });
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-1 items-center justify-center py-24">
-        <ScaleLoader size="lg" className="text-muted-foreground" />
-      </div>
-    );
+  if (isLoading && !user) {
+    return <ProfilePageSkeleton />;
   }
 
-  if (isError || !user) {
+  if ((isError && !user) || !user) {
     return (
       <div className="flex flex-1 items-center justify-center py-24">
         <Card className="w-full max-w-md shadow-card dark:shadow-none">
@@ -448,8 +528,20 @@ export function UserProfile() {
   const hasAvatarChange = !!selectedAvatar;
   const insightEmpty = t("noAnalysisYet");
 
+  const isRefreshing = isFetching && !!user;
+
   return (
-    <div className="mx-auto flex w-full mt-10 max-w-[1550px] flex-col gap-6 lg:flex-row lg:items-start">
+    <div
+      className={cn(
+        "relative mx-auto mt-10 flex w-full max-w-[1550px] flex-col gap-6 lg:flex-row lg:items-start",
+        isRefreshing && "opacity-90",
+      )}
+    >
+      {isRefreshing ? (
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-0.5 overflow-hidden rounded-full bg-muted">
+          <div className="h-full w-full animate-pulse bg-primary dark:bg-sky" />
+        </div>
+      ) : null}
       <aside className="order-first w-full shrink-0 lg:sticky lg:top-25 lg:order-last lg:w-80">
         <ProfileSummaryPanel
           displayName={displayName}
@@ -481,42 +573,45 @@ export function UserProfile() {
         </header> */}
 
         {/* Insight cards — strengths, weaknesses, suggestions, ATS */}
-        <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 sm:grid-rows-2 sm:min-h-72 xl:grid-cols-4 xl:grid-rows-1 xl:min-h-72">
+        <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 sm:grid-rows-2 sm:min-h-80 xl:grid-cols-4 xl:grid-rows-1 xl:min-h-80">
           <InsightCard
             title={t("strengths")}
             icon={IconTrendingUp}
             items={selectedAnalysis?.strengths ?? []}
             emptyText={selectedCv ? t("noStrengths") : insightEmpty}
-            className="bg-background dark:bg-sky/5"
+            viewAllLabel={t("viewAll")}
+            className="bg-gradient-to-br from-primary/5 to-background dark:from-sky/10 dark:to-background"
             iconClassName="text-primary dark:text-sky"
+            iconWrapClassName="bg-primary/10 dark:bg-sky/10"
+            itemAccentClassName="border-l-primary dark:border-l-sky"
           />
           <InsightCard
             title={t("weaknesses")}
             icon={IconAlertTriangle}
             items={selectedAnalysis?.weaknesses ?? []}
             emptyText={selectedCv ? t("noWeaknesses") : insightEmpty}
-            className="bg-background dark:bg-sky/5"
+            viewAllLabel={t("viewAll")}
+            className="bg-gradient-to-br from-amber-500/5 to-background"
             iconClassName="text-amber-600 dark:text-amber-400"
+            iconWrapClassName="bg-amber-500/10"
+            itemAccentClassName="border-l-amber-500"
           />
           <InsightCard
             title={t("suggestions")}
             icon={IconBulb}
             items={selectedAnalysis?.suggestions ?? []}
             emptyText={selectedCv ? t("noSuggestions") : insightEmpty}
-            className="bg-background dark:bg-sky/5"
+            viewAllLabel={t("viewAll")}
+            className="bg-gradient-to-br from-violet-500/5 to-background"
             iconClassName="text-violet-600 dark:text-violet-400"
+            iconWrapClassName="bg-violet-500/10"
+            itemAccentClassName="border-l-violet-500"
           />
-          <InsightCard
+          <AtsInsightCard
             title={t("atsScoreLabel")}
-            icon={IconSparkles}
-            items={
-              selectedCv && typeof selectedCv.atsScore === "number" && selectedCv.atsScore > 0
-                ? [t("atsScore", { score: selectedCv.atsScore })]
-                : []
-            }
+            score={selectedAts}
             emptyText={selectedCv ? t("processingCv") : insightEmpty}
-            className="bg-background dark:bg-sky/5"
-            iconClassName="text-emerald-600 dark:text-emerald-400"
+            className="bg-gradient-to-br from-emerald-500/5 to-background"
           />
         </div>
 
@@ -773,11 +868,11 @@ export function UserProfile() {
 
           <Card className="border-border/60 shadow-card dark:border-border/40">
             <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
-              <CardTitle className="text-base">{t("reviewCv")}</CardTitle>
+              <CardTitle className="text-base">{t("suggestions")}</CardTitle>
               <CardDescription className="text-xs">{t("cvInfoHint")}</CardDescription>
             </CardHeader>
             <CardContent className="px-4 pt-4 pb-4">
-              <CvReviewPanel cv={selectedCv} locale={locale} t={t} isLoading={isCvsLoading} />
+              <CvReviewPanel cv={selectedCv} t={t} isLoading={isCvsLoading} />
             </CardContent>
           </Card>
         </div>
@@ -880,6 +975,8 @@ function CvSummaryPanel({
   const title = getCvTitle(cv);
   const uploadedAt = formatDate(cv.createdAt ?? cv.updatedAt, locale);
   const summary = analysis.summary;
+  const summaryPreview =
+    summary && summary.length > 220 ? `${summary.slice(0, 220).trim()}…` : summary;
 
   return (
     <div className="space-y-4">
@@ -899,11 +996,21 @@ function CvSummaryPanel({
 
       <div className="rounded-xl border border-border/60 bg-muted/20 p-4 dark:border-border/40">
         <p className="text-sm leading-relaxed text-foreground/85">
-          {summary ??
+          {summaryPreview ??
             (cv.processingStatus === "processing"
               ? t("processingCv")
               : t("noSummary"))}
         </p>
+        {summary ? (
+          <div className="mt-3">
+            <CvInsightDialog
+              title={t("fullSummaryTitle")}
+              description={title}
+              triggerLabel={t("readFullSummary")}
+              bodyText={summary}
+            />
+          </div>
+        ) : null}
       </div>
 
       {analysis.strengths.length > 0 || analysis.weaknesses.length > 0 ? (
@@ -914,25 +1021,31 @@ function CvSummaryPanel({
                 <IconCheck className="size-3.5" />
                 {t("strengths")}
               </p>
-              <ul className="space-y-1">
-                {analysis.strengths.slice(0, 3).map((item) => (
-                  <li key={item} className="text-xs text-muted-foreground">
-                    {item}
+              <ul className="space-y-2">
+                {analysis.strengths.slice(0, 3).map((item, index) => (
+                  <li key={`${item.title}-${index}`} className="text-xs text-muted-foreground">
+                    {item.title ? (
+                      <span className="font-medium text-foreground">{item.title}: </span>
+                    ) : null}
+                    {item.detail}
                   </li>
                 ))}
               </ul>
             </div>
           ) : null}
           {analysis.weaknesses.length > 0 ? (
-            <div className="rounded-xl bg-amber-50/80 p-3 dark:bg-amber/5">
+            <div className="rounded-xl bg-amber-50/10 p-3 dark:bg-amber/5">
               <p className="mb-2 flex items-center gap-1 text-xs font-semibold uppercase text-amber-700 dark:text-amber-400">
                 <IconAlertTriangle className="size-3.5" />
                 {t("weaknesses")}
               </p>
-              <ul className="space-y-1">
-                {analysis.weaknesses.slice(0, 3).map((item) => (
-                  <li key={item} className="text-xs text-muted-foreground">
-                    {item}
+              <ul className="space-y-2">
+                {analysis.weaknesses.slice(0, 3).map((item, index) => (
+                  <li key={`${item.title}-${index}`} className="text-xs text-muted-foreground">
+                    {item.title ? (
+                      <span className="font-medium text-foreground">{item.title}: </span>
+                    ) : null}
+                    {item.detail}
                   </li>
                 ))}
               </ul>
@@ -946,12 +1059,10 @@ function CvSummaryPanel({
 
 function CvReviewPanel({
   cv,
-  locale,
   t,
   isLoading,
 }: {
   cv: UserCv | null;
-  locale: string;
   t: ReturnType<typeof useTranslations<"profile">>;
   isLoading: boolean;
 }) {
@@ -973,78 +1084,50 @@ function CvReviewPanel({
     );
   }
 
-  const title = getCvTitle(cv);
-  const url = getCvUrl(cv);
-  const fileType = getCvFileType(cv);
-  const uploadedAt = formatDate(cv.createdAt ?? cv.updatedAt, locale);
-  const hasScore = typeof cv.atsScore === "number" && cv.atsScore > 0;
   const analysis = getCvAnalysis(cv);
 
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-start gap-3">
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary dark:bg-sky/10 dark:text-sky">
-          <IconFileText className="size-5" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <h3 className="truncate font-semibold">{title}</h3>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {fileType ? (
-              <Badge variant="outline" className="uppercase">
-                {fileType}
-              </Badge>
-            ) : null}
-            {cv.processingStatus ? (
-              <Badge variant="secondary" className="capitalize">
-                {t(`status.${cv.processingStatus}`)}
-              </Badge>
-            ) : null}
-          </div>
-        </div>
+  if (analysis.suggestions.length === 0) {
+    return (
+      <div className="flex flex-col items-center rounded-xl border border-dashed border-border/70 bg-muted/15 px-4 py-8 text-center">
+        <IconBulb className="size-8 text-violet-500/70" />
+        <p className="mt-3 text-sm font-medium">{t("noSuggestions")}</p>
       </div>
+    );
+  }
 
-      {hasScore ? (
-        <div className="rounded-xl border border-border/60 bg-muted/20 p-3 dark:border-border/40">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            ATS
-          </p>
-          <div className="mt-1.5 flex items-end gap-2">
-            <span className="text-3xl font-bold tracking-tight">{cv.atsScore}</span>
-            <span className="pb-1 text-sm text-muted-foreground">/100</span>
-          </div>
-          <Progress value={cv.atsScore} className="mt-3 h-2 bg-background/80" />
-        </div>
-      ) : null}
+  const previewSuggestions = analysis.suggestions.slice(0, 3);
 
-      {analysis.suggestions.length > 0 ? (
-        <div className="rounded-xl border border-border/60 bg-muted/20 p-3 dark:border-border/40">
-          <p className="mb-2 flex items-center gap-1 text-xs font-semibold uppercase text-violet-700 dark:text-violet-400">
-            <IconBulb className="size-3.5" />
-            {t("suggestions")}
-          </p>
-          <ul className="space-y-1.5">
-            {analysis.suggestions.slice(0, 5).map((item) => (
-              <li key={item} className="text-xs text-muted-foreground">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
+  return (
+    <div className="flex flex-col">
+      <ul className="space-y-2.5">
+        {previewSuggestions.map((item, index) => (
+          <li
+            key={`${item.title}-${index}`}
+            className="rounded-xl border border-border/40 border-l-[3px] border-l-violet-500 bg-background/80 p-3"
+          >
+            {item.title ? (
+              <p className="text-sm font-semibold leading-snug text-foreground">
+                {item.title}
+              </p>
+            ) : null}
+            <p
+              className={cn(
+                "text-sm leading-relaxed text-muted-foreground",
+                item.title ? "mt-1.5" : "",
+              )}
+            >
+              {item.detail}
+            </p>
+          </li>
+        ))}
+      </ul>
 
-      {uploadedAt ? (
-        <p className="text-xs text-muted-foreground">
-          {t("uploadedOn", { date: uploadedAt })}
-        </p>
-      ) : null}
-
-      {url ? (
-        <Button asChild variant="default" className="mt-auto w-full rounded-xl">
-          <a href={url} target="_blank" >
-            {t("reviewCv")}
-          </a>
-        </Button>
-      ) : null}
+      <CvInsightDialog
+        title={t("suggestions")}
+        triggerLabel={t("viewAll")}
+        items={analysis.suggestions}
+        variant="footer"
+      />
     </div>
   );
 }

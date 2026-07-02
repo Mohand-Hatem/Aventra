@@ -375,6 +375,12 @@
       "sendMessage": "Send message",
       "sending": "Sending..."
     },
+    "validation": {
+      "nameMin": "Name must be at least 2 characters",
+      "emailInvalid": "Please enter a valid email",
+      "subjectRequired": "Please select a subject",
+      "messageMin": "Message must be at least 10 characters"
+    },
     "notifications": {
       "successSent": "Message sent successfully!",
       "errorGeneric": "Something went wrong.",
@@ -454,6 +460,9 @@
     "myCvsHint": "All resumes linked to your account.",
     "details": "Details",
     "noSummary": "No summary available for this CV yet.",
+    "readFullSummary": "Read full summary",
+    "fullSummaryTitle": "CV summary",
+    "viewAll": "View all",
     "processingCv": "This CV is still being analyzed.",
     "status": {
       "uploaded": "Uploaded",
