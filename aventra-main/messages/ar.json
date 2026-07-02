@@ -30,6 +30,87 @@
     "error": "حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.",
     "success": "تم تسجيل الدخول بنجاح. تهانينا!"
   },
+  "contact": {
+    "header": {
+      "help": "هل تحتاج دعمًا؟",
+      "titlePrefix": "لنتحدث",
+      "brand": "Aventra",
+      "description": "تواصل مع فريقنا لأسئلة المنتج والشراكات والدعم الفني."
+    },
+    "cards": {
+      "email": {
+        "title": "راسلنا عبر البريد",
+        "line1": "support@aventra.app",
+        "line2": "الرد خلال 24 ساعة"
+      },
+      "phone": {
+        "title": "اتصل بنا",
+        "line1": "+1 (555) 123-4567",
+        "line2": "الإثنين - الجمعة، 9 صباحًا - 5 مساءً"
+      },
+      "address": {
+        "title": "عنوان المكتب",
+        "line1": "123 شارع أفينترا",
+        "line2": "سان فرانسيسكو، كاليفورنيا 94103"
+      }
+    },
+    "connect": {
+      "title": "تواصل معنا",
+      "description": "تابع Aventra عبر وسائل التواصل لمزيد من التحديثات وأخبار المنتج وفعاليات المجتمع."
+    },
+    "socials": {
+      "linkedin": "LinkedIn",
+      "github": "GitHub",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "youtube": "YouTube"
+    },
+    "faq": {
+      "heading": "الأسئلة المتكررة",
+      "description": "إجابات عن الأسئلة الشائعة حول Aventra وتقييم تتبع المتقدمين والدعم.",
+      "items": {
+        "whatIsAventra": "ما هي Aventra؟",
+        "atsScore": "كيف يتم حساب درجة ATS؟",
+        "dataSecure": "هل بياناتي آمنة؟",
+        "contactDirectly": "هل يمكنني التواصل مع الدعم مباشرة؟",
+        "enterprisePlans": "هل تقدمون خططًا للمؤسسات؟",
+        "deleteAccount": "كيف أحذف حسابي؟"
+      }
+    },
+    "support": {
+      "heading": "هل تحتاج إلى المزيد من المساعدة؟",
+      "description": "فريق الدعم لدينا متاح للإجابة على أي أسئلة ومساعدتك في البدء.",
+      "cta": "ابدأ المحادثة"
+    },
+    "form": {
+      "title": "أرسل لنا رسالة",
+      "nameLabel": "اسمك",
+      "namePlaceholder": "أدخل اسمك",
+      "emailLabel": "بريدك الإلكتروني",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "subjectLabel": "الموضوع",
+      "subjectPlaceholder": "كيف يمكننا مساعدتك؟",
+      "subjects": {
+        "candidateSupport": "دعم المرشحين",
+        "companySupport": "دعم الشركات",
+        "pricing": "الأسعار",
+        "technicalIssue": "مشكلة فنية",
+        "partnership": "شراكة",
+        "other": "أخرى"
+      },
+      "messageLabel": "الرسالة",
+      "messagePlaceholder": "اكتب رسالتك هنا...",
+      "privacyAgreement": "بالإرسال توافق على",
+      "privacyPolicy": "سياسة الخصوصية",
+      "sendMessage": "أرسل الرسالة",
+      "sending": "جاري الإرسال..."
+    },
+    "notifications": {
+      "successSent": "تم إرسال الرسالة بنجاح!",
+      "errorGeneric": "حدث خطأ ما.",
+      "errorFailed": "فشل إرسال الرسالة. يرجى المحاولة مرة أخرى."
+    }
+  },
   "footer": {
     "description": "تحسين السيرة الذاتية بالذكاء الاصطناعي واكتشاف المرشحين — مصمم لباحثي العمل وفرق التوظيف.",
     "stayUpdated": "ابقَ على اطلاع",
