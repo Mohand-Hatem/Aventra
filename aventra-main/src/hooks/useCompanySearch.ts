@@ -38,7 +38,7 @@ export function useSearchCandidates() {
 
   return {
     // Search action
-    search: (query: string) => mutation.mutate({ query, topK: 10 }),
+    search: (query: string) => mutation.mutateAsync({ query, topK: 10 }),
     isPending: mutation.isPending,
     isError: mutation.isError,
 

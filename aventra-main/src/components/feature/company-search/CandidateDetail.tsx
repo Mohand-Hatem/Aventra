@@ -6,7 +6,7 @@
  */
 
 "use client";
-
+import { useTranslations } from "next-intl";
 import { IconDownload, IconSparkles } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import type { CandidateResult } from "@/types/company";
@@ -34,10 +34,11 @@ function ScoreBox({ value, label }: { value: number; label: string }) {
 }
 
 export default function CandidateDetail({ candidate }: CandidateDetailProps) {
+  const t = useTranslations("candidateSearch");
   const name =
     typeof candidate.user.name === "string"
       ? candidate.user.name
-      : (candidate.user.name as { en: string })?.en ?? "Unknown";
+      : (candidate.user.name as { en: string })?.en ?? t("candidateDetail.unknown");;
 
   const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
@@ -57,15 +58,15 @@ export default function CandidateDetail({ candidate }: CandidateDetailProps) {
             <p className="text-sm text-muted-foreground">{candidate.user.email}</p>
           </div>
           <div className="flex gap-3 shrink-0">
-            <ScoreBox value={candidate.matchScore} label="Match Score" />
-            <ScoreBox value={candidate.atsScore} label="ATS Score" />
+            <ScoreBox value={candidate.matchScore} label={t("candidateDetail.matchScore")} />
+            <ScoreBox value={candidate.atsScore} label={t("candidateDetail.atsScore")} />
           </div>
         </div>
 
         {/* Top Skills */}
         {candidate.skills.length > 0 && (
           <div>
-            <p className="mb-2 text-xs font-semibold text-foreground">Top Skills</p>
+            <p className="mb-2 text-xs font-semibold text-foreground">{t("candidateDetail.topSkills")}</p>
             <div className="flex flex-wrap gap-1.5">
               {candidate.skills.map((skill) => (
                 <span
@@ -84,7 +85,7 @@ export default function CandidateDetail({ candidate }: CandidateDetailProps) {
           <div>
             <div className="mb-2 flex items-center gap-1.5">
               <IconSparkles size={13} className="text-primary dark:text-sky" />
-              <p className="text-xs font-semibold text-foreground">AI Summary</p>
+              <p className="text-xs font-semibold text-foreground">{t("candidateDetail.aiSummary")}</p>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
               {candidate.summary}
@@ -96,13 +97,16 @@ export default function CandidateDetail({ candidate }: CandidateDetailProps) {
       {/* Right — Resume Preview */}
       <div className="flex flex-col rounded-2xl border border-border bg-card overflow-hidden">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <p className="text-sm font-semibold text-foreground">Resume Preview</p>
+         <p className="text-sm font-semibold text-foreground">
+  {t("candidateDetail.resumePreview")}
+</p>
           <a
             href={candidate.originalFile.url}
             download={candidate.originalFile.fileName}
             className="flex items-center gap-1.5 rounded-lg bg-primary dark:bg-sky px-3 py-1.5 text-xs font-medium text-white hover:opacity-90 transition-opacity"
           >
-            <IconDownload size={12} /> Download
+            <IconDownload size={12} />
+{t("candidateDetail.download")}
           </a>
         </div>
         <div className="flex-1 overflow-hidden">
@@ -110,11 +114,11 @@ export default function CandidateDetail({ candidate }: CandidateDetailProps) {
             <iframe
               src={`${candidate.originalFile.url}#toolbar=0`}
               className="h-full w-full border-0"
-              title="Resume Preview"
+             title={t("candidateDetail.resumePreview")}
             />
           ) : (
             <div className="flex h-full items-center justify-center">
-              <p className="text-sm text-muted-foreground">No preview available</p>
+              <p className="text-sm text-muted-foreground">{t("candidateDetail.noPreviewAvailable")}</p>
             </div>
           )}
         </div>

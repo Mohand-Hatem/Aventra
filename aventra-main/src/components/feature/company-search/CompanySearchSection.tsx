@@ -19,7 +19,7 @@ export default function CompanySearchSection() {
 
       {/* Left — Search Assistant */}
       <div className="w-[340px] shrink-0">
-        <SearchPanel onSearch={search} isPending={isPending} />
+      <SearchPanel onSearch={search} />
       </div>
 
       {/* Right — Results + Detail */}
