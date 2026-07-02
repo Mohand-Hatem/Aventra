@@ -761,4 +761,79 @@
     "goBack": "Go back",
     "errorCode": "Error 404"
     
-  }}
+  },
+"candidateSearch": {
+  "candidateDetail": {
+    "unknown": "Unknown",
+    "matchScore": "Match Score",
+    "atsScore": "ATS Score",
+    "topSkills": "Top Skills",
+    "aiSummary": "AI Summary",
+    "resumePreview": "Resume Preview",
+    "download": "Download",
+    "noPreview": "No preview available"
+  },
+
+  "resultsTable": {
+    "searching": "Searching candidates...",
+    "empty": "No results yet. Use the search assistant to find candidates.",
+    "searchResults": "Search Results",
+    "candidates": "Candidates",
+    "export": "Export",
+    "filter": "Filter",
+    "rank": "Rank",
+    "candidate": "Candidate",
+    "skills": "Skills",
+    "match": "Match",
+    "atsScore": "ATS Score",
+    "lastUpdated": "Last Updated",
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "results": "results"
+  },
+
+  "assistant": {
+    "title": "Aventra Recruiter AI",
+    "subtitle": "Your intelligent recruitment assistant.",
+    "welcomeTitle": "Welcome!",
+    "welcome": "I'm Aventra Recruiter AI. I can help you search your company's candidate database using natural language. Describe the candidate you're looking for, and I'll find the best matches.",
+    "thinking": "Searching candidates...",
+    "placeholder": "Describe the candidate you're looking for...",
+    "poweredBy": "Powered by Aventra AI",
+      "replies": {
+    "greeting": "Hello! 👋 How can I help you find candidates today?",
+    "identity": "I'm Aventra Recruiter AI. I can search your company's candidate database using natural language.",
+    "search": "Got it! I'll search for the best matching candidates.",
+    "outOfScope": "I can only help with candidate search and recruitment."
+  },
+    "suggestions": {
+      "frontend": "Frontend Developer (React & Next.js)",
+      "backend": "Backend Developer (Node.js & Express)",
+      "flutter": "Flutter Mobile Developer",
+      "data": "Data Analyst (Power BI & SQL)"
+    }
+  },
+  "searchPanel": {
+  "title": "Candidate Search",
+  "subtitle": "Search using natural language and let AI find the best matching candidates.",
+  "placeholder": "Example: Looking for a React Developer with 3+ years of Next.js experience...",
+  "search": "Search",
+  "searching": "Searching...",
+  "clear": "Clear",
+  "filters": "Filters",
+  "advancedFilters": "Advanced Filters",
+  "experience": "Experience",
+  "location": "Location",
+  "skills": "Skills",
+  "education": "Education",
+  "jobTitle": "Job Title",
+  "all": "All",
+  "remote": "Remote",
+  "hybrid": "Hybrid",
+  "onsite": "On-site",
+  "resetFilters": "Reset Filters"
+}
+}
+
+}
