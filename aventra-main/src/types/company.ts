@@ -37,3 +37,19 @@ export interface SearchCandidatesPayload {
   query: string;
   topK?: number;
 }
+
+export interface SearchHistoryEntry {
+  id: string;
+  query: string;
+  createdAt: string;
+  candidates: CandidateResult[];
+  total: number;
+}
+
+export interface SearchHistoryResponse {
+  success: boolean;
+  data: {
+    searches: SearchHistoryEntry[];
+    totalSearches?: number;
+  };
+}

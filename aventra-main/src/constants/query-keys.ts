@@ -13,6 +13,9 @@ export const queryKeys = {
     top: () => ["candidates", "top"] as const,
     detail: (id: string) => [...queryKeys.candidates.all, { id }] as const,
   },
+  company: {
+    searchHistory: ["company", "search-history"] as const,
+  },
 };
 export const GOOGLE_LOGIN_PENDING_KEY = "googleLogin";
 export const PAYMENT_PENDING_KEY = "paymentPending";

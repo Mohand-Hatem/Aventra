@@ -27,6 +27,41 @@
     "candidateSearch": "Candidate Search",
     "cvAnalysis": "CV Analysis"
   },
+  "notifications": {
+    "genericError": "Something went wrong. Please try again.",
+    "auth": {
+      "loginSuccess": "Logged in successfully. Welcome back!",
+      "registerSuccess": "Account created successfully.",
+      "registerExistingAccount": "Welcome back! Signed in with your existing account.",
+      "logoutSuccess": "Logged out successfully.",
+      "googleLoginSuccess": "Logged in successfully with Google!",
+      "googleLoginFailed": "Failed to sign in with Google. Please try again.",
+      "loginRequired": "Please sign in to continue.",
+      "checkingUser": "Checking account…"
+    },
+    "profile": {
+      "updateSuccess": "Profile updated successfully.",
+      "uploadTimeout": "Upload timed out. If your profile was updated, refresh the page.",
+      "updateFailed": "Could not update profile. Please try again."
+    },
+    "cv": {
+      "uploadSuccess": "CV uploaded successfully.",
+      "uploadFailed": "Could not upload CV. Please try again."
+    },
+    "payment": {
+      "success": "Payment successful!",
+      "failed": "Payment failed.",
+      "sessionNotFound": "Payment session not found.",
+      "confirmationTimeout": "Payment confirmation timed out. Please try again.",
+      "confirmFailed": "Unable to confirm payment. Please contact support.",
+      "sessionExpiredAfterSuccess": "Payment confirmed but session expired. Please sign in again.",
+      "startFailed": "Unable to start payment."
+    },
+    "contact": {
+      "successSent": "Message sent successfully!",
+      "errorFailed": "Failed to send message. Please try again."
+    }
+  },
   "footer": {
     "description": "AI-powered resume optimization and candidate discovery — built for both job seekers and hiring teams.",
     "stayUpdated": "Stay Updated",
@@ -385,11 +420,6 @@
       "emailInvalid": "Please enter a valid email",
       "subjectRequired": "Please select a subject",
       "messageMin": "Message must be at least 10 characters"
-    },
-    "notifications": {
-      "successSent": "Message sent successfully!",
-      "errorGeneric": "Something went wrong.",
-      "errorFailed": "Failed to send message. Please try again."
     }
   },
   "profile": {
@@ -480,6 +510,23 @@
       "avatarType": "Please choose an image file.",
       "avatarSize": "Image must be 5 MB or smaller."
     }
+  },
+  "companyProfile": {
+    "title": "Company profile",
+    "description": "Manage your organization account, usage, and past candidate searches.",
+    "tokens": "Token usage",
+    "maxTokens": "Max tokens",
+    "searchCount": "Searches",
+    "candidatesFound": "Candidates found",
+    "tokenProgress": "Monthly token usage",
+    "plan": "Current plan",
+    "searchHistory": "Search history",
+    "searchHistoryHint": "Past AI searches and their matching candidates.",
+    "noSearchesYet": "No searches yet",
+    "noSearchesHint": "Run a candidate search to see results saved here.",
+    "goToSearch": "Go to candidate search",
+    "selectSearchHint": "Select a search from the list to view its candidates.",
+    "results": "results"
   },
   "login": {
     "backToWebsite": "Back to website",

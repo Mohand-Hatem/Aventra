@@ -35,6 +35,7 @@ function normalizeAuthUserRole(
 export function normalizeAuthUser(raw: Record<string, unknown>): AuthUser {
   const maxToken = raw.maxToken ?? raw.max_token;
   const tokenUsage = raw.tokenUsage ?? raw.token_usage;
+  const searchCount = raw.searchCount ?? raw.search_count;
   const avatar = raw.avatar;
   const googleId = raw.googleId;
 
@@ -48,6 +49,7 @@ export function normalizeAuthUser(raw: Record<string, unknown>): AuthUser {
     plan: typeof raw.plan === "string" ? raw.plan : undefined,
     maxToken: typeof maxToken === "number" ? maxToken : undefined,
     tokenUsage: typeof tokenUsage === "number" ? tokenUsage : undefined,
+    searchCount: typeof searchCount === "number" ? searchCount : undefined,
     googleId:
       typeof googleId === "string" || googleId === null ? googleId : undefined,
     cvs: normalizeUserCvs(raw.cvs),

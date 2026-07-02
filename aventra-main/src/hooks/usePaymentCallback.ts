@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
 import { fetchAuthUser, syncAuthUser } from "@/hooks/useAuth";
@@ -112,6 +113,7 @@ async function restoreAuthWithRetries(
 export function usePaymentCallback() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useTranslations("notifications.payment");
   const [isPending, setIsPending] = useState(true);
   const hasRun = useRef(false);
 
@@ -137,13 +139,11 @@ export function usePaymentCallback() {
       if (completed || cancelled) return;
       completed = true;
       finish();
-      toast.success("Payment successful!");
+      toast.success(t("success"));
 
       const restored = await restoreAuthWithRetries(queryClient);
       if (!restored) {
-        toast.error(
-          "Payment confirmed but session expired. Please sign in again.",
-        );
+        toast.error(t("sessionExpiredAfterSuccess"));
         setIsPending(false);
         router.replace(APP_ROUTES.login);
         return;
@@ -157,7 +157,7 @@ export function usePaymentCallback() {
       if (completed || cancelled) return;
       completed = true;
       finish();
-      toast.error("Payment failed.");
+      toast.error(t("failed"));
       setIsPending(false);
       router.replace(APP_ROUTES.pricing);
     };
@@ -182,7 +182,7 @@ export function usePaymentCallback() {
         }
         completed = true;
         finish();
-        toast.error("Payment session not found.");
+        toast.error(t("sessionNotFound"));
         setIsPending(false);
         router.replace(APP_ROUTES.pricing);
         return;
@@ -218,7 +218,7 @@ export function usePaymentCallback() {
           } else {
             completed = true;
             finish();
-            toast.error("Payment confirmation timed out. Please try again.");
+            toast.error(t("confirmationTimeout"));
             setIsPending(false);
             router.replace(APP_ROUTES.pricing);
           }
@@ -237,7 +237,7 @@ export function usePaymentCallback() {
           } else {
             completed = true;
             finish();
-            toast.error("Unable to confirm payment. Please contact support.");
+            toast.error(t("confirmFailed"));
             setIsPending(false);
             router.replace(APP_ROUTES.pricing);
           }
@@ -252,7 +252,7 @@ export function usePaymentCallback() {
       cancelled = true;
       if (intervalId) clearInterval(intervalId);
     };
-  }, [queryClient, router]);
+  }, [queryClient, router, t]);
 
   return { isPending };
 }

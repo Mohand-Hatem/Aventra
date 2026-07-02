@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
@@ -102,6 +103,7 @@ async function updateUserProfile(
 
 export function useUpdateUserProfile() {
   const queryClient = useQueryClient();
+  const t = useTranslations("notifications.profile");
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   const mutation = useMutation({
@@ -148,22 +150,17 @@ export function useUpdateUserProfile() {
         await queryClient.invalidateQueries({ queryKey: queryKeys.auth.user });
       }
 
-      toast.success("Profile updated successfully");
+      toast.success(t("updateSuccess"));
     },
     onError: (err) => {
       const axiosErr = err as AxiosError<{ message?: string }>;
 
       if (axiosErr.code === "ECONNABORTED") {
-        toast.error(
-          "Upload timed out. If your profile was updated, refresh the page.",
-        );
+        toast.error(t("uploadTimeout"));
         return;
       }
 
-      toast.error(
-        axiosErr.response?.data?.message ??
-          "Could not update profile. Please try again.",
-      );
+      toast.error(axiosErr.response?.data?.message ?? t("updateFailed"));
     },
   });
 

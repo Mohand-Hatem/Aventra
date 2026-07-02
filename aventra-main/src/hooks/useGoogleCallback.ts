@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import { fetchAuthUser, syncAuthUser } from "@/hooks/useAuth";
 import { useRouter } from "@/i18n/routing";
@@ -13,6 +14,7 @@ const RETRY_DELAY_MS = 800;
 export const useGoogleCallback = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useTranslations("notifications.auth");
   const [isPending, setIsPending] = useState(true);
   const hasRun = useRef(false);
 
@@ -32,7 +34,7 @@ export const useGoogleCallback = () => {
             sessionStorage.removeItem(GOOGLE_LOGIN_PENDING_KEY);
             syncAuthUser(queryClient, user);
             if (pendingGoogle) {
-              toast.success("Logged in successfully with Google!");
+              toast.success(t("googleLoginSuccess"));
             }
             router.replace(APP_ROUTES.home);
             setIsPending(false);
@@ -56,13 +58,13 @@ export const useGoogleCallback = () => {
       }
       sessionStorage.removeItem(GOOGLE_LOGIN_PENDING_KEY);
       if (pendingGoogle) {
-        toast.error("Failed to login with Google. Please try again.");
+        toast.error(t("googleLoginFailed"));
       }
       setIsPending(false);
       router.replace(APP_ROUTES.login);
     };
     tryFetch();
-  }, []);
+  }, [queryClient, router, t]);
 
   return { isPending };
 };

@@ -39,6 +39,7 @@ export interface LoginRequest {
     plan?: string;
     maxToken?: number;
     tokenUsage?: number;
+    searchCount?: number;
     googleId?: string | null;
   
     cvs?: UserCv[];

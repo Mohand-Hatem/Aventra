@@ -27,15 +27,15 @@ async function sendContactMessage(
 }
 
 export function useContact() {
-  const t = useTranslations("contact");
+  const t = useTranslations("notifications.contact");
 
   return useMutation({
     mutationFn: sendContactMessage,
     onSuccess: () => {
-      toast.success(t("notifications.successSent"));
+      toast.success(t("successSent"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || t("notifications.errorFailed"));
+      toast.error(error.message || t("errorFailed"));
     },
   });
 }
