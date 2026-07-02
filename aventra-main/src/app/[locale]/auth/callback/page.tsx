@@ -1,4 +1,4 @@
-// app/[locale]/auth/callback/page.tsx
+
 "use client";
 import { ScaleLoader } from "@/components/shared/scale-loader";
 import { useGoogleCallback } from "@/hooks/useGoogleCallback";

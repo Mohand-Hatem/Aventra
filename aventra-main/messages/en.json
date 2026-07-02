@@ -628,5 +628,137 @@
       "passwordUppercase": "Password must contain one uppercase letter",
       "passwordNumber": "Password must contain one number"
     }
-  }
-}
+    },
+   "about": {
+    "metaTitle": "About — Aventra",
+    "metaDescription": "Aventra helps job seekers improve their resumes and helps companies find better candidates faster — using AI-powered scoring, smart search, and intelligent matching.",
+    "hero": {
+      "badge": "About Aventra",
+      "titlePart1": "Transforming",
+      "titlePart2": "Recruitment",
+      "titlePre": "with",
+      "titleAccent": "AI",
+      "subtitle": "Aventra helps both candidates and recruiters make smarter decisions — powered by Artificial Intelligence, Semantic Search, AI Agents, and Resume Intelligence built for the next decade of hiring.",
+      "ctaPrimary": "Explore the Platform",
+      "ctaSecondary": "Our Story",
+      "illustration": {
+        "alt": "Aventra AI-powered recruitment illustration"
+      }
+    },
+    "story": {
+      "badge": "Our Story",
+      "title": "Why we built Aventra.",
+      "description": "Most ATS platforms focus only on keywords. That means strong candidates often get missed, while recruiters waste hours filtering resumes manually.We built Aventra to make hiring smarter, faster, and more human with AI",
+      "oldBadge": "Old ATS",
+      "oldTitle": "The broken way",
+      "oldPoints": [
+        "Keyword-based filtering",
+        "Missing qualified candidates",
+        "Slow hiring process",
+        "Poor resume feedback"
+      ],
+      "newBadge": "Aventra",
+      "newTitle": "The intelligent way",
+      "newPoints": [
+        "Understands real skills, not just keywords",
+        "Surfacing hidden talent",
+        "AI agents that move work forward",
+        "Clear resume improvements"
+      ]
+    },
+    "features": {
+      "badge": "What makes us different",
+      "title": "Built for the way hiring should work.",
+      "subtitle": "Powerful AI tools designed to help candidates and recruiters work faster and smarter.",
+      "items": {
+        "aiResume": { "title": "AI Resume Analysis", "desc": "AI analysis that understands your resume beyond keywords." },
+        "atsScore": { "title": "ATS Score", "desc": "Instant ATS scores with clear fixes and suggestions." },
+        "semanticSearch": { "title": "Semantic Search", "desc": "Search candidates by skills and experience, not exact keywords." },
+        "ranking": { "title": "Smart Candidate Ranking", "desc": "Rank the best candidates automatically with AI." },
+        "jobMatching": { "title": "Job Matching", "desc": "Match candidates to the right roles based on skills and experience." },
+        "careerAssistant": { "title": "AI Career Assistant", "desc": "AI guidance to improve resumes and career opportunities." }
+      }
+    },
+    "missionVision": {
+      "badge": "Mission & Vision",
+      "title": "What we're building, and why.",
+      "mission": {
+        "label": "Mission",
+        "title": "Smarter hiring decisions, for everyone.",
+        "desc": "Helping people hire smarter and get hired faster with AI-powered tools."
+      },
+      "vision": {
+        "label": "Vision",
+        "title": "The future of intelligent recruitment.",
+        "desc": "Creating a faster, fairer hiring experience for both candidates and companies."
+      }
+    },
+    "aiStack": {
+      "badge": "Our AI Technology",
+      "title": "The intelligence stack behind Aventra.",
+      "subtitle": "A modern AI architecture engineered for precision, reasoning, and real-time discovery.",
+      "items": {
+        "gpt4": { "title": "GPT-4 Intelligence", "desc": "State-of-the-art reasoning for nuanced hiring decisions." },
+        "rag": { "title": "Retrieval-Augmented Generation", "desc": "Grounded answers, sourced from your data and ours." },
+        "agents": { "title": "AI Agents", "desc": "Autonomous workflows that screen, rank, and respond." },
+        "vectorDb": { "title": "Vector Database & Semantic Search", "desc": "Meaning-aware retrieval across millions of resumes." }
+      }
+    },
+    "bothSides": {
+      "title": "Built for both sides of hiring",
+      "subtitle": "Whether you're searching for your next role or your next great hire, Aventra works for you.",
+      "jobSeekers": {
+        "title": "Job Seekers",
+        "items": ["Resume improvement", "ATS optimization", "Missing skills detection", "Career guidance", "Job matching"]
+      },
+      "companies": {
+        "title": "Recruiters & Companies",
+        "items": ["Candidate ranking", "AI-powered search", "Resume analysis", "Smart filtering", "Faster hiring"]
+      }
+    },
+    "values": {
+      "badge": "Core Values",
+      "title": "The principles we build by.",
+      "items": {
+        "innovation": { "title": "Innovation", "desc": "We build modern AI tools that improve hiring." },
+        "fairHiring": { "title": "Fair Hiring", "desc": "Fair hiring tools designed for everyone." },
+        "transparency": { "title": "Transparency", "desc": "Clear insights you can trust." },
+        "intelligence": { "title": "Intelligence", "desc": "AI that delivers smarter decisions." }
+      }
+    },
+    "team": {
+      "badge": "Our Team",
+      "title": "The people building Aventra.",
+      "members": [
+        {
+          "name": "Mohand Hatem",
+         
+          "linkedin": "https://www.linkedin.com/in/mohand-hatem-73995a262/"
+        },
+        {
+          "name": "Mohraiel Nassr",
+          "linkedin": "https://www.linkedin.com/in/mohraiel-nassr-8485b2244/"
+        },
+        {
+          "name": "Menna Galal",
+          "linkedin": "https://www.linkedin.com/in/menna-galal-687826278/"
+        },
+        {
+          "name": "Hossam Hassan",
+          "linkedin": "https://www.linkedin.com/in/hossam-hassan-abd-al-bari/"
+        },
+        {
+          "name": "Walaa Tharwat",
+          "linkedin": "https://www.linkedin.com/in/walaa-tharwat-ba6489175/"
+        }
+      ]
+    }
+    },
+    "notFound": {
+  "title": "Page Not Found",
+  "description": "Sorry, we couldn't find the page you're looking for.",
+  "backHome": "Back to home",
+    "goBack": "Go back",
+    "errorCode": "Error 404"
+    
+  }}
