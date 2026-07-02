@@ -1,5 +1,12 @@
-// useRecruiterChat.ts
+// Folder: src/hooks
+// File: useRecruiterChat.ts
+// Purpose: Sends every message to the backend LLM+RAG endpoint and returns AI response.
+
+"use client";
+
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import axiosInstance from "@/lib/axios";
 
 export interface ChatMessage {
   id: string;
@@ -7,88 +14,19 @@ export interface ChatMessage {
   content: string;
   createdAt: string;
 }
-export interface RecruiterReplies {
-  greeting: string;
-  identity: string;
-  search: string;
-  outOfScope: string;
+
+interface ChatResponse {
+  success: boolean;
+  data: {
+    reply: string;           // الرد الطبيعي من الـ LLM
+    candidates?: unknown[];  // لو الـ LLM قرر يعمل search
+    hasResults?: boolean;
+  };
 }
 
 interface UseRecruiterChatProps {
   onSearch: (query: string) => Promise<void> | void;
-
-  replies: RecruiterReplies;
 }
-
-type Intent =
-  | "greeting"
-  | "identity"
-  | "search"
-  | "out_of_scope";
-
-const SEARCH_KEYWORDS = [
-  "find",
-  "search",
-  "looking for",
-  "need",
-  "candidate",
-  "developer",
-  "engineer",
-  "frontend",
-  "backend",
-  "react",
-  "next",
-  "next.js",
-  "node",
-  "node.js",
-  "express",
-  "flutter",
-  "android",
-  "ios",
-  "python",
-  "java",
-  "php",
-  "laravel",
-  "sql",
-  "mongodb",
-  "aws",
-  "docker",
-  "devops",
-  "cv",
-  "resume",
-  "مطور",
-
-"مبرمج",
-
-"ابحث",
-
-"ابحث عن",
-
-"فلاتر",
-
-"رياكت",
-
-"واجهة",
-
-"باك",
-
-"مرشح",
-
-"سيرة",
-
-"سي في",
-"مهندس",
-
-"وظيفة",
-
-"خبرة",
-
-"بايثون",
-
-"جافا" ,
-
-"نود", 
-];
 
 function getCurrentTime() {
   return new Date().toLocaleTimeString([], {
@@ -97,108 +35,69 @@ function getCurrentTime() {
   });
 }
 
-function detectIntent(message: string): Intent {
-  const lower = message.toLowerCase().trim();
-      const greetingRegex =
-/^(hi|hello|hey|good morning|good evening)[!. ]*$/i;
-  if (greetingRegex.test(lower)) {
-    return "greeting";
-  }
-
-  if (
-    lower.includes("who are you") ||
-    lower.includes("what are you")
-  ) {
-    return "identity";
-  }
-
-  const isSearch = SEARCH_KEYWORDS.some((keyword) =>
-    lower.includes(keyword)
-  );
-
-  if (isSearch) {
-    return "search";
-  }
-
-  return "out_of_scope";
-}
-
-export function useRecruiterChat({
-  onSearch,
-  replies,
-}: UseRecruiterChatProps) {
+export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isThinking, setIsThinking] = useState(false);
 
-  async function sendMessage(text: string) {
-    if (!text.trim()) return;
+  const chatMutation = useMutation({
+    mutationFn: async (message: string) => {
+      const { data } = await axiosInstance.post<ChatResponse>("/company/chat", {
+        message,
+        // بنبعت الـ history عشان الـ LLM يفهم السياق
+        history: messages.map((m) => ({
+          role: m.role,
+          content: m.content,
+        })),
+      });
+      return data;
+    },
+  });
 
+  async function sendMessage(text: string) {
+    if (!text.trim() || isThinking) return;
+
+    // 1. ضيفي رسالة الـ user فوراً
     const userMessage: ChatMessage = {
       id: crypto.randomUUID(),
       role: "user",
       content: text,
       createdAt: getCurrentTime(),
     };
-
     setMessages((prev) => [...prev, userMessage]);
-
     setIsThinking(true);
 
-    const intent = detectIntent(text);
+    try {
+      // 2. ابعتي للباك (LLM + RAG)
+      const response = await chatMutation.mutateAsync(text);
 
-    let reply = "";
+      // 3. ضيفي رد الـ AI
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          role: "assistant",
+          content: response.data.reply,
+          createdAt: getCurrentTime(),
+        },
+      ]);
 
-    switch (intent) {
-      case "greeting":
-        reply =
-          replies.greeting;
-        break;
-
-      case "identity":
-        reply =
-          replies.identity;
-        break;
-
-      case "search":
-        reply =
-          replies.search;
-        break;
-
-      default:
-        reply =
-          replies.outOfScope;
-        break;
+      // 4. لو الـ LLM قرر يعمل search — حدثي الـ ResultsTable
+      if (response.data.hasResults) {
+        await onSearch(text);
+      }
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          role: "assistant",
+          content: "Sorry, something went wrong. Please try again.",
+          createdAt: getCurrentTime(),
+        },
+      ]);
+    } finally {
+      setIsThinking(false);
     }
-
-    await new Promise((resolve) => setTimeout(resolve, 700));
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: reply,
-        createdAt: getCurrentTime(),
-      },
-    ]);
-
-   if (intent === "search") {
-  try {
-    await onSearch(text);
-  } catch {
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: "Sorry, something went wrong while searching.",
-        createdAt: getCurrentTime(),
-      },
-    ]);
-  }
-}
-
-    setIsThinking(false);
   }
 
   return {

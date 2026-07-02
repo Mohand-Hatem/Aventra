@@ -24,7 +24,7 @@ export function useSearchCandidates() {
   const mutation = useMutation({
     mutationFn: async (payload: SearchCandidatesPayload) => {
       const { data } = await axiosInstance.post<SearchCandidatesResponse>(
-        "/ai/search/candidates",
+        "/company/search",
         payload
       );
       return data.data.candidates;
