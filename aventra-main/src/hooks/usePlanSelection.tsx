@@ -5,7 +5,11 @@
 
 import type { PlanName } from "@/types/pricing";
 import { useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/constants/query-keys";
+import {
+  PAYMENT_PENDING_KEY,
+  PAYMOB_ORDER_ID_KEY,
+  queryKeys,
+} from "@/constants/query-keys";
 import { useUser } from "./useAuth";
 import { useRouter } from "@/i18n/routing";
 import { APP_ROUTES } from "@/constants/routes";
@@ -37,7 +41,8 @@ export function usePlanSelection() {
             router.push("/user/profile");
             return;
           }
-          localStorage.setItem("paymobOrderId", data.orderId!);
+          localStorage.setItem(PAYMOB_ORDER_ID_KEY, data.orderId!);
+          sessionStorage.setItem(PAYMENT_PENDING_KEY, "1");
           window.location.href = data.url;
         },
 

@@ -7,11 +7,14 @@ import { useAuthStore } from "@/stores/auth-store";
 import { AxiosError } from "axios";
 
 const AUTH_CALLBACK_PATH = "/auth/callback";
+const PAYMENT_RESULTS_PATH = "/payment/results";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const clearAuth = useAuthStore((s) => s.clearAuth);
-  const skipAuth = pathname.endsWith(AUTH_CALLBACK_PATH);
+  const skipAuth =
+    pathname.endsWith(AUTH_CALLBACK_PATH) ||
+    pathname.endsWith(PAYMENT_RESULTS_PATH);
 
   const { isError, error } = useUser({ enabled: !skipAuth });
 

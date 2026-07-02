@@ -15,3 +15,5 @@ export const queryKeys = {
   },
 };
 export const GOOGLE_LOGIN_PENDING_KEY = "googleLogin";
+export const PAYMENT_PENDING_KEY = "paymentPending";
+export const PAYMOB_ORDER_ID_KEY = "paymobOrderId";

@@ -1,44 +1,21 @@
 "use client";
 
-import { useEffect } from "react";
-import axiosInstance from "@/lib/axios";
-import { toast } from "react-hot-toast";
-import { useRouter } from "@/i18n/routing";
-import { queryKeys } from "@/constants/query-keys";
-import { useQueryClient } from "@tanstack/react-query";
-import { APP_ROUTES } from "@/constants/routes";
+import { ScaleLoader } from "@/components/shared/scale-loader";
+import { usePaymentCallback } from "@/hooks/usePaymentCallback";
+import { useTranslations } from "next-intl";
 
 export default function PaymentResult() {
-    const router = useRouter();
-    const queryClient = useQueryClient();
-    useEffect(() => {
-        const orderId = localStorage.getItem("paymobOrderId");
-        if (!orderId) return;
-        const interval = setInterval(async () => {
-            const { data } = await axiosInstance.get(
-                `/users/payment-status/${orderId}`
-            );
-            if (data.status === "Paid") {
-                clearInterval(interval);
-                localStorage.removeItem("paymobOrderId");
-                toast.success("Payment Successful ");
-                await queryClient.invalidateQueries({
-                    queryKey: queryKeys.auth.user,
-                });
-                router.push(APP_ROUTES.home);
-            }
-            if (data.status === "Failed") {
-                clearInterval(interval);
-                localStorage.removeItem("paymobOrderId");
-                toast.error("Payment Failed");
-            }
-        }, 2000);
-        return () => clearInterval(interval);
-    }, []);
+  const { isPending } = usePaymentCallback();
+  const t = useTranslations("payment");
 
+  if (isPending) {
     return (
-        <div className="flex h-screen items-center justify-center">
-            Confirming payment...
-        </div>
+      <section className="flex min-h-[calc(100vh-5rem)] flex-col items-center justify-center gap-4 px-4">
+        <ScaleLoader size="lg" className="text-primary dark:text-sky" />
+        <p className="text-sm text-muted-foreground">{t("confirming")}</p>
+      </section>
     );
+  }
+
+  return null;
 }

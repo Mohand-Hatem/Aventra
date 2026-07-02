@@ -302,6 +302,9 @@
     "error": "An error occurred while logging in. Please try again.",
     "success": "Login successful. Congratulations!"
   },
+  "payment": {
+    "confirming": "Confirming payment..."
+  },
   "contact": {
     "header": {
       "help": "Need support?",
