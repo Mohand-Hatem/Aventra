@@ -18,7 +18,7 @@ export default function CompanySearchSection() {
     <div className="flex h-full gap-4 p-4 overflow-hidden">
 
       {/* Left — Search Assistant */}
-      <div className="w-[340px] shrink-0">
+      <div className="w-[440px] shrink-0">
       <SearchPanel onSearch={search} />
       </div>
 
