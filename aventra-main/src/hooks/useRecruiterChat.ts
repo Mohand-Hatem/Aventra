@@ -8,22 +8,13 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axios";
 import { useAuthStore } from "@/stores/auth-store";
+import type { CandidateResult } from "@/types/company";
 
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
   createdAt: string;
-}
-
-interface CandidateResult {
-  cvId: string;
-  name: { en: string; ar: string };
-  email: string;
-  track: string;
-  atsScore: number;
-  matchScore: number;
-  matchedSnippet: string;
 }
 
 interface ChatResponse {

@@ -13,17 +13,26 @@ import MessageBubble from "./MessageBubble";
 import TypingIndicator from "./TypingIndicator";
 import ChatInput from "./ChatInput";
 import { useRecruiterChat } from "@/hooks/useRecruiterChat";
+import type { CandidateResult } from "@/types/company";
 
 interface SearchPanelProps {
-  onSearch: (results: unknown[]) => void;
+  onSearch: (results: CandidateResult[]) => void;
+  onSearchingChange?: (searching: boolean) => void;
 }
 
-export default function SearchPanel({ onSearch }: SearchPanelProps) {
+export default function SearchPanel({
+  onSearch,
+  onSearchingChange,
+}: SearchPanelProps) {
   const t = useTranslations("candidateSearch.assistant");
 
   const { messages, sendMessage, isThinking } = useRecruiterChat({ onSearch });
 
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    onSearchingChange?.(isThinking);
+  }, [isThinking, onSearchingChange]);
 
   // Only scroll when user sends a message (last message is from user)
   useEffect(() => {

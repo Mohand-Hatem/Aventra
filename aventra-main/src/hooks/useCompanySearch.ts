@@ -20,6 +20,7 @@ import type {
 export function useSearchCandidates() {
   const [candidates, setCandidates] = useState<CandidateResult[]>([]);
   const [selectedCandidate, setSelectedCandidate] = useState<CandidateResult | null>(null);
+  const [isChatSearching, setIsChatSearching] = useState(false);
 
   const mutation = useMutation({
     mutationFn: async (payload: SearchCandidatesPayload) => {
@@ -36,12 +37,19 @@ export function useSearchCandidates() {
     },
   });
 
+  function setSearchResults(results: CandidateResult[]) {
+    setCandidates(results);
+    setSelectedCandidate(results[0] ?? null);
+  }
+
   return {
     // Search action
     search: async (query: string) => {
       await mutation.mutateAsync({ query, topK: 10 });
     },
-    isPending: mutation.isPending,
+    setSearchResults,
+    setChatSearching: setIsChatSearching,
+    isPending: mutation.isPending || isChatSearching,
     isError: mutation.isError,
 
     // Results

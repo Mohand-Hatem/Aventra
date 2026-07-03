@@ -10,7 +10,8 @@ import CandidateDetail from "./CandidateDetail";
 export default function CompanySearchSection() {
   const t = useTranslations("candidateSearch");
   const {
-    search,
+    setSearchResults,
+    setChatSearching,
     isPending,
     candidates,
     selectedCandidate,
@@ -35,7 +36,10 @@ export default function CompanySearchSection() {
       <div className="flex min-h-0 flex-1 flex-col gap-6 lg:flex-row lg:gap-8">
         {/* Chat Panel */}
         <div className="flex h-[min(500px,55dvh)] shrink-0 flex-col lg:h-auto lg:w-[420px] xl:w-[480px]">
-          <SearchPanel onSearch={search} />
+          <SearchPanel
+            onSearch={setSearchResults}
+            onSearchingChange={setChatSearching}
+          />
         </div>
 
         {/* Results Panel */}
