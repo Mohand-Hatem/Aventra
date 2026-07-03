@@ -30,9 +30,9 @@ export default function ChatInput({
   }
 
   return (
-    <div className="border-t border-border/80 bg-muted/20 p-4">
+    <div className="space-y-3 p-4">
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2.5">
 
         <Input
           value={message}
@@ -45,20 +45,21 @@ export default function ChatInput({
               handleSend();
             }
           }}
-          className="h-11"
+          className="h-11 rounded-xl border-border/40 bg-card/50 placeholder:text-muted-foreground/60 focus:border-primary/50 focus:bg-card"
         />
 
         <Button
           size="icon"
           disabled={!message.trim() || disabled}
           onClick={handleSend}
+          className="h-11 w-11 rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary dark:from-sky dark:to-sky/80 dark:hover:from-sky/90 dark:hover:to-sky"
         >
           <IconSend2 size={18} />
         </Button>
 
       </div>
 
-      <p className="mt-3 text-center text-[11px] text-muted-foreground">
+      <p className="text-center text-[11px] font-medium text-muted-foreground/70">
         {t("poweredBy")}
       </p>
 

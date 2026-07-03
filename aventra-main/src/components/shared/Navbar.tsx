@@ -17,7 +17,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const userInfo = useAuthStore((state) => state.userInfo);
-  console.log(userInfo);
+  
   const isLoggedIn = !!userInfo;
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
 
@@ -80,7 +80,7 @@ export default function Navbar() {
               width={130}
               height={130}
               priority
-              className="block h-auto dark:hidden md:h-auto md:w-[150px]"
+              className="block h-auto dark:hidden md:h-auto md:w-37.5"
             />
             <Image
               src="/Aventra-logo-white1.png"
@@ -88,7 +88,7 @@ export default function Navbar() {
               width={130}
               height={130}
               priority
-              className="hidden h-auto dark:block md:h-auto md:w-[150px]"
+              className="hidden h-auto dark:block md:h-auto md:w-37.5"
             />
           </Link>
 

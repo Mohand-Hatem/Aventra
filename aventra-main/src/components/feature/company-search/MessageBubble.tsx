@@ -25,9 +25,9 @@ export default function MessageBubble({
       )}
     >
       {!isUser && (
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 dark:bg-sky/10">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 dark:from-sky/20 dark:to-sky/10">
           <IconRobot
-            size={18}
+            size={16}
             className="text-primary dark:text-sky"
           />
         </div>
@@ -35,29 +35,29 @@ export default function MessageBubble({
 
       <div
         className={cn(
-          "max-w-[80%]",
+          "max-w-xs sm:max-w-sm lg:max-w-md",
           isUser && "flex flex-col items-end"
         )}
       >
         <div
           className={cn(
-            "rounded-2xl px-4 py-3 text-sm leading-7 shadow-sm",
+            "rounded-xl px-4 py-2.5 text-sm leading-6 shadow-sm",
             isUser
-              ? "rounded-br-md bg-primary text-primary-foreground"
-              : "rounded-bl-md border border-border bg-card"
+              ? "rounded-br-md bg-gradient-to-r from-primary to-primary/90 text-primary-foreground"
+              : "rounded-bl-md border border-border/40 bg-card/60 text-foreground"
           )}
         >
           {content}
         </div>
 
-        <span className="mt-1 px-1 text-[10px] text-muted-foreground">
+        <span className="mt-1.5 px-1 text-[10px] font-medium text-muted-foreground/60">
           {time}
         </span>
       </div>
 
       {isUser && (
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted">
-          <IconUser size={18} />
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/10">
+          <IconUser size={16} className="text-primary dark:text-sky" />
         </div>
       )}
     </div>
