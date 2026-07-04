@@ -130,11 +130,11 @@ export function ContactForm() {
           {...register("subject")}
           className={cn(fieldClassName(!!errors.subject), "h-12")}
         >
-          <option value="" disabled>
+          <option value="" disabled className="bg-white text-slate-900 dark:bg-[#121821] dark:text-white">
             {t("form.subjectPlaceholder")}
           </option>
           {subjects.map((subject) => (
-            <option key={subject} value={subject}>
+            <option key={subject} value={subject} className="bg-white text-slate-900 dark:bg-[#121821] dark:text-white">
               {subject}
             </option>
           ))}

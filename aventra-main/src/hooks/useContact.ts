@@ -17,13 +17,18 @@ async function sendContactMessage(
     body: JSON.stringify(payload),
   });
 
-  const data = (await response.json()) as ContactResponse;
-
   if (!response.ok) {
-    throw new Error(data.message ?? "Failed to send message");
+    let errorMessage = "Failed to send message";
+    try {
+      const data = (await response.json()) as ContactResponse;
+      errorMessage = data.message ?? errorMessage;
+    } catch {
+      // ignore JSON parse error for non-JSON responses
+    }
+    throw new Error(errorMessage);
   }
 
-  return data;
+  return (await response.json()) as ContactResponse;
 }
 
 export function useContact() {

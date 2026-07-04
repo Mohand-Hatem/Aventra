@@ -84,7 +84,10 @@ function CVAnalysisCard() {
 
   const issues = t.raw("cvCard.issues") as string[];
   const strengths = t.raw("cvCard.strengthsList") as string[];
-  const suggestions = t.raw("cvCard.rewrites") as Array<{ from: string; to: string }>;
+  const suggestions = t.raw("cvCard.rewrites") as Array<{
+    from: string;
+    to: string;
+  }>;
 
   return (
     <div className="w-full max-w-xs overflow-hidden rounded-2xl border border-border/60 bg-card shadow-card dark:border-border/40">
@@ -128,8 +131,12 @@ function CVAnalysisCard() {
               />
             </svg>
             <div className="flex flex-col items-center leading-none">
-              <span className="text-sm font-extrabold text-foreground">{n(68)}</span>
-              <span className="text-[8px] text-muted-foreground">{digits("/100")}</span>
+              <span className="text-sm font-extrabold text-foreground">
+                {n(68)}
+              </span>
+              <span className="text-[8px] text-muted-foreground">
+                {digits("/100")}
+              </span>
             </div>
           </div>
           <div>
@@ -241,7 +248,8 @@ function CandidateSearchCard() {
         {/* filter chips */}
         <div>
           <p className="mb-2 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            <IconAdjustments className="size-3" /> {t("searchCard.smartFilters")}
+            <IconAdjustments className="size-3" />{" "}
+            {t("searchCard.smartFilters")}
           </p>
           <div className="flex flex-wrap gap-1.5">
             {filters.map((filter) => (
@@ -310,8 +318,6 @@ function CandidateSearchCard() {
     </div>
   );
 }
-
-
 
 /* ─────────────────────────────────────────────────────
    Main component
@@ -421,7 +427,7 @@ export default function WhatServe() {
           <div className="relative flex items-center justify-center">
             <div className="relative h-[520px] w-full overflow-hidden rounded-3xl">
               <Image
-                src="/serve1.jfif"
+                src="/serve1.jpg"
                 alt={t("altJobSeeker")}
                 fill
                 className="object-cover object-center"
@@ -450,7 +456,7 @@ export default function WhatServe() {
           <div className="relative flex items-center justify-center order-last lg:order-first">
             <div className="relative h-[520px] w-full overflow-hidden rounded-3xl">
               <Image
-                src="/serve2.jfif"
+                src="/serve2.jpg"
                 alt={t("altHrTeam")}
                 fill
                 className="object-cover object-center"
@@ -535,8 +541,6 @@ export default function WhatServe() {
             </div>
           </div>
         </div>
-
-
       </div>
     </section>
   );

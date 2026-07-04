@@ -20,6 +20,11 @@ const authRoutes = ['/login', '/register'];
 export default async function middleware(request: NextRequest) {
   // ensure decoded pathname for proper locale detection
   const pathname = decodeURIComponent(request.nextUrl.pathname);
+  
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.next();
+  }
+
   const pathnameWithoutLocale = getPathnameWithoutLocale(pathname);
   const token = request.cookies.get('accessToken')?.value;
   const isAuthenticated = !!token;
@@ -61,6 +66,6 @@ export default async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|en/auth/callback|ar/auth/callback|.*\\..*).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|en/auth/callback|ar/auth/callback|.*\\..*).*)',
   ],
 };
