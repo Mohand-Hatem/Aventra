@@ -162,13 +162,19 @@ export function normalizeCandidateResult(
   }
 
   return {
-    ...candidate,
+    cvId: candidate.cvId,
+    userId: "userId" in candidate ? candidate.userId : undefined,
     matchScore: normalizePercent(candidate.matchScore),
     atsScore: normalizePercent(candidate.atsScore),
-    skills: candidate.skills ?? [],
-    summary: candidate.summary ?? "",
-    resumeUrl: candidate.resumeUrl ?? "",
-    resumeFileName: candidate.resumeFileName ?? "",
+    processingStatus: "processingStatus" in candidate ? candidate.processingStatus : undefined,
+    name: "name" in candidate ? candidate.name ?? "" : "",
+    email: "email" in candidate ? candidate.email ?? "" : "",
+    skills: "skills" in candidate ? candidate.skills ?? [] : [],
+    summary: "summary" in candidate ? candidate.summary ?? "" : "",
+    resumeUrl: "resumeUrl" in candidate ? candidate.resumeUrl ?? "" : "",
+    resumeFileName: "resumeFileName" in candidate ? candidate.resumeFileName ?? "" : "",
+    resumeFileType: "resumeFileType" in candidate ? candidate.resumeFileType : undefined,
+    createdAt: "createdAt" in candidate ? candidate.createdAt : undefined,
   };
 }
 
