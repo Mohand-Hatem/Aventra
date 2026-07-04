@@ -123,7 +123,6 @@ export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
       }
 
       void Promise.all([
-        queryClient.invalidateQueries({ queryKey: queryKeys.auth.user }),
         queryClient.invalidateQueries({ queryKey: queryKeys.ai.usage }),
         queryClient.invalidateQueries({ queryKey: queryKeys.company.searchHistory }),
       ]);
@@ -143,7 +142,6 @@ export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
 
       if (tokenLimit) {
         void Promise.all([
-          queryClient.invalidateQueries({ queryKey: queryKeys.auth.user }),
           queryClient.invalidateQueries({ queryKey: queryKeys.ai.usage }),
         ]);
       }

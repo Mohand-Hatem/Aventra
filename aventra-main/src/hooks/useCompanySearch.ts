@@ -44,7 +44,6 @@ export function useSearchCandidates() {
       setCandidates(data);
       setSelectedCandidate(data[0] ?? null);
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: queryKeys.auth.user }),
         queryClient.invalidateQueries({ queryKey: queryKeys.ai.usage }),
         queryClient.invalidateQueries({ queryKey: queryKeys.company.searchHistory }),
       ]);
@@ -55,7 +54,6 @@ export function useSearchCandidates() {
 
       if (tokenLimit) {
         await Promise.all([
-          queryClient.invalidateQueries({ queryKey: queryKeys.auth.user }),
           queryClient.invalidateQueries({ queryKey: queryKeys.ai.usage }),
         ]);
       }

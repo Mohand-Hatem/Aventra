@@ -2,6 +2,8 @@ import PricingSection from "@/components/feature/pricing/PricingSection";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+export const dynamic = "force-static";
+
 type Props = {
   params: Promise<{ locale: string }>;
 };

@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import ChatHeader from "./ChatHeader";
 import WelcomeMessage from "./WelcomeMessage";
 import SuggestedPrompts from "./SuggestedPrompts";
@@ -26,20 +26,9 @@ export default function SearchPanel({
   const { messages, sendMessage, isThinking, isTokenLimitReached, tokenLimitError } =
     useRecruiterChat({ onSearch });
 
-  const bottomRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     onSearchingChange?.(isThinking);
   }, [isThinking, onSearchingChange]);
-
-  // Only scroll when user sends a message (last message is from user)
-  useEffect(() => {
-    if (messages.length > 0 && messages[messages.length - 1]?.role === "user") {
-      setTimeout(() => {
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 50);
-    }
-  }, [messages]);
 
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border/50 bg-linear-to-b from-card to-card/50 shadow-lg">
@@ -68,8 +57,6 @@ export default function SearchPanel({
             ))}
 
             {isThinking && <TypingIndicator />}
-
-            <div ref={bottomRef} />
           </div>
         )}
       </div>

@@ -5,6 +5,8 @@ import GridDescription from "@/components/feature/gridDescription";
 import WhatServe from "@/components/feature/whatServe";
 import SiteStats from "@/components/feature/siteStats";
 
+export const dynamic = "force-static";
+
 export default async function HomePage({
   params,
 }: {

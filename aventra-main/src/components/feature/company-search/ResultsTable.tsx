@@ -86,7 +86,7 @@ export default function ResultsTable({
       .toUpperCase();
   }
 
-  if (isPending) {
+  if (isPending && !candidates.length) {
     return (
       <div className="flex h-full items-center justify-center rounded-2xl border border-border/80 bg-card shadow-card">
         <div className="flex flex-col items-center gap-4 px-6 text-center">
@@ -131,6 +131,12 @@ export default function ResultsTable({
         </p>
 
         <div className="flex items-center gap-2">
+          {isPending ? (
+            <span className="rounded-lg bg-primary/10 px-2.5 py-1 text-[11px] font-medium text-primary dark:bg-sky/10 dark:text-sky">
+              {t("resultsTable.searching")}
+            </span>
+          ) : null}
+
           <button className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted">
             <IconDownload size={13} />
             {t("resultsTable.export")}

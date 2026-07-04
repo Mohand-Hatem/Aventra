@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { ContactPage } from "@/components/feature/contact/ContactPage";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Contact | Aventra",
   description:
