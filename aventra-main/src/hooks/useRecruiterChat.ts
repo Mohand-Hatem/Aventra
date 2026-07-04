@@ -5,16 +5,19 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useTranslations } from "next-intl";
+import { queryKeys } from "@/constants/query-keys";
 import axiosInstance from "@/lib/axios";
 import { useAuthStore } from "@/stores/auth-store";
+import { getApiErrorMessage, getTokenLimitError } from "@/lib/ai-token-limit";
 import {
   normalizeCandidateResults,
   type CandidateResult,
   type SearchCandidatesResponse,
 } from "@/types/company";
+import type { TokenLimitErrorResponse } from "@/types/ai";
 
 export interface ChatMessage {
   id: string;
@@ -25,10 +28,6 @@ export interface ChatMessage {
 
 interface UseRecruiterChatProps {
   onSearch: (results: CandidateResult[]) => void;
-}
-
-interface CompanySearchErrorResponse {
-  message?: string;
 }
 
 const COMPANY_SEARCH_TIMEOUT_MS = 60_000;
@@ -44,19 +43,21 @@ function getCompanySearchErrorMessage(
   error: unknown,
   t: (key: "requestTimedOut" | "somethingWentWrong") => string
 ) {
-  const axiosError = error as AxiosError<CompanySearchErrorResponse>;
+  const axiosError = error as AxiosError;
 
   if (axiosError.code === "ECONNABORTED") {
     return t("requestTimedOut");
   }
 
-  return axiosError.response?.data?.message ?? t("somethingWentWrong");
+  return getApiErrorMessage(error, t("somethingWentWrong"));
 }
 
 export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
+  const queryClient = useQueryClient();
   const t = useTranslations("candidateSearch.assistant");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isThinking, setIsThinking] = useState(false);
+  const [tokenLimitError, setTokenLimitError] = useState<TokenLimitErrorResponse | null>(null);
 
   const chatMutation = useMutation({
     mutationFn: async (message: string) => {
@@ -70,7 +71,7 @@ export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
   });
 
   async function sendMessage(text: string) {
-    if (!text.trim() || isThinking) return;
+    if (!text.trim() || isThinking || !!tokenLimitError) return;
 
     // Check if user is authenticated
     const userInfo = useAuthStore.getState().userInfo;
@@ -105,6 +106,7 @@ export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
 
     try {
       const response = await chatMutation.mutateAsync(text);
+      setTokenLimitError(null);
       let assistantContent: string;
 
       if (response.isGreeting || response.isOffTopic) {
@@ -120,6 +122,12 @@ export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
         onSearch(normalizedResults);
       }
 
+      void Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.auth.user }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.ai.usage }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.company.searchHistory }),
+      ]);
+
       setMessages((prev) => [
         ...prev,
         {
@@ -130,6 +138,16 @@ export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
         },
       ]);
     } catch (error) {
+      const tokenLimit = getTokenLimitError(error);
+      setTokenLimitError(tokenLimit);
+
+      if (tokenLimit) {
+        void Promise.all([
+          queryClient.invalidateQueries({ queryKey: queryKeys.auth.user }),
+          queryClient.invalidateQueries({ queryKey: queryKeys.ai.usage }),
+        ]);
+      }
+
       setMessages((prev) => [
         ...prev,
         {
@@ -148,5 +166,7 @@ export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
     messages,
     sendMessage,
     isThinking,
+    isTokenLimitReached: !!tokenLimitError,
+    tokenLimitError,
   };
 }

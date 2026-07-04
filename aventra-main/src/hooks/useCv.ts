@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useTranslations } from "next-intl";
@@ -5,7 +6,9 @@ import toast from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
 import { queryKeys } from "@/constants/query-keys";
 import { useUser } from "@/hooks/useAuth";
+import { getApiErrorMessage, getTokenLimitError } from "@/lib/ai-token-limit";
 import type { CvAnalysis, CvProcessingStatus, CvScoreBreakdown } from "@/types/cv";
+import type { TokenLimitErrorResponse } from "@/types/ai";
 
 export function useUserCvs() {
   const { data: user, isLoading, isError, isFetching, refetch, error } =
@@ -105,18 +108,38 @@ export function useUploadCv() {
 export function useAnalyzeCv() {
   const queryClient = useQueryClient();
   const t = useTranslations("notifications");
+  const [tokenLimitError, setTokenLimitError] = useState<TokenLimitErrorResponse | null>(null);
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: analyzeUserCv,
     onSuccess: async (payload) => {
-      await queryClient.invalidateQueries({ queryKey: queryKeys.auth.user });
+      setTokenLimitError(null);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.auth.user }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.ai.usage }),
+      ]);
       toast.success(payload?.message ?? t("cv.analyzeStarted"));
     },
-    onError: (err) => {
-      const axiosErr = err as AxiosError<{ message?: string }>;
-      toast.error(axiosErr.response?.data?.message ?? t("cv.analyzeFailed"));
+    onError: async (err) => {
+      const tokenLimit = getTokenLimitError(err);
+      setTokenLimitError(tokenLimit);
+
+      if (tokenLimit) {
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: queryKeys.auth.user }),
+          queryClient.invalidateQueries({ queryKey: queryKeys.ai.usage }),
+        ]);
+      }
+
+      toast.error(getApiErrorMessage(err, t("cv.analyzeFailed")));
     },
   });
+
+  return {
+    ...mutation,
+    isTokenLimitReached: !!tokenLimitError,
+    tokenLimitError,
+  };
 }
 
 export function useDeleteCv() {

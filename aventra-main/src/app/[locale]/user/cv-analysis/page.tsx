@@ -624,7 +624,7 @@ export default function CVAnalysisPage() {
   };
 
   const handleAnalyze = () => {
-    if (!readyToAnalyzeCvId || analyzeCv.isPending) return;
+    if (!readyToAnalyzeCvId || analyzeCv.isPending || analyzeCv.isTokenLimitReached) return;
 
     analyzeCv.mutate(readyToAnalyzeCvId, {
       onSuccess: async (payload) => {
@@ -769,7 +769,12 @@ export default function CVAnalysisPage() {
                     size="lg"
                     className="h-12 rounded-2xl"
                     onClick={handleAnalyze}
-                    disabled={!readyToAnalyzeCvId || uploadCv.isPending || analyzeCv.isPending}
+                    disabled={
+                      !readyToAnalyzeCvId ||
+                      uploadCv.isPending ||
+                      analyzeCv.isPending ||
+                      analyzeCv.isTokenLimitReached
+                    }
                   >
                     {analyzeCv.isPending || isAwaitingAnalysis ? (
                       <>
@@ -784,6 +789,12 @@ export default function CVAnalysisPage() {
                     )}
                   </Button>
                 </div>
+
+                {analyzeCv.tokenLimitError?.message ? (
+                  <p className="text-sm text-destructive">
+                    {analyzeCv.tokenLimitError.message}
+                  </p>
+                ) : null}
 
                 {sortedCvs.length > 0 ? (
                   <div className="space-y-3 rounded-2xl border border-border/60 bg-background/55 p-4">

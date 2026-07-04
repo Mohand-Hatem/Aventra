@@ -5,7 +5,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useTranslations } from "next-intl";
 import ChatHeader from "./ChatHeader";
 import WelcomeMessage from "./WelcomeMessage";
 import SuggestedPrompts from "./SuggestedPrompts";
@@ -24,9 +23,8 @@ export default function SearchPanel({
   onSearch,
   onSearchingChange,
 }: SearchPanelProps) {
-  const t = useTranslations("candidateSearch.assistant");
-
-  const { messages, sendMessage, isThinking } = useRecruiterChat({ onSearch });
+  const { messages, sendMessage, isThinking, isTokenLimitReached, tokenLimitError } =
+    useRecruiterChat({ onSearch });
 
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -44,7 +42,7 @@ export default function SearchPanel({
   }, [messages]);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-b from-card to-card/50 shadow-lg">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border/50 bg-linear-to-b from-card to-card/50 shadow-lg">
 
       <ChatHeader />
 
@@ -53,7 +51,7 @@ export default function SearchPanel({
           <div className="flex h-full flex-col items-center justify-center space-y-6">
             <WelcomeMessage />
             <div className="w-full">
-              <SuggestedPrompts onSelect={sendMessage} />
+              <SuggestedPrompts onSelect={sendMessage} disabled={isTokenLimitReached} />
             </div>
           </div>
         )}
@@ -76,8 +74,13 @@ export default function SearchPanel({
         )}
       </div>
 
-      <div className="border-t border-border/30 bg-gradient-to-t from-muted/40 to-transparent">
-        <ChatInput onSend={sendMessage} disabled={isThinking} />
+      <div className="border-t border-border/30 bg-linear-to-t from-muted/40 to-transparent">
+        {tokenLimitError?.message ? (
+          <p className="px-4 pt-4 text-center text-xs text-destructive">
+            {tokenLimitError.message}
+          </p>
+        ) : null}
+        <ChatInput onSend={sendMessage} disabled={isThinking || isTokenLimitReached} />
       </div>
     </div>
   );

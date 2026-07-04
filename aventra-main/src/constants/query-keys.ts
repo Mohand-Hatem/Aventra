@@ -1,4 +1,7 @@
 export const queryKeys = {
+  ai: {
+    usage: ["ai", "usage"] as const,
+  },
   auth: {
     user: ["user"] as const,
   },

@@ -12,6 +12,7 @@ import {
   IconStar,
   IconUsers,
 } from "@tabler/icons-react";
+import { useAiUsage } from "@/hooks/useAiUsage";
 import { useUser } from "@/hooks/useAuth";
 import { useCompanySearchHistory } from "@/hooks/useCompanySearchHistory";
 import { useUpdateUserProfile } from "@/hooks/useProfile";
@@ -112,6 +113,7 @@ function CompanySummaryPanel({
   tokenUsage,
   maxToken,
   tokenPercent,
+  progressTokenPercent,
   searchCount,
   candidatesFound,
   locale,
@@ -126,6 +128,7 @@ function CompanySummaryPanel({
   tokenUsage: number;
   maxToken: number;
   tokenPercent: number;
+  progressTokenPercent: number;
   searchCount: number;
   candidatesFound: number;
   locale: string;
@@ -188,7 +191,7 @@ function CompanySummaryPanel({
                 <span className="text-muted-foreground">{tokenPercent}%</span>
               </div>
               <div className="relative">
-                <Progress value={tokenPercent} className="h-3 bg-muted/60" />
+                <Progress value={progressTokenPercent} className="h-3 bg-muted/60" />
                 <span className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-primary-foreground mix-blend-difference">
                   {tokenPercent}%
                 </span>
@@ -201,7 +204,7 @@ function CompanySummaryPanel({
                 <span className="text-muted-foreground">{planLabel}</span>
               </div>
               <Progress
-                value={maxToken > 0 ? tokenPercent : 0}
+                value={maxToken > 0 ? progressTokenPercent : 0}
                 className="h-3 bg-muted/60 [&>div]:bg-violet-500 dark:[&>div]:bg-violet-400"
               />
             </div>
@@ -266,6 +269,7 @@ export function CompanyProfile() {
   const [selectedCandidate, setSelectedCandidate] = useState<CandidateResult | null>(null);
 
   const { data: user, isLoading, isFetching, isError } = useUser();
+  const { data: aiUsage } = useAiUsage({ enabled: !!user });
   const { data: searchHistoryData, isLoading: isHistoryLoading } =
     useCompanySearchHistory();
   const { mutate: updateProfile, isPending, uploadProgress } =
@@ -362,10 +366,16 @@ export function CompanyProfile() {
     [searches],
   );
 
-  const tokenUsage = user?.tokenUsage ?? 0;
-  const maxToken = user?.maxToken ?? 0;
-  const tokenPercent =
-    maxToken > 0 ? Math.min(100, Math.round((tokenUsage / maxToken) * 100)) : 0;
+  const tokenUsage = aiUsage?.tokenUsage ?? user?.tokenUsage ?? 0;
+  const maxToken = aiUsage?.maxToken ?? user?.maxToken ?? 0;
+  const tokenPercent = Math.max(
+    0,
+    Math.round(
+      aiUsage?.tokenUsagePercent ??
+        (maxToken > 0 ? (tokenUsage / maxToken) * 100 : 0)
+    )
+  );
+  const progressTokenPercent = Math.min(100, tokenPercent);
 
   const planKey = user?.plan?.toLowerCase();
   const planLabel =
@@ -466,6 +476,7 @@ export function CompanyProfile() {
           tokenUsage={tokenUsage}
           maxToken={maxToken}
           tokenPercent={tokenPercent}
+          progressTokenPercent={progressTokenPercent}
           searchCount={searchCount}
           candidatesFound={candidatesFound}
           locale={locale}

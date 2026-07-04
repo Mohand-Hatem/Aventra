@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 
 interface Props {
   onSelect: (value: string) => void;
+  disabled?: boolean;
 }
 
 const prompts = [
@@ -17,6 +18,7 @@ const prompts = [
 
 export default function SuggestedPrompts({
   onSelect,
+  disabled = false,
 }: Props) {
 
   const t = useTranslations("candidateSearch.assistant");
@@ -28,10 +30,11 @@ export default function SuggestedPrompts({
 
         <button
           key={key}
+          disabled={disabled}
           onClick={() => {
-    void onSelect(t(`suggestions.${key}`));
-}}
-          className="flex w-full items-center gap-3 rounded-xl border border-border/70 bg-background/80 p-3 text-left transition-all hover:border-primary/30 hover:bg-muted/60 hover:shadow-sm dark:hover:border-sky/30"
+            void onSelect(t(`suggestions.${key}`));
+          }}
+          className="flex w-full items-center gap-3 rounded-xl border border-border/70 bg-background/80 p-3 text-left transition-all hover:border-primary/30 hover:bg-muted/60 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-50 dark:hover:border-sky/30"
         >
           <IconSparkles
             size={18}

@@ -19,6 +19,7 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { useUser } from "@/hooks/useAuth";
+import { useAiUsage } from "@/hooks/useAiUsage";
 import { useDeleteCv, useUploadCv, useUserCvs } from "@/hooks/useCv";
 import { useUpdateUserProfile } from "@/hooks/useProfile";
 import { PLANS } from "@/constants/plans";
@@ -284,6 +285,7 @@ function ProfileSummaryPanel({
   tokenUsage,
   maxToken,
   tokenPercent,
+  progressTokenPercent,
   cvCount,
   atsScore,
   locale,
@@ -298,6 +300,7 @@ function ProfileSummaryPanel({
   tokenUsage: number;
   maxToken: number;
   tokenPercent: number;
+  progressTokenPercent: number;
   cvCount: number;
   atsScore: string;
   locale: string;
@@ -360,7 +363,7 @@ function ProfileSummaryPanel({
                 <span className="text-muted-foreground">{tokenPercent}%</span>
               </div>
               <div className="relative">
-                <Progress value={tokenPercent} className="h-3 bg-muted/60" />
+                <Progress value={progressTokenPercent} className="h-3 bg-muted/60" />
                 <span className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-primary-foreground mix-blend-difference">
                   {tokenPercent}%
                 </span>
@@ -373,7 +376,7 @@ function ProfileSummaryPanel({
                 <span className="text-muted-foreground">{planLabel}</span>
               </div>
               <Progress
-                value={maxToken > 0 ? tokenPercent : 0}
+                value={maxToken > 0 ? progressTokenPercent : 0}
                 className="h-3 bg-muted/60 [&>div]:bg-violet-500 dark:[&>div]:bg-violet-400"
               />
             </div>
@@ -396,6 +399,7 @@ export function UserProfile() {
   const [pendingDeleteCv, setPendingDeleteCv] = useState<UserCv | null>(null);
 
   const { data: user, isLoading, isFetching, isError } = useUser();
+  const { data: aiUsage } = useAiUsage({ enabled: !!user });
   const { data: cvs = [], isLoading: isCvsLoading } = useUserCvs();
   const { mutate: updateProfile, isPending, uploadProgress } =
     useUpdateUserProfile();
@@ -465,10 +469,16 @@ export function UserProfile() {
     });
   }, [cvs]);
 
-  const tokenUsage = user?.tokenUsage ?? 0;
-  const maxToken = user?.maxToken ?? 0;
-  const tokenPercent =
-    maxToken > 0 ? Math.min(100, Math.round((tokenUsage / maxToken) * 100)) : 0;
+  const tokenUsage = aiUsage?.tokenUsage ?? user?.tokenUsage ?? 0;
+  const maxToken = aiUsage?.maxToken ?? user?.maxToken ?? 0;
+  const tokenPercent = Math.max(
+    0,
+    Math.round(
+      aiUsage?.tokenUsagePercent ??
+        (maxToken > 0 ? (tokenUsage / maxToken) * 100 : 0)
+    )
+  );
+  const progressTokenPercent = Math.min(100, tokenPercent);
 
   const planKey = user?.plan?.toLowerCase();
   const planLabel =
@@ -613,6 +623,7 @@ export function UserProfile() {
           tokenUsage={tokenUsage}
           maxToken={maxToken}
           tokenPercent={tokenPercent}
+          progressTokenPercent={progressTokenPercent}
           cvCount={cvs.length}
           atsScore={selectedAtsScore}
           locale={locale}
