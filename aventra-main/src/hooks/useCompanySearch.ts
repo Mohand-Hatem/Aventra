@@ -11,11 +11,14 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axios";
+import { normalizeCandidateResults } from "@/types/company";
 import type {
   CandidateResult,
   SearchCandidatesResponse,
   SearchCandidatesPayload,
 } from "@/types/company";
+
+const COMPANY_SEARCH_TIMEOUT_MS = 60_000;
 
 export function useSearchCandidates() {
   const [candidates, setCandidates] = useState<CandidateResult[]>([]);
@@ -26,13 +29,13 @@ export function useSearchCandidates() {
     mutationFn: async (payload: SearchCandidatesPayload) => {
       const { data } = await axiosInstance.post<SearchCandidatesResponse>(
         "/company/search",
-        payload
+        payload,
+        { timeout: COMPANY_SEARCH_TIMEOUT_MS }
       );
-      return data.data.candidates;
+      return normalizeCandidateResults(data.results);
     },
     onSuccess: (data) => {
       setCandidates(data);
-      // لو في نتايج، اختار الأول تلقائياً
       setSelectedCandidate(data[0] ?? null);
     },
   });
@@ -43,21 +46,18 @@ export function useSearchCandidates() {
   }
 
   return {
-    // Search action
     search: async (query: string) => {
-      await mutation.mutateAsync({ query, topK: 10 });
+      await mutation.mutateAsync({ message: query });
     },
     setSearchResults,
     setChatSearching: setIsChatSearching,
     isPending: mutation.isPending || isChatSearching,
     isError: mutation.isError,
 
-    // Results
     candidates,
     total: candidates.length,
     hasResults: candidates.length > 0,
 
-    // Selected candidate for CVViewer
     selectedCandidate,
     setSelectedCandidate,
   };

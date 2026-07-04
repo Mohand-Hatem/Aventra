@@ -8,9 +8,9 @@
 
 import { useState } from "react";
 import { IconDownload, IconFilter, IconEye, IconUsers } from "@tabler/icons-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import type { CandidateResult } from "@/types/company";
+import { getLocalizedCandidateName, type CandidateResult } from "@/types/company";
 
 const PAGE_SIZE = 5;
 
@@ -61,19 +61,20 @@ export default function ResultsTable({
   isPending,
 }: ResultsTableProps) {
   const t = useTranslations("candidateSearch");
+  const locale = useLocale();
 
   const [page, setPage] = useState(1);
 
-  const totalPages = Math.ceil(candidates.length / PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(candidates.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
 
   const paginated = candidates.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
   );
 
   function getName(c: CandidateResult) {
-    if (typeof c.user.name === "string") return c.user.name;
-    return c.user.name?.en ?? t("candidateDetail.unknown");
+    return getLocalizedCandidateName(c.name, locale, t("candidateDetail.unknown"));
   }
 
   function getInitials(name: string) {
@@ -177,7 +178,7 @@ export default function ResultsTable({
 
           <tbody>
             {paginated.map((c, idx) => {
-              const rank = (page - 1) * PAGE_SIZE + idx + 1;
+              const rank = (currentPage - 1) * PAGE_SIZE + idx + 1;
               const name = getName(c);
               const initials = getInitials(name);
               const isSelected = selectedCandidate?.cvId === c.cvId;
@@ -205,9 +206,9 @@ export default function ResultsTable({
 
                       <div>
                         <p className="font-medium text-foreground">{name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {c.user.email}
-                        </p>
+                        {c.email ? (
+                          <p className="text-xs text-muted-foreground">{c.email}</p>
+                        ) : null}
                       </div>
                     </div>
                   </td>
@@ -240,10 +241,12 @@ export default function ResultsTable({
                   </td>
 
                   <td className="px-4 py-3 text-xs text-muted-foreground">
-                    {new Date(c.createdAt).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })}
+                    {c.createdAt
+                      ? new Date(c.createdAt).toLocaleDateString(locale, {
+                          month: "short",
+                          day: "numeric",
+                        })
+                      : "—"}
                   </td>
 
                   <td className="px-3 py-3">
@@ -263,9 +266,9 @@ export default function ResultsTable({
         <div className="flex items-center justify-between border-t border-border px-5 py-3">
           <p className="text-xs text-muted-foreground">
             {t("resultsTable.showing")}{" "}
-            {(page - 1) * PAGE_SIZE + 1}{" "}
+            {(currentPage - 1) * PAGE_SIZE + 1}{" "}
             {t("resultsTable.to")}{" "}
-            {Math.min(page * PAGE_SIZE, candidates.length)}{" "}
+            {Math.min(currentPage * PAGE_SIZE, candidates.length)}{" "}
             {t("resultsTable.of")}{" "}
             {candidates.length}{" "}
             {t("resultsTable.results")}
@@ -274,7 +277,7 @@ export default function ResultsTable({
           <div className="flex items-center gap-1">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
+              disabled={currentPage === 1}
               className="rounded-lg border border-border px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted disabled:opacity-40"
             >
               ‹
@@ -286,7 +289,7 @@ export default function ResultsTable({
                 onClick={() => setPage(p)}
                 className={cn(
                   "h-7 w-7 rounded-lg text-xs font-medium transition-colors",
-                  page === p
+                  currentPage === p
                     ? "bg-primary dark:bg-sky text-white"
                     : "border border-border text-muted-foreground hover:bg-muted"
                 )}
@@ -297,7 +300,7 @@ export default function ResultsTable({
 
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
+              disabled={currentPage === totalPages}
               className="rounded-lg border border-border px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted disabled:opacity-40"
             >
               ›

@@ -25,6 +25,7 @@ export interface CvAnalysis {
 export interface UserCv {
   _id?: string;
   id?: string;
+  status?: CvProcessingStatus;
   originalFile?: {
     url?: string;
     fileName?: string;
@@ -35,6 +36,9 @@ export interface UserCv {
   processingStatus?: CvProcessingStatus;
   atsScore?: number;
   scoreBreakdown?: CvScoreBreakdown;
+  fileType?: "pdf" | "doc" | "docx" | string;
+  fileName?: string;
+  fileSize?: number;
   filename?: string;
   name?: string;
   originalName?: string;
@@ -45,6 +49,7 @@ export interface UserCv {
   description?: string;
   analysis?: CvAnalysis;
   aiAnalysis?: CvAnalysis;
+  uploadedAt?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -135,13 +140,78 @@ export function normalizeUserCv(cv: unknown): UserCv {
     cv.atsScore ?? cv.ats_score ?? analysis?.atsScore,
   );
 
+  const fileUrl =
+    typeof cv.url === "string"
+      ? cv.url
+      : typeof cv.fileUrl === "string"
+        ? cv.fileUrl
+        : typeof cv.file === "string"
+          ? cv.file
+          : undefined;
+
+  const fileName =
+    typeof cv.fileName === "string"
+      ? cv.fileName
+      : typeof cv.filename === "string"
+        ? cv.filename
+        : typeof cv.name === "string"
+          ? cv.name
+          : typeof cv.originalName === "string"
+            ? cv.originalName
+            : undefined;
+
+  const fileType =
+    typeof cv.fileType === "string" ? cv.fileType : undefined;
+
+  const fileSize =
+    typeof cv.fileSize === "number" ? cv.fileSize : undefined;
+
+  const uploadedAt =
+    typeof cv.uploadedAt === "string" ? cv.uploadedAt : undefined;
+
+  const processingStatus = (cv.processingStatus ?? cv.status) as
+    | CvProcessingStatus
+    | undefined;
+
   return {
     ...(cv as UserCv),
     atsScore,
     scoreBreakdown: normalizeScoreBreakdown(cv.scoreBreakdown),
     analysis,
     aiAnalysis: analysis,
-    processingStatus: cv.processingStatus as CvProcessingStatus | undefined,
+    processingStatus,
+    status: processingStatus,
+    uploadedAt,
+    originalFile: {
+      url:
+        (isRecord(cv.originalFile) && typeof cv.originalFile.url === "string"
+          ? cv.originalFile.url
+          : undefined) ?? fileUrl,
+      fileName:
+        (isRecord(cv.originalFile) &&
+        typeof cv.originalFile.fileName === "string"
+          ? cv.originalFile.fileName
+          : undefined) ?? fileName,
+      fileType:
+        (isRecord(cv.originalFile) &&
+        typeof cv.originalFile.fileType === "string"
+          ? cv.originalFile.fileType
+          : undefined) ?? fileType,
+      fileSize:
+        (isRecord(cv.originalFile) &&
+        typeof cv.originalFile.fileSize === "number"
+          ? cv.originalFile.fileSize
+          : undefined) ?? fileSize,
+      publicId:
+        isRecord(cv.originalFile) &&
+        typeof cv.originalFile.publicId === "string"
+          ? cv.originalFile.publicId
+          : undefined,
+    },
+    createdAt:
+      typeof cv.createdAt === "string"
+        ? cv.createdAt
+        : uploadedAt ?? undefined,
   };
 }
 

@@ -6,9 +6,15 @@
 
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { useTranslations } from "next-intl";
 import axiosInstance from "@/lib/axios";
 import { useAuthStore } from "@/stores/auth-store";
-import type { CandidateResult } from "@/types/company";
+import {
+  normalizeCandidateResults,
+  type CandidateResult,
+  type SearchCandidatesResponse,
+} from "@/types/company";
 
 export interface ChatMessage {
   id: string;
@@ -17,19 +23,15 @@ export interface ChatMessage {
   createdAt: string;
 }
 
-interface ChatResponse {
-  success: boolean;
-  query: string;
-  isGreeting: boolean;
-  isOffTopic: boolean;
-  message?: string;  // Only present for greeting/off-topic
-  results?: CandidateResult[];  // Only present for search
-  resultsCount?: number;
-}
-
 interface UseRecruiterChatProps {
   onSearch: (results: CandidateResult[]) => void;
 }
+
+interface CompanySearchErrorResponse {
+  message?: string;
+}
+
+const COMPANY_SEARCH_TIMEOUT_MS = 60_000;
 
 function getCurrentTime() {
   return new Date().toLocaleTimeString([], {
@@ -38,15 +40,31 @@ function getCurrentTime() {
   });
 }
 
+function getCompanySearchErrorMessage(
+  error: unknown,
+  t: (key: "requestTimedOut" | "somethingWentWrong") => string
+) {
+  const axiosError = error as AxiosError<CompanySearchErrorResponse>;
+
+  if (axiosError.code === "ECONNABORTED") {
+    return t("requestTimedOut");
+  }
+
+  return axiosError.response?.data?.message ?? t("somethingWentWrong");
+}
+
 export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
+  const t = useTranslations("candidateSearch.assistant");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isThinking, setIsThinking] = useState(false);
 
   const chatMutation = useMutation({
     mutationFn: async (message: string) => {
-      const { data } = await axiosInstance.post<ChatResponse>("/company/search", {
-        message,
-      });
+      const { data } = await axiosInstance.post<SearchCandidatesResponse>(
+        "/company/search",
+        { message },
+        { timeout: COMPANY_SEARCH_TIMEOUT_MS }
+      );
       return data;
     },
   });
@@ -68,7 +86,7 @@ export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
         {
           id: crypto.randomUUID(),
           role: "assistant",
-          content: "Please login to use the chat assistant.",
+          content: t("loginRequired"),
           createdAt: getCurrentTime(),
         },
       ]);
@@ -86,29 +104,22 @@ export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
     setIsThinking(true);
 
     try {
-     
       const response = await chatMutation.mutateAsync(text);
-
-      
       let assistantContent: string;
 
       if (response.isGreeting || response.isOffTopic) {
-        
-        assistantContent = response.message || "I'm here to help. How can I assist you?";
+        assistantContent = response.message || t("replies.greeting");
       } else {
-        
-        const resultsCount = response.results?.length || 0;
-        assistantContent = resultsCount > 0
-          ? `Found ${resultsCount} matching candidate(s).`
-          : "No matching candidates found.";
+        const normalizedResults = normalizeCandidateResults(response.results);
+        const resultsCount = response.resultsCount ?? normalizedResults.length;
+        assistantContent =
+          resultsCount > 0
+            ? t("resultsFound", { count: resultsCount })
+            : t("noMatches");
 
-    
-        if (response.results) {
-          onSearch(response.results);
-        }
+        onSearch(normalizedResults);
       }
 
-      // 4. Add assistant message
       setMessages((prev) => [
         ...prev,
         {
@@ -124,7 +135,7 @@ export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
         {
           id: crypto.randomUUID(),
           role: "assistant",
-          content: "Sorry, something went wrong. Please try again.",
+          content: getCompanySearchErrorMessage(error, t),
           createdAt: getCurrentTime(),
         },
       ]);

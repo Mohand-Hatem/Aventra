@@ -1,6 +1,6 @@
-
-
+import RequireRole from "@/components/auth/RequireRole";
 import CompanySearchSection from "@/components/feature/company-search/CompanySearchSection";
+import { ROLES } from "@/constants/roles";
 
 export const metadata = {
   title: "Candidate Search — Aventra",
@@ -8,5 +8,9 @@ export const metadata = {
 };
 
 export default function CompanySearchPage() {
-  return <CompanySearchSection />;
+  return (
+    <RequireRole allowedRoles={[ROLES.company, ROLES.admin]}>
+      <CompanySearchSection />
+    </RequireRole>
+  );
 }

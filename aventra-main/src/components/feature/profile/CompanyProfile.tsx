@@ -42,6 +42,9 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
+const EMPTY_SEARCH_HISTORY: SearchHistoryEntry[] = [];
+const EMPTY_CANDIDATES: CandidateResult[] = [];
+
 function getInitials(name: string) {
   const trimmed = name.trim();
   if (!trimmed) return "?";
@@ -268,8 +271,8 @@ export function CompanyProfile() {
   const { mutate: updateProfile, isPending, uploadProgress } =
     useUpdateUserProfile();
 
-  const searches = searchHistoryData?.searches ?? [];
-  const searchCount = user?.searchCount ?? searchHistoryData?.totalSearches ?? 0;
+  const searches = searchHistoryData?.searches ?? EMPTY_SEARCH_HISTORY;
+  const searchCount = searchHistoryData?.totalSearches ?? user?.searchCount ?? 0;
 
   const profileSchema = useMemo(
     () =>
@@ -338,7 +341,7 @@ export function CompanyProfile() {
     [searches, selectedHistoryId],
   );
 
-  const historyCandidates = selectedHistory?.candidates ?? [];
+  const historyCandidates = selectedHistory?.candidates ?? EMPTY_CANDIDATES;
 
   useEffect(() => {
     if (historyCandidates.length === 0) {

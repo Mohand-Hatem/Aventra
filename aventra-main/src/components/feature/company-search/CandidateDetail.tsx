@@ -6,10 +6,10 @@
  */
 
 "use client";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { IconDownload, IconSparkles } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import type { CandidateResult } from "@/types/company";
+import { getLocalizedCandidateName, type CandidateResult } from "@/types/company";
 
 interface CandidateDetailProps {
   candidate: CandidateResult;
@@ -35,10 +35,12 @@ function ScoreBox({ value, label }: { value: number; label: string }) {
 
 export default function CandidateDetail({ candidate }: CandidateDetailProps) {
   const t = useTranslations("candidateSearch");
-  const name =
-    typeof candidate.user.name === "string"
-      ? candidate.user.name
-      : (candidate.user.name as { en: string })?.en ?? t("candidateDetail.unknown");;
+  const locale = useLocale();
+  const name = getLocalizedCandidateName(
+    candidate.name,
+    locale,
+    t("candidateDetail.unknown")
+  );
 
   const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
@@ -55,7 +57,9 @@ export default function CandidateDetail({ candidate }: CandidateDetailProps) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-foreground">{name}</p>
-            <p className="text-sm text-muted-foreground">{candidate.user.email}</p>
+            {candidate.email ? (
+              <p className="text-sm text-muted-foreground">{candidate.email}</p>
+            ) : null}
           </div>
           <div className="flex gap-3 shrink-0">
             <ScoreBox value={candidate.matchScore} label={t("candidateDetail.matchScore")} />
@@ -101,8 +105,8 @@ export default function CandidateDetail({ candidate }: CandidateDetailProps) {
   {t("candidateDetail.resumePreview")}
 </p>
           <a
-            href={candidate.originalFile.url}
-            download={candidate.originalFile.fileName}
+            href={candidate.resumeUrl}
+            download={candidate.resumeFileName}
             className="flex items-center gap-1.5 rounded-lg bg-primary dark:bg-sky px-3 py-1.5 text-xs font-medium text-white hover:opacity-90 transition-opacity"
           >
             <IconDownload size={12} />
@@ -110,15 +114,15 @@ export default function CandidateDetail({ candidate }: CandidateDetailProps) {
           </a>
         </div>
         <div className="flex-1 overflow-hidden">
-          {candidate.originalFile.url ? (
+          {candidate.resumeUrl ? (
             <iframe
-              src={`${candidate.originalFile.url}#toolbar=0`}
+              src={`${candidate.resumeUrl}#toolbar=0`}
               className="h-full w-full border-0"
              title={t("candidateDetail.resumePreview")}
             />
           ) : (
             <div className="flex h-full items-center justify-center">
-              <p className="text-sm text-muted-foreground">{t("candidateDetail.noPreviewAvailable")}</p>
+              <p className="text-sm text-muted-foreground">{t("candidateDetail.noPreview")}</p>
             </div>
           )}
         </div>

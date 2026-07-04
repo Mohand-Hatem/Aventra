@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
 import { queryKeys } from "@/constants/query-keys";
 import { useUser } from "@/hooks/useAuth";
+import type { CvAnalysis, CvProcessingStatus, CvScoreBreakdown } from "@/types/cv";
 
 export function useUserCvs() {
   const { data: user, isLoading, isError, isFetching, refetch, error } =
@@ -20,14 +21,67 @@ export function useUserCvs() {
   };
 }
 
+export type UploadCvResponse = {
+  success?: boolean;
+  message?: string;
+  data?: {
+    id?: string;
+    url?: string;
+    fileType?: string;
+    fileName?: string;
+    fileSize?: number;
+    status?: CvProcessingStatus;
+    uploadedAt?: string;
+  };
+};
+
+export type AnalyzeCvResponse = {
+  success?: boolean;
+  message?: string;
+  report?: {
+    atsScore?: number;
+    scoreBreakdown?: CvScoreBreakdown;
+    parsedData?: unknown;
+    aiAnalysis?: CvAnalysis;
+  };
+  usage?: {
+    promptTokens?: number;
+    completionTokens?: number;
+    totalTokens?: number;
+    responseTimeMs?: number;
+  };
+};
+
+export type DeleteCvResponse = {
+  success?: boolean;
+  message?: string;
+};
+
 async function uploadUserCv(file: File) {
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await axiosInstance.post("/users/upload-file", formData, {
+  const response = await axiosInstance.post<UploadCvResponse>("/cv/upload", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 
+  return response.data;
+}
+
+async function analyzeUserCv(cvId: string) {
+  const response = await axiosInstance.post<AnalyzeCvResponse>(
+    `/analyze/${cvId}`,
+    undefined,
+    {
+      // CV analysis can take tens of seconds; override the default 10s timeout.
+      timeout: 120000,
+    },
+  );
+  return response.data;
+}
+
+async function deleteUserCv(cvId: string) {
+  const response = await axiosInstance.delete<DeleteCvResponse>(`/cv/${cvId}`);
   return response.data;
 }
 
@@ -44,6 +98,40 @@ export function useUploadCv() {
     onError: (err) => {
       const axiosErr = err as AxiosError<{ message?: string }>;
       toast.error(axiosErr.response?.data?.message ?? t("cv.uploadFailed"));
+    },
+  });
+}
+
+export function useAnalyzeCv() {
+  const queryClient = useQueryClient();
+  const t = useTranslations("notifications");
+
+  return useMutation({
+    mutationFn: analyzeUserCv,
+    onSuccess: async (payload) => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.auth.user });
+      toast.success(payload?.message ?? t("cv.analyzeStarted"));
+    },
+    onError: (err) => {
+      const axiosErr = err as AxiosError<{ message?: string }>;
+      toast.error(axiosErr.response?.data?.message ?? t("cv.analyzeFailed"));
+    },
+  });
+}
+
+export function useDeleteCv() {
+  const queryClient = useQueryClient();
+  const t = useTranslations("notifications");
+
+  return useMutation({
+    mutationFn: deleteUserCv,
+    onSuccess: async (payload) => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.auth.user });
+      toast.success(payload?.message ?? t("cv.deleteSuccess"));
+    },
+    onError: (err) => {
+      const axiosErr = err as AxiosError<{ message?: string }>;
+      toast.error(axiosErr.response?.data?.message ?? t("cv.deleteFailed"));
     },
   });
 }

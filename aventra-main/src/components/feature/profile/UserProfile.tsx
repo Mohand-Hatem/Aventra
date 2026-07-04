@@ -13,12 +13,13 @@ import {
   IconMail,
   IconSparkles,
   IconStar,
+  IconTrash,
   IconTrendingUp,
   IconUpload,
   IconUser,
 } from "@tabler/icons-react";
 import { useUser } from "@/hooks/useAuth";
-import { useUploadCv, useUserCvs } from "@/hooks/useCv";
+import { useDeleteCv, useUploadCv, useUserCvs } from "@/hooks/useCv";
 import { useUpdateUserProfile } from "@/hooks/useProfile";
 import { PLANS } from "@/constants/plans";
 import { getUserDisplayName, normalizeLocalizedName } from "@/types/auth";
@@ -40,6 +41,17 @@ import {
 import { AtsScoreChart } from "@/components/feature/profile/AtsScoreChart";
 import { CvInsightDialog } from "@/components/feature/profile/CvInsightDialog";
 import { ProfilePageSkeleton } from "@/components/feature/profile/ProfilePageSkeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScaleLoader } from "@/components/shared/scale-loader";
 import { Badge } from "@/components/ui/badge";
@@ -77,6 +89,32 @@ function formatDate(value: string | undefined, locale: string) {
   return new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",
   }).format(date);
+}
+
+function hasCvAnalysisResults(cv: UserCv | null) {
+  if (!cv) return false;
+
+  const analysis = getCvAnalysis(cv);
+  return (
+    cv.processingStatus === "analyzed" ||
+    getCvAtsScore(cv) !== undefined ||
+    Boolean(analysis.summary) ||
+    analysis.strengths.length > 0 ||
+    analysis.weaknesses.length > 0 ||
+    analysis.suggestions.length > 0
+  );
+}
+
+function getCvAnalysisStateMessage(
+  cv: UserCv | null,
+  t: ReturnType<typeof useTranslations<"profile">>,
+) {
+  if (!cv) return t("noAnalysisYet");
+  if (cv.processingStatus === "processing") return t("processingCv");
+  if (cv.processingStatus === "uploaded" || cv.processingStatus === "failed") {
+    return t("notAnalyzedYet");
+  }
+  return null;
 }
 
 function inputClassName(hasError?: boolean) {
@@ -355,12 +393,15 @@ export function UserProfile() {
   const cvInputRef = useRef<HTMLInputElement>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [selectedCvId, setSelectedCvId] = useState<string | null>(null);
+  const [pendingDeleteCv, setPendingDeleteCv] = useState<UserCv | null>(null);
 
   const { data: user, isLoading, isFetching, isError } = useUser();
   const { data: cvs = [], isLoading: isCvsLoading } = useUserCvs();
   const { mutate: updateProfile, isPending, uploadProgress } =
     useUpdateUserProfile();
   const { mutate: uploadCv, isPending: isUploading } = useUploadCv();
+  const { mutateAsync: deleteCv, isPending: isDeletingCv, variables: deletingCvId } =
+    useDeleteCv();
 
   const displayName = user ? getUserDisplayName(user.name, locale) : "";
 
@@ -449,6 +490,25 @@ export function UserProfile() {
 
   const selectedAts = selectedCv ? getCvAtsScore(selectedCv) : undefined;
   const selectedAtsScore = selectedAts !== undefined ? String(selectedAts) : "—";
+  const selectedCvStateMessage = getCvAnalysisStateMessage(selectedCv, t);
+  const pendingDeleteCvId = pendingDeleteCv?._id ?? pendingDeleteCv?.id ?? null;
+  const pendingDeleteCvTitle = pendingDeleteCv ? getCvTitle(pendingDeleteCv) : "";
+  const deleteCvDescription = t.has("deleteCvDescription")
+    ? t("deleteCvDescription", { title: pendingDeleteCvTitle })
+    : locale === "ar"
+      ? `سيتم حذف "${pendingDeleteCvTitle}" نهائيًا من حسابك. لا يمكن التراجع عن هذا الإجراء.`
+      : `"${pendingDeleteCvTitle}" will be permanently removed from your account. This action cannot be undone.`;
+
+  const confirmDeleteCv = async () => {
+    if (!pendingDeleteCvId) return;
+
+    try {
+      await deleteCv(pendingDeleteCvId);
+      setPendingDeleteCv(null);
+    } catch {
+      // Keep the dialog open so the user can retry after the error toast.
+    }
+  };
 
   const submitProfileUpdate = (
     values: UpdateProfileFormValues,
@@ -578,9 +638,9 @@ export function UserProfile() {
             title={t("strengths")}
             icon={IconTrendingUp}
             items={selectedAnalysis?.strengths ?? []}
-            emptyText={selectedCv ? t("noStrengths") : insightEmpty}
+            emptyText={selectedCv ? (selectedCvStateMessage ?? t("noStrengths")) : insightEmpty}
             viewAllLabel={t("viewAll")}
-            className="bg-gradient-to-br from-primary/5 to-background dark:from-sky/10 dark:to-background"
+            className="bg-linear-to-br from-primary/5 to-background dark:from-sky/10 dark:to-background"
             iconClassName="text-primary dark:text-sky"
             iconWrapClassName="bg-primary/10 dark:bg-sky/10"
             itemAccentClassName="border-l-primary dark:border-l-sky"
@@ -589,9 +649,9 @@ export function UserProfile() {
             title={t("weaknesses")}
             icon={IconAlertTriangle}
             items={selectedAnalysis?.weaknesses ?? []}
-            emptyText={selectedCv ? t("noWeaknesses") : insightEmpty}
+            emptyText={selectedCv ? (selectedCvStateMessage ?? t("noWeaknesses")) : insightEmpty}
             viewAllLabel={t("viewAll")}
-            className="bg-gradient-to-br from-amber-500/5 to-background"
+            className="bg-linear-to-br from-amber-500/5 to-background"
             iconClassName="text-amber-600 dark:text-amber-400"
             iconWrapClassName="bg-amber-500/10"
             itemAccentClassName="border-l-amber-500"
@@ -600,9 +660,9 @@ export function UserProfile() {
             title={t("suggestions")}
             icon={IconBulb}
             items={selectedAnalysis?.suggestions ?? []}
-            emptyText={selectedCv ? t("noSuggestions") : insightEmpty}
+            emptyText={selectedCv ? (selectedCvStateMessage ?? t("noSuggestions")) : insightEmpty}
             viewAllLabel={t("viewAll")}
-            className="bg-gradient-to-br from-violet-500/5 to-background"
+            className="bg-linear-to-br from-violet-500/5 to-background"
             iconClassName="text-violet-600 dark:text-violet-400"
             iconWrapClassName="bg-violet-500/10"
             itemAccentClassName="border-l-violet-500"
@@ -610,8 +670,8 @@ export function UserProfile() {
           <AtsInsightCard
             title={t("atsScoreLabel")}
             score={selectedAts}
-            emptyText={selectedCv ? t("processingCv") : insightEmpty}
-            className="bg-gradient-to-br from-emerald-500/5 to-background"
+            emptyText={selectedCv ? (selectedCvStateMessage ?? t("noAnalysisYet")) : insightEmpty}
+            className="bg-linear-to-br from-emerald-500/5 to-background"
           />
         </div>
 
@@ -639,11 +699,12 @@ export function UserProfile() {
                     <CvListItem
                       key={getCvId(cv, index)}
                       cv={cv}
-                      index={index}
                       isSelected={selectedCvId === getCvId(cv, index)}
                       locale={locale}
                       t={t}
                       onSelect={() => setSelectedCvId(getCvId(cv, index))}
+                      onDelete={() => setPendingDeleteCv(cv)}
+                      isDeleting={isDeletingCv && deletingCvId === (cv._id ?? cv.id)}
                     />
                   ))}
                 </ul>
@@ -877,24 +938,59 @@ export function UserProfile() {
           </Card>
         </div>
       </div>
+
+      <AlertDialog
+        open={Boolean(pendingDeleteCv)}
+        onOpenChange={(open) => {
+          if (!open && !isDeletingCv) {
+            setPendingDeleteCv(null);
+          }
+        }}
+      >
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogMedia className="bg-destructive/10 text-destructive">
+              <IconAlertTriangle className="size-5" />
+            </AlertDialogMedia>
+            <AlertDialogTitle>{t("deleteCvConfirm")}</AlertDialogTitle>
+            <AlertDialogDescription>{deleteCvDescription}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeletingCv}>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              disabled={isDeletingCv}
+              onClick={(event) => {
+                event.preventDefault();
+                void confirmDeleteCv();
+              }}
+            >
+              {isDeletingCv ? <ScaleLoader size="sm" /> : <IconTrash className="size-4" />}
+              {isDeletingCv ? t("deletingCv") : t("deleteCv")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
 
 function CvListItem({
   cv,
-  index,
   isSelected,
   locale,
   t,
   onSelect,
+  onDelete,
+  isDeleting,
 }: {
   cv: UserCv;
-  index: number;
   isSelected: boolean;
   locale: string;
   t: ReturnType<typeof useTranslations<"profile">>;
   onSelect: () => void;
+  onDelete: () => void | Promise<void>;
+  isDeleting: boolean;
 }) {
   const title = getCvTitle(cv);
   const fileType = getCvFileType(cv);
@@ -937,6 +1033,19 @@ function CvListItem({
             </a>
           </Button>
         ) : null}
+        <Button
+          type="button"
+          variant="destructive"
+          size="sm"
+          className="rounded-lg"
+          onClick={() => {
+            void onDelete();
+          }}
+          disabled={isDeleting}
+        >
+          {isDeleting ? <ScaleLoader size="sm" /> : <IconTrash className="size-4" />}
+          {isDeleting ? t("deletingCv") : t("deleteCv")}
+        </Button>
       </div>
     </li>
   );
@@ -972,6 +1081,8 @@ function CvSummaryPanel({
   }
 
   const analysis = getCvAnalysis(cv);
+  const hasAnalysis = hasCvAnalysisResults(cv);
+  const statusMessage = getCvAnalysisStateMessage(cv, t);
   const title = getCvTitle(cv);
   const uploadedAt = formatDate(cv.createdAt ?? cv.updatedAt, locale);
   const summary = analysis.summary;
@@ -997,9 +1108,8 @@ function CvSummaryPanel({
       <div className="rounded-xl border border-border/60 bg-muted/20 p-4 dark:border-border/40">
         <p className="text-sm leading-relaxed text-foreground/85">
           {summaryPreview ??
-            (cv.processingStatus === "processing"
-              ? t("processingCv")
-              : t("noSummary"))}
+            statusMessage ??
+            t("noSummary")}
         </p>
         {summary ? (
           <div className="mt-3">
@@ -1013,7 +1123,7 @@ function CvSummaryPanel({
         ) : null}
       </div>
 
-      {analysis.strengths.length > 0 || analysis.weaknesses.length > 0 ? (
+      {hasAnalysis && (analysis.strengths.length > 0 || analysis.weaknesses.length > 0) ? (
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {analysis.strengths.length > 0 ? (
             <div className="rounded-xl bg-sky-50/80 p-3 dark:bg-sky/5">
@@ -1085,12 +1195,16 @@ function CvReviewPanel({
   }
 
   const analysis = getCvAnalysis(cv);
+  const hasAnalysis = hasCvAnalysisResults(cv);
+  const statusMessage = getCvAnalysisStateMessage(cv, t);
 
-  if (analysis.suggestions.length === 0) {
+  if (!hasAnalysis || analysis.suggestions.length === 0) {
     return (
       <div className="flex flex-col items-center rounded-xl border border-dashed border-border/70 bg-muted/15 px-4 py-8 text-center">
         <IconBulb className="size-8 text-violet-500/70" />
-        <p className="mt-3 text-sm font-medium">{t("noSuggestions")}</p>
+        <p className="mt-3 text-sm font-medium">
+          {statusMessage ?? t("noSuggestions")}
+        </p>
       </div>
     );
   }

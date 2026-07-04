@@ -10,6 +10,7 @@ import LanguageSwitcher from "../feature/LanguageSwitcher";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import { useAuthStore } from "@/stores/auth-store";
 import { useLogout } from "@/hooks/useAuth";
+import { ROLES } from "@/constants/roles";
 import { UserAvatarMenu } from "./UserAvatarMenu";
 
 export default function Navbar() {
@@ -28,15 +29,21 @@ export default function Navbar() {
   //   { href: "/contact", label: t("contact") },
   // ] as const;
 
+  const roleNavLinks =
+    userInfo?.role === ROLES.admin
+      ? [
+          { href: "/user/cv-analysis", label: t("cvAnalysis") },
+          { href: "/company/search", label: t("candidateSearch") },
+        ]
+      : userInfo?.role === ROLES.user
+        ? [{ href: "/user/cv-analysis", label: t("cvAnalysis") }]
+        : userInfo?.role === ROLES.company
+          ? [{ href: "/company/search", label: t("candidateSearch") }]
+          : [];
+
   const navLinks = [
     { href: "/", label: t("home") },
-    ...(userInfo?.role === "user"
-       ?[{ href : "/user/cv-analysis", label : t("cvAnalysis")}]
-    :[]),
-     ...(userInfo?.role === "company" 
-      ?[{ href : "/company/search", label : t("candidateSearch")}]
-    :[]),
-    
+    ...roleNavLinks,
     { href: "/pricing", label: t("pricing") },
     { href: "/about", label: t("about") },
     { href: "/contact", label: t("contact") },
