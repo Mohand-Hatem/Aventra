@@ -3,7 +3,7 @@
  * File: useCompanySearch.ts
  * Purpose:
  * - TanStack Query hook for company candidate search.
- * - useSearchCandidates → POST /ai/search/candidates
+ * - useSearchCandidates → POST  "/company/search",
  */
 
 "use client";
