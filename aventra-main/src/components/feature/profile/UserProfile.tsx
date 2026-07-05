@@ -21,7 +21,7 @@ import {
 import { useUser } from "@/hooks/useAuth";
 import { useAiUsage } from "@/hooks/useAiUsage";
 import { useDeleteCv, useUploadCv, useUserCvs } from "@/hooks/useCv";
-import { useUpdateUserProfile } from "@/hooks/useProfile";
+import { useUpdateUserProfile,useDeleteAvatar } from "@/hooks/useProfile";
 import { PLANS } from "@/constants/plans";
 import { getUserDisplayName, normalizeLocalizedName } from "@/types/auth";
 import {
@@ -599,7 +599,7 @@ export function UserProfile() {
   const insightEmpty = t("noAnalysisYet");
 
   const isRefreshing = isFetching && !!user;
-
+   const { mutate: deleteAvatar, isPending: isDeletingAvatar } = useDeleteAvatar();
   return (
     <div
       className={cn(
@@ -787,6 +787,17 @@ export function UserProfile() {
                       t("savePhoto")
                     )}
                   </Button>
+                   <Button
+    type="button"
+    variant="destructive"
+    size="sm"
+    className="rounded-xl"
+    disabled={isDeletingAvatar}
+    onClick={() => deleteAvatar()}
+  >
+    <IconTrash />
+    {isDeletingAvatar ? t("saving") : t("deletePhoto")}
+  </Button>
                 </div>
                 {isPending && uploadProgress !== null ? (
                   <div className="space-y-2">

@@ -92,7 +92,9 @@
     "profile": {
       "updateSuccess": "Profile updated successfully.",
       "uploadTimeout": "Upload timed out. If your profile was updated, refresh the page.",
-      "updateFailed": "Could not update profile. Please try again."
+      "updateFailed": "Could not update profile. Please try again.",
+      "deletePhotoSuccess": "Profile photo removed successfully",
+    "deletePhotoFailed": "Failed to remove profile photo"
     },
     "cv": {
       "uploadSuccess": "CV uploaded successfully.",
@@ -529,6 +531,7 @@
     "updateNameHint": "Change how your name appears on your profile.",
     "saveName": "Save name",
     "savePhoto": "Save photo",
+    "deletePhoto": "Delete photo",
     "maxTokens": "Max tokens",
     "viewFile": "View file",
     "strengths": "Strengths",
