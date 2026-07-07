@@ -8,13 +8,13 @@ export default function WelcomeMessage() {
   const t = useTranslations("candidateSearch.assistant");
 
   return (
-    <div className="rounded-xl border border-border/70 bg-gradient-to-br from-muted/50 to-muted/20 p-4">
+    <div className="rounded-xl border border-border/70 bg-linear-to-br from-muted/50 to-muted/20 p-4">
 
       <div className="mb-3 flex items-center gap-2">
 
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 dark:bg-sky/10">
           <Image
-            src="/logo.png"
+            src="/mobile-logo.png"
             alt="Aventra Logo"
             width={20}
             height={20}

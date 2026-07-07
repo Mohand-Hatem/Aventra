@@ -26,12 +26,12 @@ export default function MessageBubble({
       )}
     >
       {!isUser && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 dark:from-sky/20 dark:to-sky/10">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-linear-to-br from-primary/20 to-primary/10 dark:from-sky/20 dark:to-sky/10">
           <Image
             src="/mobile-logo.png"
             alt="Aventra Logo"
-            width={18}
-            height={18}
+            width={20}
+            height={20}
             className="object-contain"
           />
         </div>
@@ -47,7 +47,7 @@ export default function MessageBubble({
           className={cn(
             "rounded-xl px-4 py-2.5 text-sm leading-6 shadow-sm",
             isUser
-              ? "rounded-br-md bg-gradient-to-r from-primary to-primary/90 text-primary-foreground"
+              ? "rounded-br-md bg-linear-to-r from-primary to-primary/90 text-primary-foreground"
               : "rounded-bl-md border border-border/40 bg-card/60 text-foreground"
           )}
         >

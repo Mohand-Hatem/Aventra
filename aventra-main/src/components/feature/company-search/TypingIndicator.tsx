@@ -12,7 +12,7 @@ export default function TypingIndicator() {
 
       <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 dark:bg-sky/10">
         <Image
-          src="/logo.png"
+          src="/mobile-logo.png"
           alt="Aventra Logo"
           width={20}
           height={20}

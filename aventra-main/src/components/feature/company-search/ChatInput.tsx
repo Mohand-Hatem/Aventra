@@ -52,7 +52,7 @@ export default function ChatInput({
           size="icon"
           disabled={!message.trim() || disabled}
           onClick={handleSend}
-          className="h-11 w-11 rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary dark:from-sky dark:to-sky/80 dark:hover:from-sky/90 dark:hover:to-sky"
+          className="h-11 w-11 rounded-xl bg-linear-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary dark:from-sky dark:to-sky/80 dark:hover:from-sky/90 dark:hover:to-sky"
         >
           <IconSend2 size={18} />
         </Button>
