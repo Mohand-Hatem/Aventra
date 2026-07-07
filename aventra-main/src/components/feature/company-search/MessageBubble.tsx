@@ -1,7 +1,8 @@
 // MessageBubble.tsx
 "use client";
 
-import { IconRobot, IconUser } from "@tabler/icons-react";
+import { IconUser } from "@tabler/icons-react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface MessageBubbleProps {
@@ -26,9 +27,12 @@ export default function MessageBubble({
     >
       {!isUser && (
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 dark:from-sky/20 dark:to-sky/10">
-          <IconRobot
-            size={16}
-            className="text-primary dark:text-sky"
+          <Image
+            src="/logo.png"
+            alt="Aventra Logo"
+            width={18}
+            height={18}
+            className="object-contain"
           />
         </div>
       )}

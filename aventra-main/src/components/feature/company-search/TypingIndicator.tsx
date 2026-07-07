@@ -1,7 +1,7 @@
 // TypingIndicator.tsx
 "use client";
 
-import { IconRobot } from "@tabler/icons-react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 
 export default function TypingIndicator() {
@@ -11,9 +11,12 @@ export default function TypingIndicator() {
     <div className="flex gap-3">
 
       <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 dark:bg-sky/10">
-        <IconRobot
-          size={18}
-          className="text-primary dark:text-sky"
+        <Image
+          src="/logo.png"
+          alt="Aventra Logo"
+          width={20}
+          height={20}
+          className="object-contain"
         />
       </div>
 
