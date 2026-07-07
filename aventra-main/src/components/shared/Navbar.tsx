@@ -80,7 +80,7 @@ export default function Navbar() {
         )}
       >
         <div className="flex h-14 items-center justify-between px-4 sm:px-6 md:h-16">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="hidden items-center gap-3 md:flex">
             <Image
               src="/Aventra-logo.png"
               alt="Aventra logo"
@@ -96,6 +96,18 @@ export default function Navbar() {
               height={130}
               priority
               className="hidden h-auto dark:block md:h-auto md:w-37.5"
+            />
+          </Link>
+
+            <Link href="/" className="rounded-4xl flex md:hidden items-center gap-3">
+            
+            <Image
+              src="/mobile-logo.png"
+              alt="Aventra logo"
+              width={50}
+              height={50}
+              priority
+              className=" h-auto rounded-4xl  md:h-auto md:w-37.5"
             />
           </Link>
 

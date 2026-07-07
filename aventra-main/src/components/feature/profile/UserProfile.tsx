@@ -9,6 +9,7 @@ import {
   IconBulb,
   IconCamera,
   IconCheck,
+  IconExternalLink,
   IconFileText,
   IconMail,
   IconSparkles,
@@ -17,6 +18,10 @@ import {
   IconTrendingUp,
   IconUpload,
   IconUser,
+  IconPhone,
+  IconBrandLinkedin,
+  IconBrandGithub,
+  IconMapPin,
 } from "@tabler/icons-react";
 import { useUser } from "@/hooks/useAuth";
 import { useAiUsage } from "@/hooks/useAiUsage";
@@ -67,7 +72,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
+import { cn, ensureAbsoluteUrl } from "@/lib/utils";
 
 function getInitials(name: string) {
   const trimmed = name.trim();
@@ -729,7 +734,13 @@ export function UserProfile() {
               <CardDescription className="text-xs">{t("cvSummaryHint")}</CardDescription>
             </CardHeader>
             <CardContent className="px-4 pt-4 pb-4">
-              <CvSummaryPanel cv={selectedCv} locale={locale} t={t} isLoading={isCvsLoading} />
+              <CvSummaryPanel
+                cv={selectedCv}
+                locale={locale}
+                t={t}
+                isLoading={isCvsLoading}
+                userEmail={user?.email}
+              />
             </CardContent>
           </Card>
         </div>
@@ -1067,11 +1078,13 @@ function CvSummaryPanel({
   locale,
   t,
   isLoading,
+  userEmail,
 }: {
   cv: UserCv | null;
   locale: string;
   t: ReturnType<typeof useTranslations<"profile">>;
   isLoading: boolean;
+  userEmail?: string;
 }) {
   if (isLoading) {
     return (
@@ -1095,6 +1108,12 @@ function CvSummaryPanel({
   const hasAnalysis = hasCvAnalysisResults(cv);
   const statusMessage = getCvAnalysisStateMessage(cv, t);
   const title = getCvTitle(cv);
+  const cvUrl = getCvUrl(cv);
+  const cvContact = cv.contact as Record<string, unknown> | undefined;
+  const cvPhone = cv.phone ?? analysis.phone ?? (cvContact?.phone as string | undefined);
+  const cvLinkedin = cv.linkedin ?? analysis.linkedin ?? (cvContact?.linkedin as string | undefined);
+  const cvGithub = cv.github ?? analysis.github ?? (cvContact?.github as string | undefined);
+  const cvLocation = cv.location ?? analysis.location ?? (cvContact?.location as string | undefined);
   const uploadedAt = formatDate(cv.createdAt ?? cv.updatedAt, locale);
   const summary = analysis.summary;
   const summaryPreview =
@@ -1134,46 +1153,107 @@ function CvSummaryPanel({
         ) : null}
       </div>
 
-      {hasAnalysis && (analysis.strengths.length > 0 || analysis.weaknesses.length > 0) ? (
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          {analysis.strengths.length > 0 ? (
-            <div className="rounded-xl bg-sky-50/80 p-3 dark:bg-sky/5">
-              <p className="mb-2 flex items-center gap-1 text-xs font-semibold uppercase text-primary dark:text-sky">
-                <IconCheck className="size-3.5" />
-                {t("strengths")}
-              </p>
-              <ul className="space-y-2">
-                {analysis.strengths.slice(0, 3).map((item, index) => (
-                  <li key={`${item.title}-${index}`} className="text-xs text-muted-foreground">
-                    {item.title ? (
-                      <span className="font-medium text-foreground">{item.title}: </span>
-                    ) : null}
-                    {item.detail}
-                  </li>
-                ))}
-              </ul>
+      <div className="rounded-xl border border-border/50 bg-background/60 p-4 dark:border-border/30">
+        <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-primary dark:text-sky">
+          <IconMail className="size-3.5" />
+          {t("contactInfo")}
+        </p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {userEmail ? (
+            <div className="flex flex-col gap-1 rounded-lg border border-border/40 bg-muted/10 p-2.5">
+              <span className="text-[10px] font-semibold uppercase text-muted-foreground flex items-center gap-1">
+                <IconMail size={12} />
+                {t("emailLabel")}
+              </span>
+              <a
+                href={`mailto:${userEmail}`}
+                className="truncate text-xs font-medium text-foreground hover:text-primary dark:hover:text-sky hover:underline"
+              >
+                {userEmail}
+              </a>
             </div>
           ) : null}
-          {analysis.weaknesses.length > 0 ? (
-            <div className="rounded-xl bg-amber-50/10 p-3 dark:bg-amber/5">
-              <p className="mb-2 flex items-center gap-1 text-xs font-semibold uppercase text-amber-700 dark:text-amber-400">
-                <IconAlertTriangle className="size-3.5" />
-                {t("weaknesses")}
-              </p>
-              <ul className="space-y-2">
-                {analysis.weaknesses.slice(0, 3).map((item, index) => (
-                  <li key={`${item.title}-${index}`} className="text-xs text-muted-foreground">
-                    {item.title ? (
-                      <span className="font-medium text-foreground">{item.title}: </span>
-                    ) : null}
-                    {item.detail}
-                  </li>
-                ))}
-              </ul>
+
+          {cvPhone ? (
+            <div className="flex flex-col gap-1 rounded-lg border border-border/40 bg-muted/10 p-2.5">
+              <span className="text-[10px] font-semibold uppercase text-muted-foreground flex items-center gap-1">
+                <IconPhone size={12} />
+                {t("phoneLabel")}
+              </span>
+              <a
+                href={`tel:${cvPhone}`}
+                className="truncate text-xs font-medium text-foreground hover:text-primary dark:hover:text-sky hover:underline"
+              >
+                {cvPhone}
+              </a>
+            </div>
+          ) : null}
+
+          {cvLinkedin ? (
+            <div className="flex flex-col gap-1 rounded-lg border border-border/40 bg-muted/10 p-2.5">
+              <span className="text-[10px] font-semibold uppercase text-muted-foreground flex items-center gap-1">
+                <IconBrandLinkedin size={12} className="text-sky" />
+                {t("linkedinLabel")}
+              </span>
+              <a
+                href={ensureAbsoluteUrl(cvLinkedin)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="truncate text-xs font-medium text-foreground hover:text-primary dark:hover:text-sky hover:underline"
+              >
+                LinkedIn
+              </a>
+            </div>
+          ) : null}
+
+          {cvGithub ? (
+            <div className="flex flex-col gap-1 rounded-lg border border-border/40 bg-muted/10 p-2.5">
+              <span className="text-[10px] font-semibold uppercase text-muted-foreground flex items-center gap-1">
+                <IconBrandGithub size={12} />
+                {t("githubLabel")}
+              </span>
+              <a
+                href={ensureAbsoluteUrl(cvGithub)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="truncate text-xs font-medium text-foreground hover:text-primary dark:hover:text-sky hover:underline"
+              >
+                GitHub
+              </a>
+            </div>
+          ) : null}
+
+          {cvLocation ? (
+            <div className="flex flex-col gap-1 rounded-lg border border-border/40 bg-muted/10 p-2.5">
+              <span className="text-[10px] font-semibold uppercase text-muted-foreground flex items-center gap-1">
+                <IconMapPin size={12} />
+                {t("locationLabel")}
+              </span>
+              <span className="truncate text-xs font-medium text-foreground">
+                {cvLocation}
+              </span>
+            </div>
+          ) : null}
+
+          {cvUrl ? (
+            <div className="flex flex-col gap-1 rounded-lg border border-border/40 bg-muted/10 p-2.5">
+              <span className="text-[10px] font-semibold uppercase text-muted-foreground flex items-center gap-1">
+                <IconFileText size={12} />
+                {t("cvFileLabel")}
+              </span>
+              <a
+                href={cvUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs font-medium text-foreground hover:text-primary dark:hover:text-sky hover:underline"
+              >
+                <span className="truncate">{title || t("viewCv")}</span>
+                <IconExternalLink className="size-3 shrink-0" />
+              </a>
             </div>
           ) : null}
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }

@@ -10,8 +10,12 @@ import {
   IconFileText,
   IconSparkles,
   IconUpload,
+  IconMail,
+  IconPhone,
+  IconBrandLinkedin,
+  IconBrandGithub,
+  IconMapPin,
 } from "@tabler/icons-react";
-import { Cell, Pie, PieChart } from "recharts";
 import RequireRole from "@/components/auth/RequireRole";
 import { AtsScoreChart } from "@/components/feature/profile/AtsScoreChart";
 import { CvInsightDialog } from "@/components/feature/profile/CvInsightDialog";
@@ -24,7 +28,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
 import {
   useAnalyzeCv,
   useUploadCv,
@@ -32,7 +35,7 @@ import {
   type AnalyzeCvResponse,
   type UploadCvResponse,
 } from "@/hooks/useCv";
-import { cn } from "@/lib/utils";
+import { cn, ensureAbsoluteUrl } from "@/lib/utils";
 import {
   coerceAtsScore,
   formatInsightLabel,
@@ -119,6 +122,7 @@ function mergeCvWithAnalyzeReport(
     scoreBreakdown: report.scoreBreakdown ?? cv.scoreBreakdown,
     analysis: report.aiAnalysis ?? cv.analysis,
     aiAnalysis: report.aiAnalysis ?? cv.aiAnalysis,
+    parsedData: report.parsedData ?? cv.parsedData,
     processingStatus: "analyzed",
     status: "analyzed",
   };
@@ -184,87 +188,223 @@ function EmptyReportState({
   );
 }
 
+/* ───────────────────────────────── helpers ── */
+const BREAKDOWN_TW_COLORS = [
+  { bar: "bg-violet-500", text: "text-violet-600 dark:text-violet-400", bg: "bg-violet-50 dark:bg-violet-950/40" },
+  { bar: "bg-sky-500",    text: "text-sky-600    dark:text-sky-400",    bg: "bg-sky-50    dark:bg-sky-950/40" },
+  { bar: "bg-emerald-500",text: "text-emerald-600 dark:text-emerald-400",bg: "bg-emerald-50 dark:bg-emerald-950/40" },
+  { bar: "bg-amber-500",  text: "text-amber-600  dark:text-amber-400",  bg: "bg-amber-50  dark:bg-amber-950/40" },
+  { bar: "bg-rose-500",   text: "text-rose-600   dark:text-rose-400",   bg: "bg-rose-50   dark:bg-rose-950/40" },
+];
+
+function getScoreLabel(score?: number) {
+  if (score === undefined) return null;
+  if (score >= 85) return { label: "Excellent", cls: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800" };
+  if (score >= 70) return { label: "Good",      cls: "text-sky-600    dark:text-sky-400    bg-sky-50    dark:bg-sky-950/50    border-sky-200    dark:border-sky-800" };
+  if (score >= 55) return { label: "Fair",       cls: "text-amber-600  dark:text-amber-400  bg-amber-50  dark:bg-amber-950/50  border-amber-200  dark:border-amber-800" };
+  return                { label: "Needs Work",   cls: "text-rose-600   dark:text-rose-400   bg-rose-50   dark:bg-rose-950/50   border-rose-200   dark:border-rose-800" };
+}
+
+/* ─── Score Metric Strip ── */
+function ScoreMetricStrip({
+  entries,
+}: {
+  entries: Array<{ key: string; label: string; value: number }>;
+}) {
+  if (entries.length === 0) return null;
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      {entries.map((entry, i) => {
+        const color = BREAKDOWN_TW_COLORS[i % BREAKDOWN_TW_COLORS.length];
+        return (
+          <div
+            key={entry.key}
+            className={cn(
+              "flex flex-col gap-1.5 rounded-xl border p-4",
+              color.bg,
+              "border-border/40",
+            )}
+          >
+            <span className={cn("text-2xl font-bold tabular-nums", color.text)}>
+              {entry.value}
+              <span className="text-sm font-normal opacity-60">/100</span>
+            </span>
+            <span className="text-xs font-medium leading-tight text-foreground/70">
+              {entry.label}
+            </span>
+            <div className="mt-1 h-1 rounded-full bg-black/10 dark:bg-white/10">
+              <div
+                className={cn("h-full rounded-full transition-all duration-700", color.bar)}
+                style={{ width: `${Math.max(0, Math.min(100, entry.value))}%` }}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ─── Insight Panel ── */
 function InsightListCard({
   title,
   icon: Icon,
   items,
   emptyText,
   viewAllLabel,
-  accentClassName,
-  badgeClassName,
-  columns = 1,
+  variant,
 }: {
   title: string;
   icon: typeof IconCheck;
   items: CvInsightItem[];
   emptyText: string;
   viewAllLabel: string;
-  accentClassName: string;
-  badgeClassName: string;
-  columns?: 1 | 2;
+  variant: "emerald" | "amber" | "primary";
 }) {
-  const previewItems = items.slice(0, columns === 2 ? 4 : 3);
+  const previewItems = items.slice(0, 5);
+  const variantMap = {
+    emerald: {
+      icon: "text-emerald-600 dark:text-emerald-400",
+      dot:  "bg-emerald-500",
+      badge:"text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50",
+      border:"border-l-emerald-500",
+    },
+    amber: {
+      icon: "text-amber-600 dark:text-amber-400",
+      dot:  "bg-amber-500",
+      badge:"text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50",
+      border:"border-l-amber-500",
+    },
+    primary: {
+      icon: "text-primary dark:text-sky",
+      dot:  "bg-primary dark:bg-sky",
+      badge:"text-primary dark:text-sky bg-primary/8 dark:bg-sky/10",
+      border:"border-l-primary dark:border-l-sky",
+    },
+  };
+  const v = variantMap[variant];
 
   return (
-    <Card className="border border-border/60 bg-card/80 shadow-card backdrop-blur">
-      <CardHeader className="pb-4">
-        <div className="flex items-center gap-3">
-          <span
-            className={cn(
-              "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]",
-              badgeClassName,
-            )}
-          >
-            <Icon className={cn("size-3.5", accentClassName)} />
-            {title}
-          </span>
-          <span className="text-xs text-muted-foreground">{items.length}</span>
+    <div className={cn(
+      "flex flex-col rounded-xl border border-border/50 bg-card/80 backdrop-blur",
+      "border-l-4", v.border,
+    )}>
+      <div className="flex items-center justify-between gap-3 px-5 pt-5 pb-3">
+        <div className="flex items-center gap-2">
+          <Icon className={cn("size-4 shrink-0", v.icon)} />
+          <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         </div>
-      </CardHeader>
-      <CardContent>
+        {items.length > 0 ? (
+          <span className={cn("rounded-md px-2 py-0.5 text-xs font-semibold", v.badge)}>
+            {items.length}
+          </span>
+        ) : null}
+      </div>
+
+      <div className="flex flex-col flex-1 px-5 pb-5">
         {previewItems.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{emptyText}</p>
+          <p className="text-sm text-muted-foreground py-4">{emptyText}</p>
         ) : (
-          <ul
-            className={cn(
-              "grid gap-0 divide-y divide-border/60",
-              columns === 2 && "md:grid-cols-2 md:divide-x md:divide-y-0",
-            )}
-          >
+          <ul className="divide-y divide-border/40">
             {previewItems.map((item, index) => (
-              <li key={`${title}-${index}`} className="py-4">
-                <div className="flex items-start gap-3">
-                  <span className="min-w-7 text-[11px] font-medium tracking-[0.16em] text-muted-foreground">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <p className="text-sm leading-6 text-foreground/92">
-                    {formatInsightLabel(item)}
-                  </p>
-                </div>
+              <li key={`${title}-${index}`} className="flex items-start gap-3 py-2.5">
+                <span className={cn(
+                  "mt-1.5 size-1.5 shrink-0 rounded-full",
+                  v.dot,
+                )} />
+                <p className="text-sm leading-6 text-foreground/85">
+                  {formatInsightLabel(item)}
+                </p>
               </li>
             ))}
           </ul>
         )}
 
-        {items.length > 0 ? (
-          <CvInsightDialog
-            title={title}
-            triggerLabel={viewAllLabel}
-            items={items}
-            variant="footer"
-          />
+        {items.length > 5 ? (
+          <div className="mt-3 pt-3 border-t border-border/40">
+            <CvInsightDialog
+              title={title}
+              triggerLabel={viewAllLabel}
+              items={items}
+              variant="footer"
+            />
+          </div>
         ) : null}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
+/* ─── Contact Strip ── */
+function ContactInfoCard({
+  profileT,
+  email,
+  phone,
+  linkedin,
+  github,
+  location,
+}: {
+  profileT: ReturnType<typeof useTranslations<"profile">>;
+  email?: string;
+  phone?: string;
+  linkedin?: string;
+  github?: string;
+  location?: string;
+}) {
+  const hasContact = !!(email || phone || linkedin || github || location);
+
+  const items = [
+    email    ? { icon: IconMail,          label: profileT("emailLabel"),    value: email,     href: `mailto:${email}`,             external: false } : null,
+    phone    ? { icon: IconPhone,         label: profileT("phoneLabel"),    value: phone,     href: `tel:${phone}`,                external: false } : null,
+    linkedin ? { icon: IconBrandLinkedin, label: profileT("linkedinLabel"), value: "LinkedIn", href: ensureAbsoluteUrl(linkedin), external: true  } : null,
+    github   ? { icon: IconBrandGithub,   label: profileT("githubLabel"),   value: "GitHub",  href: ensureAbsoluteUrl(github),   external: true  } : null,
+    location ? { icon: IconMapPin,        label: profileT("locationLabel"), value: location,  href: undefined,                    external: false } : null,
+  ].filter(Boolean) as { icon: typeof IconMail; label: string; value: string; href: string | undefined; external: boolean }[];
+
+  if (!hasContact) return null;
+
+  return (
+    <div className="rounded-xl border border-border/50 bg-card/80 backdrop-blur">
+      <div className="flex items-center gap-2 border-b border-border/40 px-5 py-3">
+        <IconMail className="size-4 text-muted-foreground" />
+        <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          {profileT("contactInfo")}
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-0 divide-x divide-border/40">
+        {items.map(({ icon: ItemIcon, label, value, href, external }) => (
+          <div key={label} className="flex flex-col gap-0.5 px-5 py-3 min-w-[140px]">
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              {label}
+            </span>
+            {href ? (
+              <a
+                href={href}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noopener noreferrer" : undefined}
+                className="flex items-center gap-1 text-sm font-medium text-foreground hover:text-primary dark:hover:text-sky hover:underline transition-colors truncate"
+              >
+                <ItemIcon size={13} className="shrink-0 opacity-60" />
+                <span className="truncate">{value}</span>
+              </a>
+            ) : (
+              <span className="flex items-center gap-1 text-sm font-medium text-foreground truncate">
+                <ItemIcon size={13} className="shrink-0 opacity-60" />
+                <span className="truncate">{value}</span>
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Breakdown Card ── */
 function BreakdownCard({
   title,
-  subtitle,
   emptyText,
   entries,
-  averageLabel,
 }: {
   title: string;
   subtitle: string;
@@ -272,134 +412,37 @@ function BreakdownCard({
   entries: Array<{ key: string; label: string; value: number; color: string }>;
   averageLabel: string;
 }) {
-  const chartConfig = useMemo(
-    () =>
-      entries.reduce<ChartConfig>((config, entry) => {
-        config[entry.key] = {
-          label: entry.label,
-          color: entry.color,
-        };
-        return config;
-      }, {}),
-    [entries],
-  );
-  const averageScore =
-    entries.length > 0
-      ? Math.round(
-          entries.reduce((total, entry) => total + entry.value, 0) / entries.length,
-        )
-      : 0;
-
   return (
     <Card className="h-full border border-border/60 bg-card/80 shadow-card backdrop-blur">
       <CardHeader className="pb-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <CardTitle className="text-lg">{title}</CardTitle>
-          <CardDescription>{subtitle}</CardDescription>
-        </div>
+        <CardTitle className="text-base font-semibold">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-1 flex-col">
+      <CardContent>
         {entries.length === 0 ? (
-          <div className="flex min-h-64 flex-1 items-center justify-center text-center text-sm text-muted-foreground">
+          <div className="flex min-h-48 items-center justify-center text-center text-sm text-muted-foreground">
             <p className="max-w-sm">{emptyText}</p>
           </div>
         ) : (
-          <div className="grid flex-1 gap-6 lg:grid-cols-[minmax(260px,0.9fr)_minmax(0,1.1fr)] xl:gap-8">
-            <div className="flex min-h-88 flex-col justify-between rounded-[1.75rem] border border-border/60 bg-background/55 p-6 sm:p-8">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  {title}
-                </p>
-                <p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">
-                  {subtitle}
-                </p>
-              </div>
-
-              <div className="flex flex-1 items-center justify-center py-6">
-                <div className="relative mx-auto aspect-square w-full max-w-72">
-                  <ChartContainer
-                    config={chartConfig}
-                    className="h-full w-full"
-                  >
-                    <PieChart>
-                      <Pie
-                        data={entries}
-                        dataKey="value"
-                        nameKey="key"
-                        innerRadius={66}
-                        outerRadius={108}
-                        paddingAngle={4}
-                        startAngle={90}
-                        endAngle={-270}
-                        strokeWidth={0}
-                      >
-                        {entries.map((entry) => (
-                          <Cell key={entry.key} fill={entry.color} />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ChartContainer>
-
-                  <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span dir="ltr" className="text-4xl font-semibold tracking-tight text-foreground">
-                      {averageScore}
-                    </span>
-                    <span className="mt-1 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                      {averageLabel}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {entries.map((entry) => (
-                  <span
-                    key={`${entry.key}-chip`}
-                    className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/75 px-3 py-1.5 text-xs text-foreground/85"
-                  >
-                    <span
-                      className="size-2 rounded-full"
-                      style={{ backgroundColor: entry.color }}
-                    />
-                    {entry.label}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex flex-col justify-center gap-4 self-stretch">
-              {entries.map((entry) => (
-                <div
-                  key={entry.key}
-                  className="rounded-2xl border border-border/60 bg-background/45 p-4 sm:p-5"
-                >
-                  <div className="flex items-center justify-between gap-4 text-sm">
-                    <div className="flex items-center gap-2.5">
-                      <span
-                        className="size-2.5 rounded-full"
-                        style={{ backgroundColor: entry.color }}
-                      />
-                      <span className="font-medium text-foreground/90">{entry.label}</span>
-                    </div>
-                    <span
-                      dir="ltr"
-                      className="rounded-full border border-border/60 bg-background/75 px-2.5 py-1 text-xs font-semibold text-foreground/85"
-                    >
+          <div className="space-y-4">
+            {entries.map((entry, i) => {
+              const color = BREAKDOWN_TW_COLORS[i % BREAKDOWN_TW_COLORS.length];
+              return (
+                <div key={entry.key}>
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <span className="text-sm font-medium text-foreground/85">{entry.label}</span>
+                    <span className={cn("text-sm font-bold tabular-nums", color.text)}>
                       {entry.value}
                     </span>
                   </div>
-                  <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-muted/70">
+                  <div className="h-1.5 overflow-hidden rounded-full bg-muted/50">
                     <div
-                      className="h-full rounded-full transition-[width]"
-                      style={{
-                        width: `${Math.max(0, Math.min(100, entry.value))}%`,
-                        backgroundColor: entry.color,
-                      }}
+                      className={cn("h-full rounded-full transition-all duration-700 ease-out", color.bar)}
+                      style={{ width: `${Math.max(0, Math.min(100, entry.value))}%` }}
                     />
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
         )}
       </CardContent>
@@ -885,104 +928,129 @@ export default function CVAnalysisPage() {
                   </CardContent>
                 </Card>
               ) : reportState === "ready" ? (
-                <>
-                  <div className="grid items-stretch gap-6 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
-                    <Card className="h-full border border-border/60 bg-card/80 shadow-card backdrop-blur">
-                      <CardHeader className="pb-2">
-                        <div className="flex items-center justify-between gap-3">
-                          <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.2em]">
-                            {t("overallScore")}
-                          </CardDescription>
-                          {activeAtsScore !== undefined ? (
-                            <span
-                              className="rounded-full px-2.5 py-1 text-[11px] font-medium"
-                              style={{
-                                color:
-                                  activeAtsScore >= 80
-                                    ? "#22c55e"
-                                    : activeAtsScore >= 60
-                                      ? "#38bdf8"
-                                      : "#f59e0b",
-                                backgroundColor:
-                                  activeAtsScore >= 80
-                                    ? "rgba(34, 197, 94, 0.12)"
-                                    : activeAtsScore >= 60
-                                      ? "rgba(56, 189, 248, 0.12)"
-                                      : "rgba(245, 158, 11, 0.12)",
-                              }}
-                            >
-                              {activeAtsScore}/100
-                            </span>
-                          ) : null}
-                        </div>
-                      </CardHeader>
-                      <CardContent className="flex flex-1 flex-col justify-center pb-8">
-                        <AtsScoreChart score={activeAtsScore ?? 0} size="lg" className="mx-auto w-full max-w-sm" />
-                        <p className="mx-auto mt-6 max-w-sm text-center text-sm leading-6 text-muted-foreground">
-                          {activeAnalysis?.summary || t("readyDescription")}
-                        </p>
-                        {activeAtsScore !== undefined || activeAnalysis?.summary ? (
-                          <CvInsightDialog
-                            title={t("overallScore")}
-                            description={t("reportTitle")}
-                            triggerLabel={profileT("viewAll")}
-                            bodyText={
-                              activeAnalysis?.summary
-                                ? `${t("atsScore")}: ${activeAtsScore ?? "--"}/100\n\n${activeAnalysis.summary}`
-                                : `${t("atsScore")}: ${activeAtsScore ?? "--"}/100`
-                            }
-                            variant="footer"
-                          />
-                        ) : null}
-                      </CardContent>
-                    </Card>
+                <div className="space-y-6">
 
-                    <BreakdownCard
-                      title={t("scoreBreakdown")}
-                      subtitle={t("categoriesCount", {
-                        count: breakdownEntries.length,
-                      })}
-                      emptyText={t("breakdownUnavailable")}
-                      entries={breakdownEntries}
-                      averageLabel={t("averageScore")}
-                    />
+                  {/* ══ Row 1: Score hero ══ */}
+                  <div className="grid gap-5 lg:grid-cols-[280px_1fr]">
+
+                    {/* ATS Score card — compact left column */}
+                    <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-border/50 bg-card/80 p-6 backdrop-blur">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                        {t("overallScore")}
+                      </p>
+
+                      <AtsScoreChart score={activeAtsScore ?? 0} size="lg" className="w-full max-w-[180px]" />
+
+                      {activeAtsScore !== undefined ? (() => {
+                        const grade = getScoreLabel(activeAtsScore);
+                        return grade ? (
+                          <span className={cn(
+                            "rounded-lg border px-4 py-1.5 text-sm font-semibold",
+                            grade.cls,
+                          )}>
+                            {grade.label}
+                          </span>
+                        ) : null;
+                      })() : null}
+
+                      {activeAnalysis?.summary ? (
+                        <p className="text-center text-xs leading-5 text-muted-foreground">
+                          {activeAnalysis.summary.length > 140
+                            ? `${activeAnalysis.summary.slice(0, 140).trim()}…`
+                            : activeAnalysis.summary}
+                        </p>
+                      ) : null}
+
+                      {activeAtsScore !== undefined || activeAnalysis?.summary ? (
+                        <CvInsightDialog
+                          title={t("overallScore")}
+                          description={t("reportTitle")}
+                          triggerLabel={profileT("viewAll")}
+                          bodyText={
+                            activeAnalysis?.summary
+                              ? `${t("atsScore")}: ${activeAtsScore ?? "--"}/100\n\n${activeAnalysis.summary}`
+                              : `${t("atsScore")}: ${activeAtsScore ?? "--"}/100`
+                          }
+                          variant="footer"
+                        />
+                      ) : null}
+                    </div>
+
+                    {/* Right: metric strip + breakdown bars */}
+                    <div className="flex flex-col gap-5">
+                      {/* Metric scorecard chips */}
+                      <ScoreMetricStrip entries={breakdownEntries} />
+
+                      {/* Breakdown bars */}
+                      {breakdownEntries.length > 0 ? (
+                        <div className="flex-1 rounded-xl border border-border/50 bg-card/80 px-5 py-4 backdrop-blur">
+                          <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                            {t("scoreBreakdown")}
+                          </p>
+                          <div className="space-y-3.5">
+                            {breakdownEntries.map((entry, i) => {
+                              const color = BREAKDOWN_TW_COLORS[i % BREAKDOWN_TW_COLORS.length];
+                              return (
+                                <div key={entry.key}>
+                                  <div className="mb-1.5 flex items-center justify-between gap-3">
+                                    <span className="text-sm font-medium text-foreground/80">{entry.label}</span>
+                                    <span className={cn("text-sm font-bold tabular-nums", color.text)}>
+                                      {entry.value}
+                                    </span>
+                                  </div>
+                                  <div className="h-1.5 overflow-hidden rounded-full bg-muted/50">
+                                    <div
+                                      className={cn("h-full rounded-full transition-all duration-700", color.bar)}
+                                      style={{ width: `${Math.max(0, Math.min(100, entry.value))}%` }}
+                                    />
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
 
-                  <div className="grid items-stretch gap-6 xl:grid-cols-2">
+                  {/* ══ Row 2: Insight panels ══ */}
+                  <div className="grid gap-5 md:grid-cols-3">
                     <InsightListCard
                       title={t("strengths")}
                       icon={IconCheck}
                       items={activeAnalysis?.strengths ?? []}
                       emptyText={profileT("noStrengths")}
                       viewAllLabel={profileT("viewAll")}
-                      accentClassName="text-emerald-500"
-                      badgeClassName="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                      variant="emerald"
                     />
-
                     <InsightListCard
                       title={t("weaknesses")}
                       icon={IconAlertTriangle}
                       items={activeAnalysis?.weaknesses ?? []}
                       emptyText={profileT("noWeaknesses")}
                       viewAllLabel={profileT("viewAll")}
-                      accentClassName="text-amber-500"
-                      badgeClassName="bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                      variant="amber"
                     />
-
-                    <div className="xl:col-span-2">
-                      <InsightListCard
-                        title={t("suggestionsTitle")}
-                        icon={IconBulb}
-                        items={activeAnalysis?.suggestions ?? []}
-                        emptyText={profileT("noSuggestions")}
-                        viewAllLabel={profileT("viewAll")}
-                        accentClassName="text-primary dark:text-sky"
-                        badgeClassName="bg-primary/10 text-primary dark:bg-sky/10 dark:text-sky"
-                        columns={2}
-                      />
-                    </div>
+                    <InsightListCard
+                      title={t("suggestionsTitle")}
+                      icon={IconBulb}
+                      items={activeAnalysis?.suggestions ?? []}
+                      emptyText={profileT("noSuggestions")}
+                      viewAllLabel={profileT("viewAll")}
+                      variant="primary"
+                    />
                   </div>
-                </>
+
+                  {/* ══ Row 3: Contact strip ══ */}
+                  <ContactInfoCard
+                    profileT={profileT}
+                    email={activeAnalysis?.email}
+                    phone={activeAnalysis?.phone}
+                    linkedin={activeAnalysis?.linkedin}
+                    github={activeAnalysis?.github}
+                    location={activeAnalysis?.location}
+                  />
+                </div>
               ) : reportState === "failed" ? (
                 <EmptyReportState
                   title={t("failedTitle")}

@@ -540,6 +540,15 @@
     "noStrengths": "No strengths identified yet.",
     "noWeaknesses": "No weaknesses identified yet.",
     "noSuggestions": "No suggestions yet.",
+    "contactInfo": "Contact Information",
+    "emailLabel": "Email Address",
+    "phoneLabel": "Phone Number",
+    "linkedinLabel": "LinkedIn",
+    "githubLabel": "GitHub",
+    "locationLabel": "Location",
+    "noContactInfo": "No contact information identified.",
+    "cvFileLabel": "CV Resume",
+    "viewCv": "View CV",
     "accountSettings": "Account settings",
     "uploadCvHint": "PDF or DOCX — upload to get ATS scoring and AI insights.",
     "chooseCv": "Choose file",
@@ -883,7 +892,9 @@
     "aiSummary": "AI Summary",
     "resumePreview": "Resume Preview",
     "download": "Download",
-    "noPreview": "No preview available"
+    "noPreview": "No preview available",
+    "contactLinks": "Contact links",
+    "viewResume": "View Resume"
   },
 
   "resultsTable": {

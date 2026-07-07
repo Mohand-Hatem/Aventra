@@ -20,6 +20,10 @@ export interface CandidateResult {
   resumeFileName: string;
   resumeFileType?: string;
   createdAt?: string;
+  phone?: string;
+  location?: string;
+  linkedin?: string;
+  github?: string;
 }
 
 export interface CompanySearchApiCandidate {
@@ -34,6 +38,10 @@ export interface CompanySearchApiCandidate {
   cvFileName?: string;
   cvFileType?: string;
   _id?: string;
+  phone?: string;
+  location?: string;
+  linkedin?: string;
+  github?: string;
 }
 
 interface LegacyCandidateResult {
@@ -45,6 +53,10 @@ interface LegacyCandidateResult {
   user?: {
     name?: LocalizedCandidateName;
     email?: string;
+    phone?: string;
+    location?: string;
+    linkedin?: string;
+    github?: string;
   };
   skills?: string[];
   summary?: string;
@@ -54,6 +66,10 @@ interface LegacyCandidateResult {
     fileType?: string;
   };
   createdAt?: string;
+  phone?: string;
+  location?: string;
+  linkedin?: string;
+  github?: string;
 }
 
 export interface SearchCandidatesResponse {
@@ -142,6 +158,10 @@ export function normalizeCandidateResult(
       resumeFileName: candidate.originalFile?.fileName ?? "",
       resumeFileType: candidate.originalFile?.fileType,
       createdAt: candidate.createdAt,
+      phone: candidate.phone ?? candidate.user?.phone,
+      location: candidate.location ?? candidate.user?.location,
+      linkedin: candidate.linkedin ?? candidate.user?.linkedin,
+      github: candidate.github ?? candidate.user?.github,
     };
   }
 
@@ -158,6 +178,10 @@ export function normalizeCandidateResult(
       resumeUrl: candidate.cvFileUrl ?? "",
       resumeFileName: candidate.cvFileName ?? `${fallbackName} CV.pdf`,
       resumeFileType: candidate.cvFileType,
+      phone: "phone" in candidate ? candidate.phone : undefined,
+      location: "location" in candidate ? candidate.location : undefined,
+      linkedin: "linkedin" in candidate ? candidate.linkedin : undefined,
+      github: "github" in candidate ? candidate.github : undefined,
     };
   }
 
@@ -175,6 +199,10 @@ export function normalizeCandidateResult(
     resumeFileName: "resumeFileName" in candidate ? candidate.resumeFileName ?? "" : "",
     resumeFileType: "resumeFileType" in candidate ? candidate.resumeFileType : undefined,
     createdAt: "createdAt" in candidate ? candidate.createdAt : undefined,
+    phone: "phone" in candidate ? candidate.phone : undefined,
+    location: "location" in candidate ? candidate.location : undefined,
+    linkedin: "linkedin" in candidate ? candidate.linkedin : undefined,
+    github: "github" in candidate ? candidate.github : undefined,
   };
 }
 

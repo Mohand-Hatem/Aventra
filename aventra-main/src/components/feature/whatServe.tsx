@@ -437,7 +437,7 @@ export default function WhatServe() {
               <div className="absolute inset-0 bg-linear-to-t from-background/80 via-transparent to-transparent" />
             </div>
 
-            <div className="absolute -bottom-4 -left-4 z-10 sm:-bottom-6 sm:-left-6">
+            <div className="absolute -bottom-4 -left-4 z-10 max-w-[280px] sm:-bottom-6 sm:-left-6 sm:max-w-sm">
               <CVAnalysisCard />
             </div>
 
@@ -466,7 +466,7 @@ export default function WhatServe() {
               <div className="absolute inset-0 bg-linear-to-t from-background/80 via-transparent to-transparent" />
             </div>
 
-            <div className="absolute -bottom-4 -right-4 z-10 sm:-bottom-6 sm:-right-6">
+            <div className="absolute -bottom-4 -right-4 z-10 max-w-[280px] sm:-bottom-6 sm:-right-6 sm:max-w-sm">
               <CandidateSearchCard />
             </div>
 

@@ -541,6 +541,15 @@
     "noStrengths": "لم يتم تحديد نقاط قوة بعد.",
     "noWeaknesses": "لم يتم تحديد نقاط ضعف بعد.",
     "noSuggestions": "لا توجد اقتراحات بعد.",
+    "contactInfo": "معلومات الاتصال",
+    "emailLabel": "البريد الإلكتروني",
+    "phoneLabel": "رقم الهاتف",
+    "linkedinLabel": "لينكد إن",
+    "githubLabel": "جيتهاب",
+    "locationLabel": "الموقع",
+    "noContactInfo": "لم يتم تحديد معلومات اتصال.",
+    "cvFileLabel": "السيرة الذاتية",
+    "viewCv": "عرض السيرة الذاتية",
     "accountSettings": "إعدادات الحساب",
     "uploadCvHint": "PDF أو DOCX — ارفع للحصول على تقييم ATS ورؤى الذكاء الاصطناعي.",
     "chooseCv": "اختر ملف",
@@ -937,7 +946,9 @@
     "aiSummary": "ملخص الذكاء الاصطناعي",
     "resumePreview": "معاينة السيرة الذاتية",
     "download": "تنزيل",
-    "noPreview": "لا توجد معاينة متاحة"
+    "noPreview": "لا توجد معاينة متاحة",
+    "contactLinks": "روابط الاتصال",
+    "viewResume": "عرض السيرة الذاتية"
   },
 
   "resultsTable": {

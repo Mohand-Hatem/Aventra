@@ -312,7 +312,7 @@ export default function GridDescription() {
                   alt={t("altMatching")}
                   width={120}
                   height={80}
-                  className="ml-auto h-16 w-auto rounded-lg object-cover opacity-60"
+                  className="ms-auto h-16 w-auto rounded-lg object-cover opacity-60"
                 />
               </div>
             </div>

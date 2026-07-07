@@ -7,9 +7,11 @@
 
 "use client";
 import { useLocale, useTranslations } from "next-intl";
-import { IconDownload, IconSparkles } from "@tabler/icons-react";
+import { IconDownload, IconSparkles, IconChevronDown, IconMail, IconFileText, IconPhone, IconBrandLinkedin, IconBrandGithub, IconMapPin } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
+import { ensureAbsoluteUrl } from "@/lib/utils";
 import { getLocalizedCandidateName, type CandidateResult } from "@/types/company";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 
 interface CandidateDetailProps {
   candidate: CandidateResult;
@@ -57,8 +59,68 @@ export default function CandidateDetail({ candidate }: CandidateDetailProps) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-foreground">{name}</p>
-            {candidate.email ? (
-              <p className="text-sm text-muted-foreground">{candidate.email}</p>
+            {candidate.email || candidate.phone || candidate.linkedin || candidate.github || candidate.location ? (
+              <div className="mt-1 flex flex-col gap-1 items-start">
+                <DropdownMenu modal={false}>
+                  <DropdownMenuTrigger asChild>
+                    <button className="inline-flex items-center gap-1 text-xs font-semibold text-primary dark:text-sky hover:text-primary/80 dark:hover:text-sky/80 transition-colors focus:outline-none cursor-pointer">
+                      {t("candidateDetail.contactLinks")}
+                      <IconChevronDown size={12} className="shrink-0" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-56 mt-1 border border-border bg-popover shadow-md p-1">
+                    {candidate.email ? (
+                      <DropdownMenuItem asChild>
+                        <a href={`mailto:${candidate.email}`} className="flex w-full items-center gap-2 px-2 py-1.5 text-xs font-medium cursor-pointer">
+                          <IconMail size={14} className="text-muted-foreground shrink-0" />
+                          <span className="truncate">{candidate.email}</span>
+                        </a>
+                      </DropdownMenuItem>
+                    ) : null}
+                    {candidate.phone ? (
+                      <DropdownMenuItem asChild>
+                        <a href={`tel:${candidate.phone}`} className="flex w-full items-center gap-2 px-2 py-1.5 text-xs font-medium cursor-pointer">
+                          <IconPhone size={14} className="text-muted-foreground shrink-0" />
+                          <span className="truncate">{candidate.phone}</span>
+                        </a>
+                      </DropdownMenuItem>
+                    ) : null}
+                    {candidate.linkedin ? (
+                      <DropdownMenuItem asChild>
+                        <a href={ensureAbsoluteUrl(candidate.linkedin)} target="_blank" rel="noopener noreferrer" className="flex w-full items-center gap-2 px-2 py-1.5 text-xs font-medium cursor-pointer">
+                          <IconBrandLinkedin size={14} className="text-sky shrink-0" />
+                          <span className="truncate">LinkedIn</span>
+                        </a>
+                      </DropdownMenuItem>
+                    ) : null}
+                    {candidate.github ? (
+                      <DropdownMenuItem asChild>
+                        <a href={ensureAbsoluteUrl(candidate.github)} target="_blank" rel="noopener noreferrer" className="flex w-full items-center gap-2 px-2 py-1.5 text-xs font-medium cursor-pointer">
+                          <IconBrandGithub size={14} className="text-muted-foreground shrink-0" />
+                          <span className="truncate">GitHub</span>
+                        </a>
+                      </DropdownMenuItem>
+                    ) : null}
+                    {candidate.resumeUrl ? (
+                      <DropdownMenuItem asChild>
+                        <a href={candidate.resumeUrl} target="_blank" rel="noopener noreferrer" className="flex w-full items-center gap-2 px-2 py-1.5 text-xs font-medium cursor-pointer">
+                          <IconFileText size={14} className="text-muted-foreground shrink-0" />
+                          <span className="truncate">{t("candidateDetail.viewResume")}</span>
+                        </a>
+                      </DropdownMenuItem>
+                    ) : null}
+                    {candidate.location ? (
+                      <>
+                        <DropdownMenuSeparator />
+                        <div className="flex items-center gap-2 px-2 py-1.5 text-xs text-muted-foreground">
+                          <IconMapPin size={14} className="shrink-0" />
+                          <span className="truncate">{candidate.location}</span>
+                        </div>
+                      </>
+                    ) : null}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             ) : null}
           </div>
           <div className="flex gap-3 shrink-0">

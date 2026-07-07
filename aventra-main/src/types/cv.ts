@@ -20,6 +20,11 @@ export interface CvAnalysis {
   weaknesses?: CvInsightItem[];
   suggestions?: CvInsightItem[];
   atsScore?: number;
+  phone?: string;
+  location?: string;
+  linkedin?: string;
+  github?: string;
+  email?: string;
 }
 
 export interface UserCv {
@@ -52,6 +57,13 @@ export interface UserCv {
   uploadedAt?: string;
   createdAt?: string;
   updatedAt?: string;
+  phone?: string;
+  location?: string;
+  linkedin?: string;
+  github?: string;
+  email?: string;
+  contact?: unknown;
+  parsedData?: unknown;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -118,6 +130,15 @@ function normalizeScoreBreakdown(value: unknown): CvScoreBreakdown | undefined {
 function normalizeCvAnalysis(value: unknown): CvAnalysis | undefined {
   if (!isRecord(value)) return undefined;
 
+  // Contact info may be at root or nested in contact/personalInfo/personal_info
+  const contactNested =
+    (isRecord(value.contact) ? value.contact : null) ??
+    (isRecord(value.personalInfo) ? value.personalInfo : null) ??
+    (isRecord(value.personal_info) ? value.personal_info : null);
+
+  const pickStr = (a: unknown, b: unknown) =>
+    typeof a === "string" && a.trim() ? a.trim() : typeof b === "string" && b.trim() ? b.trim() : undefined;
+
   return {
     summary: typeof value.summary === "string" ? value.summary : undefined,
     description:
@@ -126,6 +147,11 @@ function normalizeCvAnalysis(value: unknown): CvAnalysis | undefined {
     weaknesses: parseInsightItems(value.weaknesses),
     suggestions: parseInsightItems(value.suggestions),
     atsScore: coerceAtsScore(value.atsScore ?? value.ats_score),
+    phone: pickStr(value.phone, contactNested?.phone),
+    location: pickStr(value.location, contactNested?.location ?? contactNested?.address),
+    linkedin: pickStr(value.linkedin, contactNested?.linkedin ?? contactNested?.linkedIn),
+    github: pickStr(value.github, contactNested?.github),
+    email: pickStr(value.email, contactNested?.email),
   };
 }
 
@@ -173,8 +199,34 @@ export function normalizeUserCv(cv: unknown): UserCv {
     | CvProcessingStatus
     | undefined;
 
+  const phone = typeof cv.phone === "string" ? cv.phone :
+    (isRecord(cv.contact) && typeof cv.contact.phone === "string" ? cv.contact.phone :
+    (isRecord(cv.parsedData) ? normalizeCvAnalysis(cv.parsedData)?.phone : undefined) ??
+    analysis?.phone);
+  const location = typeof cv.location === "string" ? cv.location :
+    (isRecord(cv.contact) && typeof cv.contact.location === "string" ? cv.contact.location :
+    (isRecord(cv.parsedData) ? normalizeCvAnalysis(cv.parsedData)?.location : undefined) ??
+    analysis?.location);
+  const linkedin = typeof cv.linkedin === "string" ? cv.linkedin :
+    (isRecord(cv.contact) && typeof cv.contact.linkedin === "string" ? cv.contact.linkedin :
+    (isRecord(cv.parsedData) ? normalizeCvAnalysis(cv.parsedData)?.linkedin : undefined) ??
+    analysis?.linkedin);
+  const github = typeof cv.github === "string" ? cv.github :
+    (isRecord(cv.contact) && typeof cv.contact.github === "string" ? cv.contact.github :
+    (isRecord(cv.parsedData) ? normalizeCvAnalysis(cv.parsedData)?.github : undefined) ??
+    analysis?.github);
+  const email = typeof cv.email === "string" ? cv.email :
+    (isRecord(cv.contact) && typeof cv.contact.email === "string" ? cv.contact.email :
+    (isRecord(cv.parsedData) ? normalizeCvAnalysis(cv.parsedData)?.email : undefined) ??
+    analysis?.email);
+
   return {
     ...(cv as UserCv),
+    phone,
+    location,
+    linkedin,
+    github,
+    email,
     atsScore,
     scoreBreakdown: normalizeScoreBreakdown(cv.scoreBreakdown),
     analysis,
@@ -275,5 +327,10 @@ export function getCvAnalysis(
     suggestions: nested.suggestions ?? [],
     atsScore: getCvAtsScore(cv),
     scoreBreakdown: cv.scoreBreakdown,
+    phone: cv.phone ?? nested.phone,
+    location: cv.location ?? nested.location,
+    linkedin: cv.linkedin ?? nested.linkedin,
+    github: cv.github ?? nested.github,
+    email: cv.email ?? nested.email,
   };
 }

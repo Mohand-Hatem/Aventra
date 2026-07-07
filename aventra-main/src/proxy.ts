@@ -17,10 +17,10 @@ function getPathnameWithoutLocale(pathname: string): string {
 const protectedRoutes = ['/profile'];
 const authRoutes = ['/login', '/register'];
 
-export default async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // ensure decoded pathname for proper locale detection
   const pathname = decodeURIComponent(request.nextUrl.pathname);
-  
+
   if (pathname.startsWith('/api/')) {
     return NextResponse.next();
   }
@@ -36,15 +36,7 @@ export default async function middleware(request: NextRequest) {
     pathnameWithoutLocale === route || pathnameWithoutLocale.startsWith(`${route}/`)
   );
 
-  // Debug (safe to remove once verified)
-  try {
-    // eslint-disable-next-line no-console
-    console.log('[middleware] pathname=', pathname, 'pathnameWithoutLocale=', pathnameWithoutLocale, 'isProtected=', isProtectedRoute, 'isAuthRoute=', isAuthRoute, 'isAuthenticated=', isAuthenticated);
-  } catch (e) {
-    // ignore in restricted runtimes
-  }
-
-  // Always allow auth pages to render (prevents middleware from redirecting/404ing them)
+  // Always allow auth pages to render (prevents proxy from redirecting/404ing them)
   if (isAuthRoute) {
     return intlMiddleware(request);
   }
