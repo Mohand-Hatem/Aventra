@@ -28,7 +28,7 @@ export default function MessageBubble({
       {!isUser && (
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 dark:from-sky/20 dark:to-sky/10">
           <Image
-            src="/logo.png"
+            src="/mobile-logo.png"
             alt="Aventra Logo"
             width={18}
             height={18}
