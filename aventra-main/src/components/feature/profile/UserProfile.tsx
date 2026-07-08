@@ -591,6 +591,7 @@ export function UserProfile() {
   }
 
   const avatarSrc = avatarPreview ?? user.avatar ?? undefined;
+  const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
   const initials = getInitials(displayName);
   const nameChanged =
     watchedName.en.trim() !== currentName.en.trim() ||
@@ -787,18 +788,18 @@ export function UserProfile() {
                       t("savePhoto")
                     )}
                   </Button>
-                   <Button
-    type="button"
-    variant="destructive"
-    size="sm"
-    className="rounded-xl"
-    disabled={isDeletingAvatar}
-    onClick={() => deleteAvatar()}
-  >
-    <IconTrash />
-    {isDeletingAvatar ? t("saving") : t("deletePhoto")}
-  </Button>
                 </div>
+                 <Button
+  type="button"
+  variant="destructive"
+  size="sm"
+  className="rounded-xl w-full"
+  disabled={isDeletingAvatar || avatarSrc === DEFAULT_AVATAR}
+  onClick={() => deleteAvatar()}
+>
+  <IconTrash />
+  {isDeletingAvatar ? t("saving") : t("deletePhoto")}
+</Button>
                 {isPending && uploadProgress !== null ? (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -997,7 +998,7 @@ export function UserProfile() {
   );
 }
 
-function CvListItem({
+function CvListItem ({
   cv,
   isSelected,
   locale,
@@ -1020,36 +1021,39 @@ function CvListItem({
   const cvUrl = getCvUrl(cv);
 
   return (
-    <li
-      className={cn(
-        "flex items-center gap-3 rounded-xl border p-3 transition-colors",
-        isSelected
-          ? "border-primary/40 bg-primary/5 dark:border-sky/40 dark:bg-sky/5"
-          : "border-border/60 bg-card dark:border-border/40",
-      )}
-    >
-      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary dark:bg-sky/10 dark:text-sky">
-        <IconFileText className="size-5" />
+     <li className={cn(
+      "flex flex-col gap-2 rounded-xl border p-3 transition-colors",
+      isSelected
+        ? "border-primary/40 bg-primary/5 dark:border-sky/40 dark:bg-sky/5"
+        : "border-border/60 bg-card dark:border-border/40",
+    )}>
+      {/* Row 1 — icon + name */}
+      <div className="flex items-center gap-3">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary dark:bg-sky/10 dark:text-sky">
+          <IconFileText className="size-4" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium">{title}</p>
+          <p className="text-xs text-muted-foreground">
+            {fileType?.toUpperCase() ?? t("cvs")}
+            {uploadedAt ? ` · ${uploadedAt}` : ""}
+          </p>
+        </div>
       </div>
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium">{title}</p>
-        <p className="text-xs text-muted-foreground">
-          {fileType?.toUpperCase() ?? t("cvs")}
-          {uploadedAt ? ` · ${uploadedAt}` : ""}
-        </p>
-      </div>
-      <div className="flex shrink-0 gap-1.5">
+
+      {/* Row 2 — buttons */}
+      <div className="flex gap-1.5">
         <Button
           type="button"
           variant={isSelected ? "default" : "outline"}
           size="sm"
-          className="rounded-lg"
+          className="rounded-lg flex-1 text-xs"
           onClick={onSelect}
         >
           {t("details")}
         </Button>
         {cvUrl ? (
-          <Button asChild variant="outline" size="sm" className="rounded-lg">
+          <Button asChild variant="outline" size="sm" className="rounded-lg flex-1 text-xs">
             <a href={cvUrl} target="_blank" rel="noreferrer">
               {t("reviewCv")}
             </a>
@@ -1059,14 +1063,11 @@ function CvListItem({
           type="button"
           variant="destructive"
           size="sm"
-          className="rounded-lg"
-          onClick={() => {
-            void onDelete();
-          }}
+          className="rounded-lg px-2.5"
+          onClick={() => void onDelete()}
           disabled={isDeleting}
         >
-          {isDeleting ? <ScaleLoader size="sm" /> : <IconTrash className="size-4" />}
-          {isDeleting ? t("deletingCv") : t("deleteCv")}
+          {isDeleting ? <ScaleLoader size="sm" /> : <IconTrash className="size-3.5" />}
         </Button>
       </div>
     </li>
@@ -1103,7 +1104,7 @@ function CvSummaryPanel({
   }
 
   const analysis = getCvAnalysis(cv);
-  const hasAnalysis = hasCvAnalysisResults(cv);
+  // const hasAnalysis = hasCvAnalysisResults(cv);
   const statusMessage = getCvAnalysisStateMessage(cv, t);
   const title = getCvTitle(cv);
   const uploadedAt = formatDate(cv.createdAt ?? cv.updatedAt, locale);
@@ -1145,7 +1146,7 @@ function CvSummaryPanel({
         ) : null}
       </div>
 
-      {hasAnalysis && (analysis.strengths.length > 0 || analysis.weaknesses.length > 0) ? (
+      {/* {hasAnalysis && (analysis.strengths.length > 0 || analysis.weaknesses.length > 0) ? (
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {analysis.strengths.length > 0 ? (
             <div className="rounded-xl bg-sky-50/80 p-3 dark:bg-sky/5">
@@ -1184,7 +1185,7 @@ function CvSummaryPanel({
             </div>
           ) : null}
         </div>
-      ) : null}
+      ) : null} */}
     </div>
   );
 }
