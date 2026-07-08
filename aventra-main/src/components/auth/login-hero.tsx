@@ -21,13 +21,17 @@ export function LoginHero() {
         className="pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-primary-foreground/10 blur-3xl"
       />
 
-      <div className="relative z-10 flex h-full w-full flex-col justify-between pt-10">
+      <div className="relative z-10 flex h-full w-full flex-col justify-between">
         <div className="mt-3 flex h-[15%] flex-col justify-end px-10">
           <p className="text-[0.62rem] font-bold uppercase tracking-[0.22em] text-primary dark:text-sky">
             {t("badge")}
           </p>
-          <span className="text-2xl font-bold leading-snug">{t("titleLine1")}</span>
-          <span className="text-2xl font-bold leading-snug">{t("titleLine2")}</span>
+          <span className="text-xl font-bold leading-snug">
+            {t("titleLine1")}
+          </span>
+          <span className="text-xl font-bold leading-snug">
+            {t("titleLine2")}
+          </span>
         </div>
 
         <div className="flex h-[80%] w-full flex-col">
@@ -57,7 +61,9 @@ export function LoginHero() {
                     "linear-gradient(to top,var(--canvas) 55%, transparent 100%)",
                 }}
               >
-                <p className="mb-2 text-base font-bold text-sky">{t("cardTitle")}</p>
+                <p className="mb-2 text-base font-bold text-sky">
+                  {t("cardTitle")}
+                </p>
                 <p className="max-w-70 text-[0.78rem] leading-relaxed">
                   {t("cardDescription")}
                 </p>

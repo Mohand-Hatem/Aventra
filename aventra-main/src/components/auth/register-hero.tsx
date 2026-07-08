@@ -21,15 +21,15 @@ export function RegisterHero() {
         className="pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-primary-foreground/10 blur-3xl"
       />
 
-      <div className="relative z-10 flex h-full w-full flex-col justify-between pt-10">
-        <div className="mt-3 flex h-[15%] flex-col justify-end px-10">
+      <div className="relative z-10 flex h-full w-full flex-col justify-between">
+        <div className="mt-15 xl:mt-5 flex h-[15%] flex-col justify-end px-10">
           <p className="text-[0.62rem] font-bold uppercase tracking-[0.22em] text-primary dark:text-sky">
             {t("badge")}
           </p>
-          <span className="lg:text-2xl sm:text-lg text-base font-bold leading-snug">
+          <span className="text-lg  font-bold leading-snug">
             {t("candidateLine")}
           </span>
-          <span className="lg:text-2xl sm:text-lg text-base mt-2 font-bold leading-snug">
+          <span className="text-lg  mt-2 font-bold leading-snug">
             {t("companyLine")}
           </span>
         </div>
@@ -63,7 +63,9 @@ export function RegisterHero() {
                     "linear-gradient(to top,var(--canvas) 55%, transparent 100%)",
                 }}
               >
-                <p className="mb-2 text-base font-bold text-sky">{t("cardTitle")}</p>
+                <p className="mb-2 text-base font-bold text-sky">
+                  {t("cardTitle")}
+                </p>
                 <p className="max-w-70 text-[0.78rem] leading-relaxed">
                   {t("cardDescription")}
                 </p>

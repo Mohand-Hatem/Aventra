@@ -69,25 +69,25 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header dir="ltr" className="fixed top-2 z-50 flex w-full justify-center px-2 sm:px-6 md:top-4">
+    <header dir="ltr" className="fixed top-2 z-50 flex w-full justify-center px-2 sm:px-6 lg:top-4">
       <nav
         className={cn(
           "flex w-full flex-col justify-center rounded-2xl border transition-all duration-300 ease-out",
           isScrolled
-            ? "border-border/70 bg-background/80 shadow-lg shadow-foreground/5 backdrop-blur-xl md:w-[85%]"
-            : "border-transparent bg-transparent md:w-full",
+            ? "border-border/70 bg-background/80 shadow-lg shadow-foreground/5 backdrop-blur-xl lg:w-[85%]"
+            : "border-transparent bg-transparent lg:w-full",
           isOpen && "border-border/70 bg-background/95 backdrop-blur-xl",
         )}
       >
-        <div className="flex h-14 items-center justify-between px-4 sm:px-6 md:h-16">
-          <Link href="/" className="hidden items-center gap-3 md:flex">
+        <div className="flex h-14 items-center justify-between px-4 sm:px-6 lg:h-16">
+          <Link href="/" className="hidden items-center gap-3 lg:flex">
             <Image
               src="/Aventra-logo.png"
               alt="Aventra logo"
               width={130}
               height={130}
               priority
-              className="block h-auto dark:hidden md:h-auto md:w-37.5"
+              className="block h-auto dark:hidden lg:h-auto lg:w-37.5"
             />
             <Image
               src="/Aventra-logo-white1.png"
@@ -95,11 +95,11 @@ export default function Navbar() {
               width={130}
               height={130}
               priority
-              className="hidden h-auto dark:block md:h-auto md:w-37.5"
+              className="hidden h-auto dark:block lg:h-auto lg:w-37.5"
             />
           </Link>
 
-            <Link href="/" className="rounded-4xl flex md:hidden items-center gap-3">
+            <Link href="/" className="rounded-4xl flex lg:hidden items-center gap-3">
             
             <Image
               src="/mobile-logo.png"
@@ -107,11 +107,11 @@ export default function Navbar() {
               width={50}
               height={50}
               priority
-              className=" h-auto rounded-4xl  md:h-auto md:w-37.5"
+              className=" h-auto rounded-4xl  lg:h-auto lg:w-37.5"
             />
           </Link>
 
-          <div className="hidden items-center gap-4 md:flex">
+          <div className="hidden items-center gap-4 lg:flex">
             <LanguageSwitcher />
             <ThemeToggle />
 
@@ -151,7 +151,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <LanguageSwitcher />
             <ThemeToggle />
             <button
@@ -170,7 +170,7 @@ export default function Navbar() {
         </div>
 
         {isOpen && (
-          <div className="flex animate-in flex-col gap-4 border-t border-border/40 px-6 py-5 duration-200 fade-in slide-in-from-top-5 md:hidden">
+          <div className="flex animate-in flex-col gap-4 border-t border-border/40 px-6 py-5 duration-200 fade-in slide-in-from-top-5 lg:hidden">
             <div className="flex flex-col gap-3">
               {navLinks.map((item) => (
                 <Link

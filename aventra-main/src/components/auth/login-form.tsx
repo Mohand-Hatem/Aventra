@@ -56,8 +56,8 @@ export function LoginForm() {
   };
 
   return (
-    <div className="relative flex w-full flex-col items-center justify-center bg-background px-6 py-10 lg:w-[54%]">
-      <div className="w-full max-w-125  ">
+    <div className="relative flex w-full flex-col items-center justify-center bg-background px-6 py-10 sm:px-12 lg:px-16 lg:w-[54%]">
+      <div className="w-full max-w-[440px]">
         <div className="mb-10 flex justify-end">
           <Link
             href={APP_ROUTES.home}
@@ -90,7 +90,7 @@ export function LoginForm() {
         </div>
 
         <div className="mb-8">
-          <h1 className="text-[2rem] font-bold leading-tight tracking-tight text-foreground">
+          <h1 className="text-2xl sm:text-3xl lg:text-[2rem] font-bold leading-tight tracking-tight text-foreground">
             {t("title")}
           </h1>
         </div>

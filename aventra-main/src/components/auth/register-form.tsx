@@ -25,7 +25,7 @@ function inputClassName(hasError?: boolean) {
     "focus:ring-2 focus:ring-primary/25 focus:border-primary",
     "dark:focus:ring-sky/25 dark:focus:border-sky",
     "disabled:cursor-not-allowed disabled:opacity-60",
-    hasError ? "border-destructive" : "border-border"
+    hasError ? "border-destructive" : "border-border",
   );
 }
 
@@ -37,7 +37,6 @@ export function RegisterForm() {
 
   const registerMutation = useRegister();
   const { login } = useGoogleLogin();
-  
 
   const registerSchema = useMemo(
     () =>
@@ -51,7 +50,7 @@ export function RegisterForm() {
         passwordUppercase: t("validation.passwordUppercase"),
         passwordNumber: t("validation.passwordNumber"),
       }),
-    [t]
+    [t],
   );
 
   const {
@@ -88,7 +87,7 @@ export function RegisterForm() {
         valid: /[0-9]/.test(password),
       },
     ],
-    [password, t]
+    [password, t],
   );
 
   const isSubmitting = registerMutation.isPending;
@@ -109,24 +108,25 @@ export function RegisterForm() {
       {
         onError: (error) => {
           const axiosErr = error as AxiosError<{ message?: string }>;
-          setServerError(
-            axiosErr.response?.data?.message ?? t("genericError")
-          );
+          setServerError(axiosErr.response?.data?.message ?? t("genericError"));
         },
-      }
+      },
     );
   };
 
   return (
-    <div className="relative flex w-full flex-col items-center justify-center bg-background px-6 py-10 lg:w-[54%]">
-      <div className="w-full max-w-125 ">
+    <div className="relative flex w-full flex-col items-center justify-center bg-background px-6 py-10 sm:px-12 lg:px-16 lg:w-[54%]">
+      <div className="w-full max-w-[480px]">
         <div className="mb-10 flex justify-end">
           <Link
             href={APP_ROUTES.home}
             className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             {t("backToWebsite")}
-            <GoArrowRight className="h-4 w-4 rtl:rotate-180 dark:text-sky text-primary" aria-hidden="true" />
+            <GoArrowRight
+              className="h-4 w-4 rtl:rotate-180 dark:text-sky text-primary"
+              aria-hidden="true"
+            />
           </Link>
         </div>
 
@@ -152,7 +152,7 @@ export function RegisterForm() {
         </div>
 
         <div className="mb-8">
-          <h1 className="text-[2rem] font-bold leading-tight tracking-tight text-foreground">
+          <h1 className="text-xl sm:text-2xl lg:text-[2rem] font-bold leading-tight tracking-tight text-foreground">
             {t("title")}
           </h1>
         </div>
@@ -172,15 +172,15 @@ export function RegisterForm() {
             <span className="text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               {t("accountType")}
             </span>
-            <div className="relative rounded-xl border border-border bg-card p-1">
+            <div className="relative rounded-xl border border-border bg-card p-1 flex">
               <div
                 className={cn(
-                  "absolute bottom-1 top-1 w-[calc(50%-0.25rem)] rounded-lg bg-primary transition-all duration-300 ease-out dark:bg-primary",
-                  role === "user" ? "inset-s-1" : "inset-s-[calc(50%+0.125rem)]"
+                  "absolute bottom-1 top-1 w-[calc(50%-0.25rem)] rounded-lg bg-primary transition-all duration-300 ease-out",
+                  role === "user" ? "start-1" : "start-[calc(50%+0.125rem)]",
                 )}
               />
 
-              <div className="relative grid grid-cols-2">
+              <div className="relative grid grid-cols-2 w-full">
                 {(
                   [
                     ["user", t("candidate")],
@@ -193,10 +193,10 @@ export function RegisterForm() {
                     disabled={isSubmitting}
                     onClick={() => setRole(value)}
                     className={cn(
-                      "relative z-10  rounded-lg px-4 py-3 text-sm font-semibold transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-60",
+                      "relative z-10 rounded-lg px-4 py-3 text-sm font-semibold transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-60 text-center w-full",
                       role === value
-                        ? "text-primary-foreground bg-primary dark:text-white"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "text-primary-foreground bg-transparent"
+                        : "text-muted-foreground hover:text-foreground",
                     )}
                   >
                     {label}
@@ -312,7 +312,7 @@ export function RegisterForm() {
                   "text-xs font-medium flex items-center",
                   item.valid
                     ? "text-primary dark:text-sky"
-                    : "text-muted-foreground"
+                    : "text-muted-foreground",
                 )}
               >
                 <FiCheck className="h-4 w-4 inline-block me-2 dark:text-sky text-primary" />{" "}
@@ -351,7 +351,7 @@ export function RegisterForm() {
           className={cn(
             "flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-border",
             "bg-card text-sm font-medium text-foreground",
-            "transition-colors hover:bg-muted"
+            "transition-colors hover:bg-muted",
           )}
         >
           <FcGoogle className="h-4.5 w-4.5 shrink-0" aria-hidden="true" />
