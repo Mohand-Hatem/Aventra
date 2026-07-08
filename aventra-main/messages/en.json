@@ -179,6 +179,7 @@
     "titleLine2": "interviews",
     "subtitle": "Upload your resume. Get an instant ATS score, fixable issues, and AI-rewritten bullets — built for engineers, by engineers.",
     "uploadResume": "Upload your resume →",
+    "cvUploadForUsersOnly": "CV Analysis is available for job seekers only.",
     "seeHowItWorks": "▶ See how it works",
     "trust": {
       "noCard": "No credit card required",
@@ -320,6 +321,7 @@
       "rewrites": { "title": "AI-Powered Rewrites", "desc": "One click to replace weak lines with impactful, role-specific bullet points written by AI." }
     },
     "analyzeCv": "Analyze My CV",
+   
     "seePricing": "See Pricing",
     "b2cTrust": ["Free first analysis", "No credit card", "Results in seconds"],
     "cvsScored": "47,300+ CVs Scored",

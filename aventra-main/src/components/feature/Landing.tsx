@@ -22,7 +22,8 @@ import {
 } from "@tabler/icons-react";
 import { useLogin, useUser } from "@/hooks/useAuth";
 import { useAuthStore } from "@/stores/auth-store";
-
+import { useRouter } from "@/i18n/routing";
+import toast from "react-hot-toast";
 /*
   --chart-accent is set on the root section:
     light → var(--color-primary)
@@ -411,7 +412,22 @@ export default function Landing() {
     t("trust.freeAnalysis"),
     t("trust.resumesAnalyzed"),
   ];
+  
+const router = useRouter();
 
+function handleUploadClick() {
+  if (!user) {
+    toast.error(t("cvUploadForUsersOnly"));
+     router.push("/");
+    return;
+  }
+  if (user.role === "company") {
+    toast.error(t("cvUploadForUsersOnly"));
+    return;
+  }
+  // user or admin
+  router.push("/user/cv-analysis");
+}
   return (
     <section
       className={cn(
@@ -462,16 +478,20 @@ export default function Landing() {
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <Button asChild size="lg" className="rounded-xl px-6">
-              <Link href="/register">{t("uploadResume")}</Link>
-            </Button>
+          <Button
+  size="lg"
+  className="rounded-xl px-6"
+  onClick={handleUploadClick}
+>
+  {t("uploadResume")}
+</Button>
             <Button
               asChild
               variant="outline"
               size="lg"
               className="rounded-xl px-6"
             >
-              <Link href="/pricing">{t("seeHowItWorks")}</Link>
+              <Link href="/about">{t("seeHowItWorks")}</Link>
             </Button>
           </div>
 
