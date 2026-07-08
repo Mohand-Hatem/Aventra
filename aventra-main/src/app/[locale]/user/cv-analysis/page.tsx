@@ -818,11 +818,11 @@ export default function CVAnalysisPage() {
                             type="button"
                             onClick={() => setSelectedCvId(cvId)}
                             className={cn(
-                              "flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition-colors",
-                              isSelected
-                                ? "border-primary bg-primary/6 dark:border-sky dark:bg-sky/10"
-                                : "border-border/60 bg-background/70 hover:border-primary/30 hover:bg-primary/4 dark:hover:border-sky/30 dark:hover:bg-sky/6",
-                            )}
+  "flex min-w-0 items-center justify-between gap-3 overflow-hidden rounded-2xl border px-4 py-3 text-left transition-colors",
+  isSelected
+    ? "border-primary bg-primary/6 dark:border-sky dark:bg-sky/10"
+    : "border-border/60 bg-background/70 hover:border-primary/30 hover:bg-primary/4 dark:hover:border-sky/30 dark:hover:bg-sky/6",
+)}
                           >
                             <div className="min-w-0">
                               <p className="truncate text-sm font-medium text-foreground">

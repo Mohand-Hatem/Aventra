@@ -99,7 +99,7 @@ export default function Navbar() {
             />
           </Link>
 
-          <div className="hidden items-center gap-4 md:flex">
+          <div className="hidden items-center gap-4 lg:flex">
             <LanguageSwitcher />
             <ThemeToggle />
 
@@ -139,7 +139,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <LanguageSwitcher />
             <ThemeToggle />
             <button
@@ -158,7 +158,7 @@ export default function Navbar() {
         </div>
 
         {isOpen && (
-          <div className="flex animate-in flex-col gap-4 border-t border-border/40 px-6 py-5 duration-200 fade-in slide-in-from-top-5 md:hidden">
+          <div className="flex animate-in flex-col gap-4 border-t border-border/40 px-6 py-5 duration-200 fade-in slide-in-from-top-5 lg:hidden">
             <div className="flex flex-col gap-3">
               {navLinks.map((item) => (
                 <Link
