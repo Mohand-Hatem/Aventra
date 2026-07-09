@@ -139,13 +139,17 @@ function CompanySummaryPanel({
       <CardContent className="p-5">
         <div className="flex flex-col items-center text-center">
           <Avatar className="size-50 ring-4 ring-primary/10 dark:ring-sky/10">
-            {avatarSrc ? <AvatarImage src={avatarSrc} alt={displayName} /> : null}
+            {avatarSrc ? (
+              <AvatarImage src={avatarSrc} alt={displayName} />
+            ) : null}
             <AvatarFallback className="bg-primary text-2xl font-semibold text-primary-foreground">
               {initials}
             </AvatarFallback>
           </Avatar>
 
-          <h2 className="mt-4 font-heading text-xl font-bold tracking-tight">{displayName}</h2>
+          <h2 className="mt-4 font-heading text-xl font-bold tracking-tight">
+            {displayName}
+          </h2>
           <p className="mt-1 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
             <IconMail className="size-3.5 shrink-0" />
             <span className="truncate">{email}</span>
@@ -191,7 +195,10 @@ function CompanySummaryPanel({
                 <span className="text-muted-foreground">{tokenPercent}%</span>
               </div>
               <div className="relative">
-                <Progress value={progressTokenPercent} className="h-3 bg-muted/60" />
+                <Progress
+                  value={progressTokenPercent}
+                  className="h-3 bg-muted/60"
+                />
                 <span className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-primary-foreground mix-blend-difference">
                   {tokenPercent}%
                 </span>
@@ -243,9 +250,13 @@ function SearchHistoryItem({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="line-clamp-2 text-sm font-medium text-foreground">{entry.query}</p>
+          <p className="line-clamp-2 text-sm font-medium text-foreground">
+            {entry.query}
+          </p>
           {formattedDate ? (
-            <p className="mt-1 text-xs text-muted-foreground">{formattedDate}</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {formattedDate}
+            </p>
           ) : null}
         </div>
         <Badge variant="secondary" className="shrink-0">
@@ -265,18 +276,25 @@ export function CompanyProfile() {
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
-  const [selectedCandidate, setSelectedCandidate] = useState<CandidateResult | null>(null);
+  const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(
+    null,
+  );
+  const [selectedCandidate, setSelectedCandidate] =
+    useState<CandidateResult | null>(null);
 
   const { data: user, isLoading, isFetching, isError } = useUser();
   const { data: aiUsage } = useAiUsage({ enabled: !!user });
   const { data: searchHistoryData, isLoading: isHistoryLoading } =
     useCompanySearchHistory();
-  const { mutate: updateProfile, isPending, uploadProgress } =
-    useUpdateUserProfile();
+  const {
+    mutate: updateProfile,
+    isPending,
+    uploadProgress,
+  } = useUpdateUserProfile();
 
   const searches = searchHistoryData?.searches ?? EMPTY_SEARCH_HISTORY;
-  const searchCount = searchHistoryData?.totalSearches ?? user?.searchCount ?? 0;
+  const searchCount =
+    searchHistoryData?.totalSearches ?? user?.searchCount ?? 0;
 
   const profileSchema = useMemo(
     () =>
@@ -305,7 +323,9 @@ export function CompanyProfile() {
   const selectedAvatar = watch("avatar");
   const watchedName = watch("name");
   const displayName = user ? getUserDisplayName(user.name, locale) : "";
-  const currentName = user ? normalizeLocalizedName(user.name) : { en: "", ar: "" };
+  const currentName = user
+    ? normalizeLocalizedName(user.name)
+    : { en: "", ar: "" };
 
   useEffect(() => {
     if (!user) return;
@@ -354,7 +374,10 @@ export function CompanyProfile() {
     }
 
     setSelectedCandidate((current) => {
-      if (current && historyCandidates.some((candidate) => candidate.cvId === current.cvId)) {
+      if (
+        current &&
+        historyCandidates.some((candidate) => candidate.cvId === current.cvId)
+      ) {
         return current;
       }
       return historyCandidates[0];
@@ -362,7 +385,11 @@ export function CompanyProfile() {
   }, [historyCandidates]);
 
   const candidatesFound = useMemo(
-    () => searches.reduce((sum, entry) => sum + (entry.total || entry.candidates.length), 0),
+    () =>
+      searches.reduce(
+        (sum, entry) => sum + (entry.total || entry.candidates.length),
+        0,
+      ),
     [searches],
   );
 
@@ -372,8 +399,8 @@ export function CompanyProfile() {
     0,
     Math.round(
       aiUsage?.tokenUsagePercent ??
-        (maxToken > 0 ? (tokenUsage / maxToken) * 100 : 0)
-    )
+        (maxToken > 0 ? (tokenUsage / maxToken) * 100 : 0),
+    ),
   );
   const progressTokenPercent = Math.min(100, tokenPercent);
 
@@ -489,7 +516,9 @@ export function CompanyProfile() {
           <Card className="border-border/60 shadow-card dark:border-border/40">
             <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
               <CardTitle className="text-base">{t("searchHistory")}</CardTitle>
-              <CardDescription className="text-xs">{t("searchHistoryHint")}</CardDescription>
+              <CardDescription className="text-xs">
+                {t("searchHistoryHint")}
+              </CardDescription>
             </CardHeader>
             <CardContent className="px-4 pt-4 pb-4">
               {isHistoryLoading ? (
@@ -499,8 +528,12 @@ export function CompanyProfile() {
               ) : searches.length === 0 ? (
                 <div className="flex flex-col items-center rounded-xl border border-dashed border-border/70 bg-muted/15 px-4 py-8 text-center">
                   <IconSearch className="size-8 text-muted-foreground" />
-                  <p className="mt-3 text-sm font-medium">{t("noSearchesYet")}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{t("noSearchesHint")}</p>
+                  <p className="mt-3 text-sm font-medium">
+                    {t("noSearchesYet")}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t("noSearchesHint")}
+                  </p>
                   <Button asChild className="mt-4 rounded-xl">
                     <Link href="/company/search">{t("goToSearch")}</Link>
                   </Button>
@@ -541,7 +574,9 @@ export function CompanyProfile() {
               <div className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-border/80 bg-card/60 px-6 text-center">
                 <div>
                   <IconUsers className="mx-auto size-8 text-muted-foreground" />
-                  <p className="mt-2 text-sm text-muted-foreground">{t("selectSearchHint")}</p>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {t("selectSearchHint")}
+                  </p>
                 </div>
               </div>
             ) : null}
@@ -555,20 +590,30 @@ export function CompanyProfile() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Card className="border-border/60 shadow-card dark:border-border/40">
               <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
-                <CardTitle className="text-base">{tProfile("changePhoto")}</CardTitle>
-                <CardDescription className="text-xs">{tProfile("photoHint")}</CardDescription>
+                <CardTitle className="text-base">
+                  {tProfile("changePhoto")}
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  {tProfile("photoHint")}
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3 px-4 pt-4 pb-4">
                 <div className="flex items-center gap-3">
                   <Avatar className="size-40 ring-2 ring-background">
-                    {avatarSrc ? <AvatarImage src={avatarSrc} alt={displayName} /> : null}
+                    {avatarSrc ? (
+                      <AvatarImage src={avatarSrc} alt={displayName} />
+                    ) : null}
                     <AvatarFallback className="bg-primary text-sm font-semibold text-primary-foreground">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{displayName}</p>
-                    <p className="text-xs text-muted-foreground">{tProfile("photoHint")}</p>
+                    <p className="truncate text-sm font-medium">
+                      {displayName}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {tProfile("photoHint")}
+                    </p>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -618,7 +663,9 @@ export function CompanyProfile() {
                   </div>
                 ) : null}
                 {errors.avatar ? (
-                  <p className="text-xs text-destructive">{errors.avatar.message}</p>
+                  <p className="text-xs text-destructive">
+                    {errors.avatar.message}
+                  </p>
                 ) : null}
                 <input
                   ref={avatarInputRef}
@@ -638,17 +685,25 @@ export function CompanyProfile() {
 
             <Card className="border-border/60 shadow-card dark:border-border/40">
               <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
-                <CardTitle className="text-base">{tProfile("updateName")}</CardTitle>
-                <CardDescription className="text-xs">{tProfile("updateNameHint")}</CardDescription>
+                <CardTitle className="text-base">
+                  {tProfile("updateName")}
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  {tProfile("updateNameHint")}
+                </CardDescription>
               </CardHeader>
               <CardContent className="px-4 pt-4 pb-4">
                 <form
-                  onSubmit={handleSubmit((values) => submitProfileUpdate(values, ["name"]))}
+                  onSubmit={handleSubmit((values) =>
+                    submitProfileUpdate(values, ["name"]),
+                  )}
                   className="space-y-3"
                 >
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="company-name-en">{tRegister("englishName")}</Label>
+                      <Label htmlFor="company-name-en">
+                        {tRegister("englishName")}
+                      </Label>
                       <Input
                         id="company-name-en"
                         autoComplete="organization"
@@ -657,11 +712,15 @@ export function CompanyProfile() {
                         {...register("name.en")}
                       />
                       {errors.name?.en ? (
-                        <p className="text-sm text-destructive">{errors.name.en.message}</p>
+                        <p className="text-sm text-destructive">
+                          {errors.name.en.message}
+                        </p>
                       ) : null}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="company-name-ar">{tRegister("arabicName")}</Label>
+                      <Label htmlFor="company-name-ar">
+                        {tRegister("arabicName")}
+                      </Label>
                       <Input
                         id="company-name-ar"
                         autoComplete="organization"
@@ -671,7 +730,9 @@ export function CompanyProfile() {
                         {...register("name.ar")}
                       />
                       {errors.name?.ar ? (
-                        <p className="text-sm text-destructive">{errors.name.ar.message}</p>
+                        <p className="text-sm text-destructive">
+                          {errors.name.ar.message}
+                        </p>
                       ) : null}
                     </div>
                   </div>

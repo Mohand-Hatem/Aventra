@@ -628,59 +628,61 @@
   },
   "pricing": {
     "metaTitle": "Pricing — Aventra",
-    "metaDescription": "Simple plans for job seekers and companies.",
-    "badge": "Simple, transparent pricing",
+    "metaDescription": "Choose the plan that fits your recruitment scale.",
+    "badge": "Pricing",
     "badgeUnlimited": "Your access",
-    "title": "Choose your plan",
+    "title": "Simple, Transparent Pricing",
     "titleUnlimited": "Unlimited plan",
-    "subtitle": "Simple plans for job seekers and companies.",
-    "subtitleLine2": "Start free, upgrade when you need more.",
+    "subtitle": "Choose the plan that fits your recruitment scale. Upgrade or downgrade anytime as your team grows.",
+    "subtitleLine2": "",
     "subtitleUnlimited": "You have full access to every feature with no limits.",
-    "trialNote": "All plans include a <trial>7-day free trial</trial>. No credit card required.",
-    "perMonth": "per month",
+    "trialNote": "",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "yearlyDiscount": "20% OFF",
+    "perMonth": "/mo",
+    "billedAnnually": "/mo billed annually",
     "currentPlan": "Your Current Plan is {plan}",
     "redirecting": "Redirecting...",
     "fullAccess": "FULL ACCESS",
     "mostPopular": "MOST POPULAR",
     "plans": {
       "free": {
-        "description": "Perfect for job seekers getting started",
-        "tokens": "1,000 tokens / month",
+        "name": "Free",
+        "description": "Perfect for individual recruiters getting started with AI tools.",
+        "tokens": "",
         "cta": "Get Started",
         "features": [
-          "1 CV upload & analysis",
-          "ATS Score calculation",
-          "Basic strengths & weaknesses",
-          "3 AI improvement suggestions",
-          "Email support"
+          "5 AI Semantic Searches / mo",
+          "1 Active Job",
+          "Basic Candidate Profiles",
+          "Full RAG Integration"
         ]
       },
       "pro": {
-        "description": "For serious job seekers & recruiters",
-        "tokens": "2,000 tokens / month",
-        "cta": "Get Pro",
+        "name": "Pro",
+        "description": "Scaling talent teams that need deeper AI insights and integration.",
+        "tokens": "",
+        "cta": "Get Started",
         "features": [
-          "Unlimited CV uploads",
-          "Advanced ATS analysis",
-          "Full strengths & weaknesses",
-          "AI career assistant (chat)",
-          "Job matching analysis",
-          "Missing skills detection",
-          "Priority support"
+          "100 AI Semantic Searches",
+          "10 Active Jobs",
+          "Full RAG Integration",
+          "Advanced Filters",
+          "Team Collaboration (up to 5 seats)"
         ]
       },
       "enterprise": {
-        "description": "For companies hiring at scale",
-        "tokens": "4,000 tokens / month",
+        "name": "Enterprise",
+        "description": "Global organizations with high-volume hiring and custom security needs.",
+        "tokens": "",
         "cta": "Contact Sales",
         "features": [
-          "Everything in Pro",
-          "Natural language candidate search",
-          "AI candidate ranking",
-          "Bulk CV processing",
-          "Custom integrations",
-          "Dedicated account manager",
-          "SLA support"
+          "Unlimited AI Searches",
+          "Unlimited Jobs",
+          "Dedicated Support",
+          "Custom BigTable Clusters",
+          "API Access & SSO"
         ]
       },
       "unlimited": {

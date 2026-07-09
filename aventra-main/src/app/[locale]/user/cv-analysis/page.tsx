@@ -50,6 +50,7 @@ import {
   type UserCv,
 } from "@/types/cv";
 import { ROLES } from "@/constants/roles";
+import Image from "next/image";
 
 const ACCEPTED_MIME_TYPES = new Set([
   "application/pdf",
@@ -179,7 +180,9 @@ function EmptyReportState({
         <div className="flex size-14 items-center justify-center rounded-2xl border border-primary/15 bg-primary/8 text-primary dark:border-sky/20 dark:bg-sky/10 dark:text-sky">
           <IconSparkles className="size-6" />
         </div>
-        <h3 className="mt-5 text-3xl font-semibold tracking-tight">{title}</h3>
+        <h3 className="mt-5 text-sm lg:text-3xl  font-semibold tracking-tight">
+          {title}
+        </h3>
         <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground">
           {description}
         </p>
@@ -190,19 +193,54 @@ function EmptyReportState({
 
 /* ───────────────────────────────── helpers ── */
 const BREAKDOWN_TW_COLORS = [
-  { bar: "bg-violet-500", text: "text-violet-600 dark:text-violet-400", bg: "bg-violet-50 dark:bg-violet-950/40" },
-  { bar: "bg-sky-500",    text: "text-sky-600    dark:text-sky-400",    bg: "bg-sky-50    dark:bg-sky-950/40" },
-  { bar: "bg-emerald-500",text: "text-emerald-600 dark:text-emerald-400",bg: "bg-emerald-50 dark:bg-emerald-950/40" },
-  { bar: "bg-amber-500",  text: "text-amber-600  dark:text-amber-400",  bg: "bg-amber-50  dark:bg-amber-950/40" },
-  { bar: "bg-rose-500",   text: "text-rose-600   dark:text-rose-400",   bg: "bg-rose-50   dark:bg-rose-950/40" },
+  {
+    bar: "bg-violet-500",
+    text: "text-violet-600 dark:text-violet-400",
+    bg: "bg-violet-50 dark:bg-violet-950/40",
+  },
+  {
+    bar: "bg-sky-500",
+    text: "text-sky-600    dark:text-sky-400",
+    bg: "bg-sky-50    dark:bg-sky-950/40",
+  },
+  {
+    bar: "bg-emerald-500",
+    text: "text-emerald-600 dark:text-emerald-400",
+    bg: "bg-emerald-50 dark:bg-emerald-950/40",
+  },
+  {
+    bar: "bg-amber-500",
+    text: "text-amber-600  dark:text-amber-400",
+    bg: "bg-amber-50  dark:bg-amber-950/40",
+  },
+  {
+    bar: "bg-rose-500",
+    text: "text-rose-600   dark:text-rose-400",
+    bg: "bg-rose-50   dark:bg-rose-950/40",
+  },
 ];
 
 function getScoreLabel(score?: number) {
   if (score === undefined) return null;
-  if (score >= 85) return { label: "Excellent", cls: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800" };
-  if (score >= 70) return { label: "Good",      cls: "text-sky-600    dark:text-sky-400    bg-sky-50    dark:bg-sky-950/50    border-sky-200    dark:border-sky-800" };
-  if (score >= 55) return { label: "Fair",       cls: "text-amber-600  dark:text-amber-400  bg-amber-50  dark:bg-amber-950/50  border-amber-200  dark:border-amber-800" };
-  return                { label: "Needs Work",   cls: "text-rose-600   dark:text-rose-400   bg-rose-50   dark:bg-rose-950/50   border-rose-200   dark:border-rose-800" };
+  if (score >= 85)
+    return {
+      label: "Excellent",
+      cls: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800",
+    };
+  if (score >= 70)
+    return {
+      label: "Good",
+      cls: "text-sky-600    dark:text-sky-400    bg-sky-50    dark:bg-sky-950/50    border-sky-200    dark:border-sky-800",
+    };
+  if (score >= 55)
+    return {
+      label: "Fair",
+      cls: "text-amber-600  dark:text-amber-400  bg-amber-50  dark:bg-amber-950/50  border-amber-200  dark:border-amber-800",
+    };
+  return {
+    label: "Needs Work",
+    cls: "text-rose-600   dark:text-rose-400   bg-rose-50   dark:bg-rose-950/50   border-rose-200   dark:border-rose-800",
+  };
 }
 
 /* ─── Score Metric Strip ── */
@@ -234,7 +272,10 @@ function ScoreMetricStrip({
             </span>
             <div className="mt-1 h-1 rounded-full bg-black/10 dark:bg-white/10">
               <div
-                className={cn("h-full rounded-full transition-all duration-700", color.bar)}
+                className={cn(
+                  "h-full rounded-full transition-all duration-700",
+                  color.bar,
+                )}
                 style={{ width: `${Math.max(0, Math.min(100, entry.value))}%` }}
               />
             </div>
@@ -265,37 +306,47 @@ function InsightListCard({
   const variantMap = {
     emerald: {
       icon: "text-emerald-600 dark:text-emerald-400",
-      dot:  "bg-emerald-500",
-      badge:"text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50",
-      border:"border-l-emerald-500",
+      dot: "bg-emerald-500",
+      badge:
+        "text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50",
+      border: "border-l-emerald-500",
     },
     amber: {
       icon: "text-amber-600 dark:text-amber-400",
-      dot:  "bg-amber-500",
-      badge:"text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50",
-      border:"border-l-amber-500",
+      dot: "bg-amber-500",
+      badge:
+        "text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50",
+      border: "border-l-amber-500",
     },
     primary: {
       icon: "text-primary dark:text-sky",
-      dot:  "bg-primary dark:bg-sky",
-      badge:"text-primary dark:text-sky bg-primary/8 dark:bg-sky/10",
-      border:"border-l-primary dark:border-l-sky",
+      dot: "bg-primary dark:bg-sky",
+      badge: "text-primary dark:text-sky bg-primary/8 dark:bg-sky/10",
+      border: "border-l-primary dark:border-l-sky",
     },
   };
   const v = variantMap[variant];
 
   return (
-    <div className={cn(
-      "flex flex-col rounded-xl border border-border/50 bg-card/80 backdrop-blur",
-      "border-l-4", v.border,
-    )}>
+    <div
+      className={cn(
+        "flex flex-col rounded-xl border border-border/50 bg-card/80 backdrop-blur",
+        "border-l-4",
+        v.border,
+      )}
+    >
       <div className="flex items-center justify-between gap-3 px-5 pt-5 pb-3">
         <div className="flex items-center gap-2">
           <Icon className={cn("size-4 shrink-0", v.icon)} />
           <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         </div>
         {items.length > 0 ? (
-          <span className={cn("rounded-md px-2 py-0.5 text-xs font-semibold", v.badge)}>
+          <span
+            className={cn(
+              "rounded-md px-2 py-0.5 text-xs font-semibold",
+              v.badge,
+            )}
+          >
             {items.length}
           </span>
         ) : null}
@@ -307,11 +358,13 @@ function InsightListCard({
         ) : (
           <ul className="divide-y divide-border/40">
             {previewItems.map((item, index) => (
-              <li key={`${title}-${index}`} className="flex items-start gap-3 py-2.5">
-                <span className={cn(
-                  "mt-1.5 size-1.5 shrink-0 rounded-full",
-                  v.dot,
-                )} />
+              <li
+                key={`${title}-${index}`}
+                className="flex items-start gap-3 py-2.5"
+              >
+                <span
+                  className={cn("mt-1.5 size-1.5 shrink-0 rounded-full", v.dot)}
+                />
                 <p className="text-sm leading-6 text-foreground/85">
                   {formatInsightLabel(item)}
                 </p>
@@ -354,12 +407,58 @@ function ContactInfoCard({
   const hasContact = !!(email || phone || linkedin || github || location);
 
   const items = [
-    email    ? { icon: IconMail,          label: profileT("emailLabel"),    value: email,     href: `mailto:${email}`,             external: false } : null,
-    phone    ? { icon: IconPhone,         label: profileT("phoneLabel"),    value: phone,     href: `tel:${phone}`,                external: false } : null,
-    linkedin ? { icon: IconBrandLinkedin, label: profileT("linkedinLabel"), value: "LinkedIn", href: ensureAbsoluteUrl(linkedin), external: true  } : null,
-    github   ? { icon: IconBrandGithub,   label: profileT("githubLabel"),   value: "GitHub",  href: ensureAbsoluteUrl(github),   external: true  } : null,
-    location ? { icon: IconMapPin,        label: profileT("locationLabel"), value: location,  href: undefined,                    external: false } : null,
-  ].filter(Boolean) as { icon: typeof IconMail; label: string; value: string; href: string | undefined; external: boolean }[];
+    email
+      ? {
+          icon: IconMail,
+          label: profileT("emailLabel"),
+          value: email,
+          href: `mailto:${email}`,
+          external: false,
+        }
+      : null,
+    phone
+      ? {
+          icon: IconPhone,
+          label: profileT("phoneLabel"),
+          value: phone,
+          href: `tel:${phone}`,
+          external: false,
+        }
+      : null,
+    linkedin
+      ? {
+          icon: IconBrandLinkedin,
+          label: profileT("linkedinLabel"),
+          value: "LinkedIn",
+          href: ensureAbsoluteUrl(linkedin),
+          external: true,
+        }
+      : null,
+    github
+      ? {
+          icon: IconBrandGithub,
+          label: profileT("githubLabel"),
+          value: "GitHub",
+          href: ensureAbsoluteUrl(github),
+          external: true,
+        }
+      : null,
+    location
+      ? {
+          icon: IconMapPin,
+          label: profileT("locationLabel"),
+          value: location,
+          href: undefined,
+          external: false,
+        }
+      : null,
+  ].filter(Boolean) as {
+    icon: typeof IconMail;
+    label: string;
+    value: string;
+    href: string | undefined;
+    external: boolean;
+  }[];
 
   if (!hasContact) return null;
 
@@ -373,7 +472,10 @@ function ContactInfoCard({
       </div>
       <div className="flex flex-wrap gap-0 divide-x divide-border/40">
         {items.map(({ icon: ItemIcon, label, value, href, external }) => (
-          <div key={label} className="flex flex-col gap-0.5 px-5 py-3 min-w-[140px]">
+          <div
+            key={label}
+            className="flex flex-col gap-0.5 px-5 py-3 min-w-[140px]"
+          >
             <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
               {label}
             </span>
@@ -429,15 +531,27 @@ function BreakdownCard({
               return (
                 <div key={entry.key}>
                   <div className="mb-2 flex items-center justify-between gap-3">
-                    <span className="text-sm font-medium text-foreground/85">{entry.label}</span>
-                    <span className={cn("text-sm font-bold tabular-nums", color.text)}>
+                    <span className="text-sm font-medium text-foreground/85">
+                      {entry.label}
+                    </span>
+                    <span
+                      className={cn(
+                        "text-sm font-bold tabular-nums",
+                        color.text,
+                      )}
+                    >
                       {entry.value}
                     </span>
                   </div>
                   <div className="h-1.5 overflow-hidden rounded-full bg-muted/50">
                     <div
-                      className={cn("h-full rounded-full transition-all duration-700 ease-out", color.bar)}
-                      style={{ width: `${Math.max(0, Math.min(100, entry.value))}%` }}
+                      className={cn(
+                        "h-full rounded-full transition-all duration-700 ease-out",
+                        color.bar,
+                      )}
+                      style={{
+                        width: `${Math.max(0, Math.min(100, entry.value))}%`,
+                      }}
                     />
                   </div>
                 </div>
@@ -452,7 +566,9 @@ function BreakdownCard({
 
 export default function CVAnalysisPage() {
   const [file, setFile] = useState<File | null>(null);
-  const [uploadedCv, setUploadedCv] = useState<NonNullable<UploadCvResponse["data"]> | null>(null);
+  const [uploadedCv, setUploadedCv] = useState<NonNullable<
+    UploadCvResponse["data"]
+  > | null>(null);
   const [analysisCvId, setAnalysisCvId] = useState<string | null>(null);
   const [instantReport, setInstantReport] = useState<{
     cvId: string;
@@ -468,7 +584,9 @@ export default function CVAnalysisPage() {
   const sortedCvs = useMemo(() => sortCvsByNewest(cvs), [cvs]);
   const selectedCv = useMemo(() => {
     if (selectedCvId) {
-      const matched = sortedCvs.find((cv, index) => getCvId(cv, index) === selectedCvId);
+      const matched = sortedCvs.find(
+        (cv, index) => getCvId(cv, index) === selectedCvId,
+      );
       if (matched) return matched;
     }
 
@@ -500,10 +618,12 @@ export default function CVAnalysisPage() {
   }, [instantReport, selectedBackendCvId, selectedCv]);
   const isAwaitingAnalysis =
     !!analysisCvId &&
-    (!trackedAnalysisCv || !isFinalAnalysisStatus(trackedAnalysisCv.processingStatus));
+    (!trackedAnalysisCv ||
+      !isFinalAnalysisStatus(trackedAnalysisCv.processingStatus));
 
   useEffect(() => {
-    if (!isAwaitingAnalysis && !(selectedCv?.processingStatus === "processing")) return;
+    if (!isAwaitingAnalysis && !(selectedCv?.processingStatus === "processing"))
+      return;
 
     // Keep the page fresh while the backend finishes processing the newest CV.
     const intervalId = window.setInterval(() => {
@@ -592,40 +712,41 @@ export default function CVAnalysisPage() {
     formatFileSize(currentUploadedCv?.fileSize) ??
     formatFileSize(displayCv?.originalFile?.fileSize);
 
-  const previewStatus =
-    uploadCv.isPending
-      ? t("uploading")
-      : hasInstantAnalysis
-        ? t("statusAnalyzed")
+  const previewStatus = uploadCv.isPending
+    ? t("uploading")
+    : hasInstantAnalysis
+      ? t("statusAnalyzed")
       : analyzeCv.isPending || isAwaitingAnalysis
         ? t("analyzing")
-      : file
-        ? t("fileReady")
-        : currentUploadedCv?.status === "uploaded" || displayCv?.processingStatus === "uploaded"
-          ? t("statusUploaded")
-        : displayCv?.processingStatus === "analyzed"
-          ? t("statusAnalyzed")
-          : displayCv?.processingStatus === "failed"
-            ? t("failedTitle")
-            : displayCv?.processingStatus && isAnalyzingStatus(displayCv.processingStatus)
-              ? t("processingTitle")
-              : t("fileHint");
+        : file
+          ? t("fileReady")
+          : currentUploadedCv?.status === "uploaded" ||
+              displayCv?.processingStatus === "uploaded"
+            ? t("statusUploaded")
+            : displayCv?.processingStatus === "analyzed"
+              ? t("statusAnalyzed")
+              : displayCv?.processingStatus === "failed"
+                ? t("failedTitle")
+                : displayCv?.processingStatus &&
+                    isAnalyzingStatus(displayCv.processingStatus)
+                  ? t("processingTitle")
+                  : t("fileHint");
 
   const reportState = hasDraftPendingAnalysis
     ? "empty"
     : isAwaitingAnalysis && !hasInstantAnalysis
       ? "processing"
       : !displayCv
-    ? "empty"
-    : displayCv.processingStatus === "failed"
-      ? "failed"
-      : displayCv.processingStatus === "uploaded"
         ? "empty"
-      : hasAnalysis
-        ? "ready"
-        : displayCv.processingStatus === "processing"
-          ? "processing"
-          : "empty";
+        : displayCv.processingStatus === "failed"
+          ? "failed"
+          : displayCv.processingStatus === "uploaded"
+            ? "empty"
+            : hasAnalysis
+              ? "ready"
+              : displayCv.processingStatus === "processing"
+                ? "processing"
+                : "empty";
 
   const handleFileChange = (nextFile: File | null) => {
     if (!nextFile) {
@@ -667,7 +788,12 @@ export default function CVAnalysisPage() {
   };
 
   const handleAnalyze = () => {
-    if (!readyToAnalyzeCvId || analyzeCv.isPending || analyzeCv.isTokenLimitReached) return;
+    if (
+      !readyToAnalyzeCvId ||
+      analyzeCv.isPending ||
+      analyzeCv.isTokenLimitReached
+    )
+      return;
 
     analyzeCv.mutate(readyToAnalyzeCvId, {
       onSuccess: async (payload) => {
@@ -686,11 +812,70 @@ export default function CVAnalysisPage() {
   return (
     <RequireRole allowedRoles={[ROLES.user, ROLES.admin]}>
       <div className="relative isolate overflow-hidden">
-        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 bg-radial from-primary/8 via-primary/4 to-transparent dark:from-sky/8 dark:via-primary/6" />
-        <div className="pointer-events-none absolute right-0 bottom-0 -z-10 h-96 w-96 rounded-full bg-primary/6 blur-3xl dark:bg-sky/10" />
+        {/* ── Banner ── */}
+        <div className="relative w-full hidden h-[400px] dark:flex">
+          <div className="rounded-2xl absolute inset-0 z-10 bg-linear-to-t from-black/80 to-black/5" />
+          <Image
+            src="/cv.png"
+            alt="banner"
+            width={1600}
+            height={900}
+            className="w-full rounded-2xl object-cover"
+          />
+        </div>
+        <div
+          className="w-full rounded-2xl h-[400px] flex dark:hidden"
+        >
+          <Image
+            src="/cv-light.png"
+            alt="banner"
+            width={1600}
+            height={900}
+            className="w-full rounded-2xl object-cover"
+          />
+        </div>
 
-        <div className="mx-auto flex w-full max-w-7xl flex-col px-6 pb-24 pt-28 sm:px-8 lg:px-10">
-          <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(340px,420px)] lg:items-start xl:grid-cols-[minmax(0,1.08fr)_minmax(380px,440px)]">
+        <div className="mx-auto flex w-full max-w-7xl flex-col px-6 py-16 sm:px-8 lg:px-10">
+          {/* ── Stats Strip (after banner) ── */}
+          <section>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-border/60 bg-card py-5 text-center">
+                <span className="text-3xl font-bold text-primary dark:text-sky">
+                  98%
+                </span>
+                <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                  Accuracy
+                </span>
+              </div>
+              <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-border/60 bg-card py-5 text-center">
+                <span className="text-3xl font-bold text-foreground">
+                  {"<"} 30s
+                </span>
+                <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                  Analysis Time
+                </span>
+              </div>
+              <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-border/60 bg-card py-5 text-center">
+                <span className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                  5
+                </span>
+                <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                  Score Metrics
+                </span>
+              </div>
+              <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-border/60 bg-card py-5 text-center">
+                <span className="text-3xl font-bold text-amber-600 dark:text-amber-400">
+                  AI
+                </span>
+                <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                  Powered
+                </span>
+              </div>
+            </div>
+          </section>
+
+          {/* ── Upload Your CV ── */}
+          <section className="mt-16 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(340px,420px)] lg:items-start xl:grid-cols-[minmax(0,1.08fr)_minmax(380px,440px)]">
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/7 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary dark:border-sky/15 dark:bg-sky/8 dark:text-sky">
                 <IconSparkles className="size-3.5" />
@@ -715,6 +900,62 @@ export default function CVAnalysisPage() {
                   {t("suggestionsTitle")}
                 </span>
               </div>
+
+              {/* ── Feature cards ── */}
+              <div className="mt-10 grid grid-cols-2 gap-3">
+                <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-4">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/8 text-primary dark:border-sky/20 dark:bg-sky/10 dark:text-sky">
+                    <IconSparkles className="size-4" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      AI ATS Score
+                    </p>
+                    <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
+                      Instant resume scoring out of 100
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-4">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-600 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400">
+                    <IconCheck className="size-4" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      Strengths
+                    </p>
+                    <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
+                      What&apos;s working well in your CV
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-4">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-amber-200 bg-amber-50 text-amber-600 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400">
+                    <IconAlertTriangle className="size-4" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      Weaknesses
+                    </p>
+                    <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
+                      Areas that need improvement
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-4">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/8 text-primary dark:border-sky/20 dark:bg-sky/10 dark:text-sky">
+                    <IconBulb className="size-4" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      Suggestions
+                    </p>
+                    <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
+                      Actionable tips to stand out
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <Card className="border border-border/60 bg-card/80 shadow-card backdrop-blur lg:sticky lg:top-24">
@@ -724,12 +965,17 @@ export default function CVAnalysisPage() {
                     <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.2em]">
                       {t("uploadEyebrow")}
                     </CardDescription>
-                    <CardTitle className="mt-2 text-xl">{t("uploadTitle")}</CardTitle>
+                    <CardTitle className="mt-2 text-xl">
+                      {t("uploadTitle")}
+                    </CardTitle>
                   </div>
                   <span
                     className={cn(
                       "rounded-full px-2.5 py-1 text-[11px] font-medium",
-                      getStatusTone(selectedCv?.processingStatus, uploadCv.isPending),
+                      getStatusTone(
+                        selectedCv?.processingStatus,
+                        uploadCv.isPending,
+                      ),
                     )}
                   >
                     {previewStatus}
@@ -747,13 +993,17 @@ export default function CVAnalysisPage() {
                       <div className="flex size-16 items-center justify-center rounded-2xl border border-primary/15 bg-primary/8 text-primary dark:border-sky/15 dark:bg-sky/10 dark:text-sky">
                         <IconFileText className="size-7" />
                       </div>
-                      <p className="mt-5 text-lg font-medium text-foreground">
+                      <p className="mt-5 break-all text-sm md:text-lg font-medium text-foreground">
                         {previewName}
                       </p>
                       {previewSize ? (
-                        <p className="mt-2 text-sm text-muted-foreground">{previewSize}</p>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          {previewSize}
+                        </p>
                       ) : null}
-                      <p className="mt-1 text-sm text-muted-foreground">{previewStatus}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {previewStatus}
+                      </p>
                       <p className="mt-3 text-xs font-medium text-primary dark:text-sky">
                         {t("chooseFile")}
                       </p>
@@ -763,7 +1013,9 @@ export default function CVAnalysisPage() {
                       <div className="flex size-16 items-center justify-center rounded-2xl border border-border/70 bg-muted/35 text-muted-foreground">
                         <IconUpload className="size-7" />
                       </div>
-                      <p className="mt-5 text-lg font-medium">{t("uploadTitle")}</p>
+                      <p className="mt-5 text-lg font-medium">
+                        {t("uploadTitle")}
+                      </p>
                       <p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">
                         {t("uploadToStart")}
                       </p>
@@ -782,7 +1034,9 @@ export default function CVAnalysisPage() {
                   onClick={(event) => {
                     event.currentTarget.value = "";
                   }}
-                  onChange={(event) => handleFileChange(event.target.files?.[0] ?? null)}
+                  onChange={(event) =>
+                    handleFileChange(event.target.files?.[0] ?? null)
+                  }
                 />
 
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -792,7 +1046,9 @@ export default function CVAnalysisPage() {
                     size="lg"
                     className="h-12 rounded-2xl border-border/70 bg-background/70"
                     onClick={handleUpload}
-                    disabled={!file || uploadCv.isPending || analyzeCv.isPending}
+                    disabled={
+                      !file || uploadCv.isPending || analyzeCv.isPending
+                    }
                   >
                     {uploadCv.isPending ? (
                       <>
@@ -840,7 +1096,7 @@ export default function CVAnalysisPage() {
                 ) : null}
 
                 {sortedCvs.length > 0 ? (
-                  <div className="space-y-3 rounded-2xl border border-border/60 bg-background/55 p-4">
+                  <div className="relative space-y-3 rounded-2xl border border-border/60 bg-background/55 p-4">
                     <div className="space-y-1">
                       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                         {profileT("myCvs")}
@@ -850,10 +1106,12 @@ export default function CVAnalysisPage() {
                       </p>
                     </div>
 
-                    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+                    <div className="grid gap-2 lg:grid-cols-1">
                       {sortedCvs.map((cv, index) => {
                         const cvId = getCvId(cv, index);
-                        const isSelected = selectedCvId ? selectedCvId === cvId : index === 0;
+                        const isSelected = selectedCvId
+                          ? selectedCvId === cvId
+                          : index === 0;
 
                         return (
                           <button
@@ -861,28 +1119,29 @@ export default function CVAnalysisPage() {
                             type="button"
                             onClick={() => setSelectedCvId(cvId)}
                             className={cn(
-                              "flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition-colors",
+                              "flex flex-1 items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition-colors",
                               isSelected
                                 ? "border-primary bg-primary/6 dark:border-sky dark:bg-sky/10"
                                 : "border-border/60 bg-background/70 hover:border-primary/30 hover:bg-primary/4 dark:hover:border-sky/30 dark:hover:bg-sky/6",
                             )}
                           >
                             <div className="min-w-0">
-                              <p className="truncate text-sm font-medium text-foreground">
+                              <p className="lg:truncate break-all text-sm font-medium text-foreground">
                                 {getCvTitle(cv)}
                               </p>
                               <p className="mt-1 text-xs text-muted-foreground">
                                 {formatFileSize(cv.originalFile?.fileSize)}
                               </p>
                             </div>
-
                             <span
                               className={cn(
                                 "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium",
                                 getStatusTone(cv.processingStatus),
                               )}
                             >
-                              {profileT(`status.${cv.processingStatus ?? "uploaded"}`)}
+                              {profileT(
+                                `status.${cv.processingStatus ?? "uploaded"}`,
+                              )}
                             </span>
                           </button>
                         );
@@ -896,6 +1155,88 @@ export default function CVAnalysisPage() {
             </Card>
           </section>
 
+          {/* ── How it Works (Process) ── */}
+          <section className="mt-20">
+            <div className="mb-8 text-center">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                Process
+              </p>
+              <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                How it Works
+              </h2>
+              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground">
+                Three simple steps to get a full AI-powered breakdown of your
+                resume
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              {/* Step 01 */}
+              <div className="relative flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-5">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/8 text-primary dark:border-sky/20 dark:bg-sky/10 dark:text-sky">
+                  <IconUpload className="size-4" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Step 01
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    Upload Your CV
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                    Drop your PDF or DOCX resume. We accept all standard formats
+                    up to 10 MB.
+                  </p>
+                </div>
+                <div className="hidden sm:block absolute -right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 text-xl select-none">
+                  ›
+                </div>
+              </div>
+
+              {/* Step 02 */}
+              <div className="relative flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-5">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-violet-200 bg-violet-50 text-violet-600 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-400">
+                  <IconSparkles className="size-4" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Step 02
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    AI Analyzes It
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                    Our AI engine reads your CV and computes a detailed ATS
+                    compatibility score.
+                  </p>
+                </div>
+                <div className="hidden sm:block absolute -right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 text-xl select-none">
+                  ›
+                </div>
+              </div>
+
+              {/* Step 03 */}
+              <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-5">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-600 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400">
+                  <IconCheck className="size-4" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Step 03
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    Get Your Report
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                    Receive a full report with strengths, weaknesses, and
+                    prioritized suggestions in seconds.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── ATS Report ── */}
           <section className="mt-16">
             <ReportSectionLabel>{t("reportEyebrow")}</ReportSectionLabel>
 
@@ -929,29 +1270,35 @@ export default function CVAnalysisPage() {
                 </Card>
               ) : reportState === "ready" ? (
                 <div className="space-y-6">
-
                   {/* ══ Row 1: Score hero ══ */}
                   <div className="grid gap-5 lg:grid-cols-[280px_1fr]">
-
-                    {/* ATS Score card — compact left column */}
+                    {/* ATS Score card */}
                     <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-border/50 bg-card/80 p-6 backdrop-blur">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                         {t("overallScore")}
                       </p>
 
-                      <AtsScoreChart score={activeAtsScore ?? 0} size="lg" className="w-full max-w-[180px]" />
+                      <AtsScoreChart
+                        score={activeAtsScore ?? 0}
+                        size="lg"
+                        className="w-full max-w-[180px]"
+                      />
 
-                      {activeAtsScore !== undefined ? (() => {
-                        const grade = getScoreLabel(activeAtsScore);
-                        return grade ? (
-                          <span className={cn(
-                            "rounded-lg border px-4 py-1.5 text-sm font-semibold",
-                            grade.cls,
-                          )}>
-                            {grade.label}
-                          </span>
-                        ) : null;
-                      })() : null}
+                      {activeAtsScore !== undefined
+                        ? (() => {
+                            const grade = getScoreLabel(activeAtsScore);
+                            return grade ? (
+                              <span
+                                className={cn(
+                                  "rounded-lg border px-4 py-1.5 text-sm font-semibold",
+                                  grade.cls,
+                                )}
+                              >
+                                {grade.label}
+                              </span>
+                            ) : null;
+                          })()
+                        : null}
 
                       {activeAnalysis?.summary ? (
                         <p className="text-center text-xs leading-5 text-muted-foreground">
@@ -961,7 +1308,8 @@ export default function CVAnalysisPage() {
                         </p>
                       ) : null}
 
-                      {activeAtsScore !== undefined || activeAnalysis?.summary ? (
+                      {activeAtsScore !== undefined ||
+                      activeAnalysis?.summary ? (
                         <CvInsightDialog
                           title={t("overallScore")}
                           description={t("reportTitle")}
@@ -978,10 +1326,8 @@ export default function CVAnalysisPage() {
 
                     {/* Right: metric strip + breakdown bars */}
                     <div className="flex flex-col gap-5">
-                      {/* Metric scorecard chips */}
                       <ScoreMetricStrip entries={breakdownEntries} />
 
-                      {/* Breakdown bars */}
                       {breakdownEntries.length > 0 ? (
                         <div className="flex-1 rounded-xl border border-border/50 bg-card/80 px-5 py-4 backdrop-blur">
                           <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -989,19 +1335,34 @@ export default function CVAnalysisPage() {
                           </p>
                           <div className="space-y-3.5">
                             {breakdownEntries.map((entry, i) => {
-                              const color = BREAKDOWN_TW_COLORS[i % BREAKDOWN_TW_COLORS.length];
+                              const color =
+                                BREAKDOWN_TW_COLORS[
+                                  i % BREAKDOWN_TW_COLORS.length
+                                ];
                               return (
                                 <div key={entry.key}>
                                   <div className="mb-1.5 flex items-center justify-between gap-3">
-                                    <span className="text-sm font-medium text-foreground/80">{entry.label}</span>
-                                    <span className={cn("text-sm font-bold tabular-nums", color.text)}>
+                                    <span className="text-sm font-medium text-foreground/80">
+                                      {entry.label}
+                                    </span>
+                                    <span
+                                      className={cn(
+                                        "text-sm font-bold tabular-nums",
+                                        color.text,
+                                      )}
+                                    >
                                       {entry.value}
                                     </span>
                                   </div>
                                   <div className="h-1.5 overflow-hidden rounded-full bg-muted/50">
                                     <div
-                                      className={cn("h-full rounded-full transition-all duration-700", color.bar)}
-                                      style={{ width: `${Math.max(0, Math.min(100, entry.value))}%` }}
+                                      className={cn(
+                                        "h-full rounded-full transition-all duration-700",
+                                        color.bar,
+                                      )}
+                                      style={{
+                                        width: `${Math.max(0, Math.min(100, entry.value))}%`,
+                                      }}
                                     />
                                   </div>
                                 </div>
@@ -1074,13 +1435,3 @@ export default function CVAnalysisPage() {
     </RequireRole>
   );
 }
-
-
-
-
-
-
-
-
-
-

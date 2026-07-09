@@ -10,6 +10,7 @@ function makeQueryClient() {
         staleTime: 60 * 1000,
         retry: 1,
         gcTime: 5 * 60 * 1000,
+        refetchOnWindowFocus: false,
       },
     },
   });

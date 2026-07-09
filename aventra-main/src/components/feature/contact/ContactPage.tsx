@@ -74,7 +74,7 @@ export function ContactPage() {
   ];
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#f8fbff] text-slate-950 dark:bg-[#050b12] dark:text-white">
+    <main className="min-h-screen overflow-hidden bg-background text-foreground">
       <section className="relative mx-auto max-w-7xl px-6 pb-16 pt-28 lg:px-8">
         <div className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute left-0 top-0 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl dark:bg-cyan-500/10" />

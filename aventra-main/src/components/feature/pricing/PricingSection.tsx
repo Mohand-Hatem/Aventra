@@ -12,9 +12,8 @@ export default function PricingSection() {
   const userInfo = useAuthStore((state) => state.userInfo);
   const showUnlimitedOnly = hasUnlimitedAccess(userInfo);
   const { plans, unlimitedPlan } = usePricingPlans();
-
   return (
-    <section className="min-h-screen w-full bg-background dark:bg-canvas">
+    <section className="min-h-screen w-full bg-background">
       <div className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6">
 
       {/* Header */}

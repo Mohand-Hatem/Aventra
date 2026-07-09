@@ -54,17 +54,12 @@ type UseUserOptions = {
 };
 
 export const useUser = (options?: UseUserOptions) => {
-  const queryClient = useQueryClient();
-
   return useQuery({
     queryKey: queryKeys.auth.user,
-    queryFn: async () => {
-      const user = await fetchAuthUser();
-      syncAuthUser(queryClient, user);
-      return user;
-    },
+    queryFn: fetchAuthUser,
     initialData: () => useAuthStore.getState().userInfo ?? undefined,
     enabled: options?.enabled ?? true,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
 
@@ -78,7 +73,6 @@ export const useLogin = () => {
     onSuccess: async (data) => {
       const user = parseAuthUserPayload(data);
       syncAuthUser(queryClient, user);
-      await queryClient.invalidateQueries({ queryKey: queryKeys.auth.user });
       toast.success(t("auth.loginSuccess"));
       router.push("/");
     },
@@ -114,7 +108,6 @@ export const useRegister = () => {
     onSuccess: async ({ data, isExistingAccount }) => {
       const user = parseAuthUserPayload(data);
       syncAuthUser(queryClient, user);
-      await queryClient.invalidateQueries({ queryKey: queryKeys.auth.user });
       if (isExistingAccount) {
         toast.success(t("auth.registerExistingAccount"));
       } else {

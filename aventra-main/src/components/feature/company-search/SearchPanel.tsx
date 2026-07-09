@@ -23,8 +23,13 @@ export default function SearchPanel({
   onSearch,
   onSearchingChange,
 }: SearchPanelProps) {
-  const { messages, sendMessage, isThinking, isTokenLimitReached, tokenLimitError } =
-    useRecruiterChat({ onSearch });
+  const {
+    messages,
+    sendMessage,
+    isThinking,
+    isTokenLimitReached,
+    tokenLimitError,
+  } = useRecruiterChat({ onSearch });
 
   useEffect(() => {
     onSearchingChange?.(isThinking);
@@ -32,7 +37,6 @@ export default function SearchPanel({
 
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border/50 bg-linear-to-b from-card to-card/50 shadow-lg">
-
       <ChatHeader />
 
       <div className="flex-1 overflow-y-auto bg-card/40 p-4">
@@ -40,7 +44,10 @@ export default function SearchPanel({
           <div className="flex h-full flex-col items-center justify-center space-y-6">
             <WelcomeMessage />
             <div className="w-full">
-              <SuggestedPrompts onSelect={sendMessage} disabled={isTokenLimitReached} />
+              <SuggestedPrompts
+                onSelect={sendMessage}
+                disabled={isTokenLimitReached}
+              />
             </div>
           </div>
         )}
@@ -67,7 +74,10 @@ export default function SearchPanel({
             {tokenLimitError.message}
           </p>
         ) : null}
-        <ChatInput onSend={sendMessage} disabled={isThinking || isTokenLimitReached} />
+        <ChatInput
+          onSend={sendMessage}
+          disabled={isThinking || isTokenLimitReached}
+        />
       </div>
     </div>
   );

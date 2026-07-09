@@ -6,6 +6,44 @@
 
 export type LocalizedCandidateName = string | { en?: string; ar?: string };
 
+export interface CandidateEducation {
+  degree?: string;
+  institution?: string;
+  year?: string;
+}
+
+export interface CandidateExperience {
+  role?: string;
+  company?: string;
+  duration?: string;
+  description?: string;
+}
+
+export interface CandidateProject {
+  name?: string;
+  description?: string;
+  technologies?: string[];
+}
+
+export interface CandidateCertification {
+  name?: string;
+  issuer?: string;
+  date?: string;
+}
+
+export interface CandidateStrengthWeakness {
+  title: string;
+  detail: string;
+}
+
+export interface CandidateScoreBreakdown {
+  keywordMatch?: number;
+  formattingClarity?: number;
+  skillsRelevance?: number;
+  experienceDepth?: number;
+  educationCertifications?: number;
+}
+
 export interface CandidateResult {
   cvId: string;
   userId?: string;
@@ -24,6 +62,14 @@ export interface CandidateResult {
   location?: string;
   linkedin?: string;
   github?: string;
+  education?: CandidateEducation[];
+  experience?: CandidateExperience[];
+  projects?: CandidateProject[];
+  certifications?: CandidateCertification[];
+  strengths?: CandidateStrengthWeakness[];
+  weaknesses?: CandidateStrengthWeakness[];
+  suggestions?: CandidateStrengthWeakness[];
+  scoreBreakdown?: CandidateScoreBreakdown;
 }
 
 export interface CompanySearchApiCandidate {
@@ -42,6 +88,31 @@ export interface CompanySearchApiCandidate {
   location?: string;
   linkedin?: string;
   github?: string;
+  parsedData?: {
+    contact?: {
+      linkedin?: string;
+      github?: string;
+      email?: string;
+      phone?: string;
+      location?: string;
+    };
+    skills?: {
+      technical?: string[];
+      soft?: string[];
+      missingRecommended?: string[];
+    };
+    certifications?: CandidateCertification[];
+    experience?: CandidateExperience[];
+    education?: CandidateEducation[];
+    projects?: CandidateProject[];
+  };
+  aiAnalysis?: {
+    summary?: string;
+    strengths?: CandidateStrengthWeakness[];
+    weaknesses?: CandidateStrengthWeakness[];
+    suggestions?: CandidateStrengthWeakness[];
+  };
+  scoreBreakdown?: CandidateScoreBreakdown;
 }
 
 interface LegacyCandidateResult {
@@ -70,8 +141,19 @@ interface LegacyCandidateResult {
   location?: string;
   linkedin?: string;
   github?: string;
+  parsedData?: {
+    education?: CandidateEducation[];
+    experience?: CandidateExperience[];
+    projects?: CandidateProject[];
+    certifications?: CandidateCertification[];
+  };
+  aiAnalysis?: {
+    strengths?: CandidateStrengthWeakness[];
+    weaknesses?: CandidateStrengthWeakness[];
+    suggestions?: CandidateStrengthWeakness[];
+  };
+  scoreBreakdown?: CandidateScoreBreakdown;
 }
-
 export interface SearchCandidatesResponse {
   success: boolean;
   query: string;
@@ -145,7 +227,7 @@ export function normalizeCandidateResult(
 ): CandidateResult {
   if ("user" in candidate || "originalFile" in candidate) {
     return {
-      cvId: candidate.cvId,
+      cvId: candidate.cvId || (candidate as any)._id || (candidate as any).id,
       userId: candidate.userId,
       matchScore: normalizePercent(candidate.matchScore),
       atsScore: normalizePercent(candidate.atsScore),
@@ -162,13 +244,22 @@ export function normalizeCandidateResult(
       location: candidate.location ?? candidate.user?.location,
       linkedin: candidate.linkedin ?? candidate.user?.linkedin,
       github: candidate.github ?? candidate.user?.github,
+      education: candidate.parsedData?.education ?? [],
+      experience: candidate.parsedData?.experience ?? [],
+      projects: candidate.parsedData?.projects ?? [],
+      certifications: candidate.parsedData?.certifications ?? [],
+      strengths: candidate.aiAnalysis?.strengths ?? [],
+      weaknesses: candidate.aiAnalysis?.weaknesses ?? [],
+      suggestions: candidate.aiAnalysis?.suggestions ?? [],
+      scoreBreakdown: candidate.scoreBreakdown,
     };
   }
 
   if ("topSkills" in candidate || "cvFileUrl" in candidate || "matchedSnippet" in candidate) {
-    const fallbackName = getCandidateNameText(candidate.name, candidate.cvId);
+    const actualCvId = candidate.cvId || (candidate as any)._id || (candidate as any).id;
+    const fallbackName = getCandidateNameText(candidate.name, actualCvId);
     return {
-      cvId: candidate.cvId,
+      cvId: actualCvId,
       matchScore: normalizePercent(candidate.matchScore),
       atsScore: normalizePercent(candidate.atsScore),
       name: candidate.name ?? "",
@@ -182,11 +273,19 @@ export function normalizeCandidateResult(
       location: "location" in candidate ? candidate.location : undefined,
       linkedin: "linkedin" in candidate ? candidate.linkedin : undefined,
       github: "github" in candidate ? candidate.github : undefined,
+      education: candidate.parsedData?.education ?? [],
+      experience: candidate.parsedData?.experience ?? [],
+      projects: candidate.parsedData?.projects ?? [],
+      certifications: candidate.parsedData?.certifications ?? [],
+      strengths: candidate.aiAnalysis?.strengths ?? [],
+      weaknesses: candidate.aiAnalysis?.weaknesses ?? [],
+      suggestions: candidate.aiAnalysis?.suggestions ?? [],
+      scoreBreakdown: candidate.scoreBreakdown,
     };
   }
 
   return {
-    cvId: candidate.cvId,
+    cvId: candidate.cvId || (candidate as any)._id || (candidate as any).id,
     userId: "userId" in candidate ? candidate.userId : undefined,
     matchScore: normalizePercent(candidate.matchScore),
     atsScore: normalizePercent(candidate.atsScore),
@@ -203,6 +302,14 @@ export function normalizeCandidateResult(
     location: "location" in candidate ? candidate.location : undefined,
     linkedin: "linkedin" in candidate ? candidate.linkedin : undefined,
     github: "github" in candidate ? candidate.github : undefined,
+    education: "education" in candidate ? candidate.education : [],
+    experience: "experience" in candidate ? candidate.experience : [],
+    projects: "projects" in candidate ? candidate.projects : [],
+    certifications: "certifications" in candidate ? candidate.certifications : [],
+    strengths: "strengths" in candidate ? candidate.strengths : [],
+    weaknesses: "weaknesses" in candidate ? candidate.weaknesses : [],
+    suggestions: "suggestions" in candidate ? candidate.suggestions : [],
+    scoreBreakdown: "scoreBreakdown" in candidate ? candidate.scoreBreakdown : undefined,
   };
 }
 

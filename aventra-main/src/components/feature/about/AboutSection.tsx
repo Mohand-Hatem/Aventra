@@ -85,7 +85,7 @@ export default function AboutSection() {
   }[];
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-background">
       {/* Hero */}
       <section className="relative overflow-hidden px-4 pt-28 pb-16 sm:px-6 sm:pt-36 sm:pb-20 lg:px-8">
         <div className="mx-auto grid max-w-360 items-center gap-12 lg:grid-cols-2 lg:gap-10">

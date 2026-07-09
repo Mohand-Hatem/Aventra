@@ -22,6 +22,7 @@ import {
 } from "@tabler/icons-react";
 import { useLogin, useUser } from "@/hooks/useAuth";
 import { useAuthStore } from "@/stores/auth-store";
+import { ROLES } from "@/constants/roles";
 
 /*
   --chart-accent is set on the root section:
@@ -71,10 +72,16 @@ function ScoreGauge({ score }: { score: number }) {
         </RadialBarChart>
       </ChartContainer>
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-        <span dir="ltr" className="text-lg font-bold leading-none text-foreground">
+        <span
+          dir="ltr"
+          className="text-lg font-bold leading-none text-foreground"
+        >
           {n(score)}
         </span>
-        <span dir="ltr" className="mt-0.5 text-[10px] leading-none text-muted-foreground">
+        <span
+          dir="ltr"
+          className="mt-0.5 text-[10px] leading-none text-muted-foreground"
+        >
           {digits("/100")}
         </span>
       </div>
@@ -103,7 +110,9 @@ function CandidateChart() {
       {candidates.map((c, i) => (
         <div key={c.name} className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-foreground">{c.name}</span>
+            <span className="text-xs font-medium text-foreground">
+              {c.name}
+            </span>
             <span
               dir="ltr"
               className="text-xs font-semibold tabular-nums"
@@ -197,49 +206,53 @@ function B2BCards() {
         <div className="h-px flex-1 bg-border/60" />
       </div>
 
-      <div className="flex flex-col gap-3">
-        <div className="relative flex h-40 overflow-hidden border border-border/60 rounded-lg bg-card shadow-card dark:border-border/40">
-          <div className="flex flex-1 flex-col justify-evenly py-5 ps-6 pe-4">
+      <div className="flex flex-col  gap-3">
+        <div className="relative   flex h-40 md:h-44 overflow-hidden border border-border/60 rounded-lg bg-card shadow-card dark:border-border/40">
+          <div className="flex flex-1 w-[50%]  flex-col justify-evenly py-5 ps-6 pe-2">
             <div>
-              <p className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="text-[10px] md:text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                 {t("jobSeekers")}
               </p>
-              <p className="mt-2 text-2xl font-bold text-primary dark:text-sky">
+              <p className="mt-2 text-xl md:text-2xl font-bold text-primary dark:text-sky">
                 {t("b2cLabel")}
               </p>
             </div>
-            <p className="text-sm text-muted-foreground">{t("b2cDesc")}</p>
+            <p className="text-xs md:text-sm text-muted-foreground">
+              {t("b2cDesc")}
+            </p>
           </div>
-          <div className="relative w-70 -inset-e-5 shrink-0">
+          <div className="relative w-[50%] right-5 md:right-10   shrink-0">
             <Image
               src="/ats.png"
               alt={t("altAts")}
               fill
-              className="object-cover object-end"
+              className="object-contain scale-150 md:scale-130 object-right "
               sizes="200px"
             />
           </div>
         </div>
 
         {/* B2B card */}
-        <div className="relative flex h-40 overflow-hidden border border-border/60 rounded-lg bg-card shadow-card dark:border-border/40">
-          <div className="flex flex-1 flex-col justify-evenly py-5 ps-6 pe-4">
+        <div className="relative flex h-40 md:h-44 overflow-hidden border border-border/60 rounded-lg bg-card shadow-card dark:border-border/40">
+          <div className="flex flex-1 w-[50%] flex-col justify-evenly py-5 ps-6 pe-4">
             <div>
-              <p className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="text-[10px] md:text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                 {t("companies")}
               </p>
-              <p className="mt-2 text-2xl font-bold text-primary dark:text-sky">
+              <p className="mt-2 text-xl md:text-2xl font-bold text-primary dark:text-sky">
                 {t("b2bLabel")}
               </p>
             </div>
-            <p className="text-sm text-muted-foreground">{t("b2bDesc")}</p>
+            <p className="text-xs md:text-sm text-muted-foreground">
+              {t("b2bDesc")}
+            </p>
           </div>
-          <div className="relative w-60 -inset-e-5 shrink-0">
+          <div className="relative w-[50%] right-5 md:right-10 shrink-0">
             <Image
               src="/comapny.png"
               alt={t("altCompany")}
               fill
-              className="object-cover object-center"
+              className="object-contain scale-130 object-right"
               sizes="200px"
             />
           </div>
@@ -248,8 +261,6 @@ function B2BCards() {
     </div>
   );
 }
-
-
 
 function UserCards() {
   const t = useTranslations("landing");
@@ -279,7 +290,11 @@ function UserCards() {
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {tags.map((tag) => (
-                <Chip key={tag} dir="ltr" className="bg-muted text-muted-foreground">
+                <Chip
+                  key={tag}
+                  dir="ltr"
+                  className="bg-muted text-muted-foreground"
+                >
                   +{tag}
                 </Chip>
               ))}
@@ -405,7 +420,7 @@ function CompanyCards() {
 export default function Landing() {
   const t = useTranslations("landing");
   const user = useAuthStore((state) => state.userInfo);
-  console.log(user);
+
   const trustItems = [
     t("trust.noCard"),
     t("trust.freeAnalysis"),
@@ -462,9 +477,22 @@ export default function Landing() {
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <Button asChild size="lg" className="rounded-xl px-6">
-              <Link href="/register">{t("uploadResume")}</Link>
-            </Button>
+            {user ? (
+              user.role === ROLES.company ? (
+                <Button asChild size="lg" className="rounded-xl px-6">
+                  <Link href="/company/search">Search Candidate</Link>
+                </Button>
+              ) : (
+                <Button asChild size="lg" className="rounded-xl px-6">
+                  <Link href="/user/cv-analysis">Upload Resume</Link>
+                </Button>
+              )
+            ) : (
+              <Button asChild size="lg" className="rounded-xl px-6">
+                <Link href="/about">Discover Features</Link>
+              </Button>
+            )}
+
             <Button
               asChild
               variant="outline"
@@ -490,7 +518,7 @@ export default function Landing() {
         </div>
 
         {/* ── RIGHT: cards ── */}
-        <div className="flex h-auto lg:h-full flex-col justify-center overflow-visible lg:overflow-y-auto rounded-2xl bg-muted/30 p-4 dark:bg-transparent">
+        <div className="flex h-auto lg:h-full flex-col justify-center overflow-visible  rounded-2xl bg-muted/30 p-4 dark:bg-transparent">
           <div className="flex flex-col gap-6">
             <UserCards />
             <div className="h-px shrink-0 bg-border/60" />

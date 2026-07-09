@@ -24,13 +24,13 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
   return (
     <div
       className={cn(
-        "relative flex flex-col rounded-2xl border p-8 transition-all duration-300",
+        "relative flex flex-col rounded-3xl border p-8 transition-all duration-300",
         isCurrentPlan && !isUnlimitedPlan && "opacity-50 cursor-not-allowed",
         isGoldCard &&
           "border-amber-500 bg-indigo-800 text-white",
         !isGoldCard &&
           featured &&
-          "border-primary dark:border-sky bg-primary dark:bg-sky text-white shadow-2xl scale-105",
+          "border-transparent bg-[#0B1536] text-white shadow-2xl scale-105",
         !isGoldCard &&
           !featured &&
           "border-border bg-card text-card-foreground shadow-sm hover:shadow-md hover:-translate-y-1",
@@ -38,12 +38,13 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
     >
       {/* Featured badge */}
       {(featured || isGoldCard) && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+        <div className="absolute -top-4 right-8">
           <span
             className={cn(
-              "rounded-full bg-white px-4 py-1 text-xs font-bold shadow",
-              isGoldCard ? "text-amber-600" : "text-primary",
+              "rounded bg-blue-600 px-3 py-1.5 text-[10px] font-bold text-white shadow tracking-widest",
+              isGoldCard && "bg-amber-500 text-white"
             )}
+            style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%)" }}
           >
             {isGoldCard ? t("fullAccess") : t("mostPopular")}
           </span>
@@ -72,26 +73,36 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
 
       {/* Price */}
       <div className="mt-4 flex items-end gap-1">
-        {!isUnlimitedPlan && (
+        {!isUnlimitedPlan && price !== "Custom" && (
           <span
             className={cn(
-              "text-2xl font-semibold",
+              "text-2xl font-semibold mb-1",
               isHighlighted ? "text-white/90" : "text-muted-foreground",
             )}
           >
             $
           </span>
         )}
-        <span className="text-5xl font-bold tracking-tight">{price}</span>
+        <span className={cn("font-bold tracking-tight", price === "Custom" ? "text-4xl" : "text-5xl")}>{price}</span>
+        {!isUnlimitedPlan && price !== "Custom" && !featured && (
+          <span
+            className={cn(
+              "text-base mb-1",
+              isHighlighted ? "text-white/70" : "text-muted-foreground",
+            )}
+          >
+            {t("perMonth")}
+          </span>
+        )}
       </div>
-      {!isUnlimitedPlan && (
+      {!isUnlimitedPlan && price !== "Custom" && featured && (
         <p
           className={cn(
-            "mt-1 text-sm",
+            "mt-1 text-sm font-medium",
             isHighlighted ? "text-white/70" : "text-muted-foreground",
           )}
         >
-          {t("perMonth")}
+          {t("billedAnnually")}
         </p>
       )}
 
@@ -106,16 +117,18 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
       </p>
 
       {/* Tokens */}
-      <div
-        className={cn(
-          "mt-4 rounded-xl px-4 py-2 text-center text-sm font-medium",
-          isHighlighted
-            ? "bg-white/20 text-white"
-            : "bg-primary/10 dark:bg-sky/10 text-primary dark:text-sky",
-        )}
-      >
-        {tokens}
-      </div>
+      {tokens && (
+        <div
+          className={cn(
+            "mt-4 rounded-xl px-4 py-2 text-center text-sm font-medium",
+            isHighlighted
+              ? "bg-white/20 text-white"
+              : "bg-primary/10 dark:bg-sky/10 text-primary dark:text-sky",
+          )}
+        >
+          {tokens}
+        </div>
+      )}
 
       {/* Divider */}
       <div
@@ -130,8 +143,8 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
               className={cn(
                 "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
                 isHighlighted
-                  ? "bg-white/20 text-white"
-                  : "bg-primary/10 dark:bg-sky/10 text-primary dark:text-sky",
+                  ? "bg-emerald-500/20 text-emerald-400"
+                  : "bg-emerald-500/10 text-emerald-500",
               )}
             >
               <IconCheck size={12} stroke={3} />
@@ -164,12 +177,12 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
           disabled={isPending}
           onClick={() => handlePlanSelection(name)}
           className={cn(
-            "mt-8 block w-full rounded-xl py-3 text-center text-sm font-semibold transition-all duration-200",
+            "mt-8 block w-full rounded-xl py-3 text-center text-sm font-semibold transition-all duration-200 border-2",
             isGoldCard
-              ? "bg-white text-amber-600 hover:bg-white/90 shadow"
+              ? "bg-white text-amber-600 hover:bg-white/90 shadow border-transparent"
               : featured
-                ? "bg-white text-primary hover:bg-white/90 shadow"
-                : "border-2 border-primary dark:border-sky text-primary dark:text-sky hover:bg-primary dark:hover:bg-sky hover:text-white dark:hover:text-white",
+                ? "bg-blue-600 text-white hover:bg-blue-700 shadow border-transparent"
+                : "bg-white border-foreground/20 text-foreground hover:bg-muted dark:bg-card dark:hover:bg-muted/50",
           )}
         >
           {isPending ? (

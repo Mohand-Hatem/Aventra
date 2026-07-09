@@ -115,43 +115,45 @@ export function RegisterForm() {
   };
 
   return (
-    <div className="relative flex w-full flex-col items-center justify-center bg-background px-6 py-10 sm:px-12 lg:px-16 lg:w-[54%]">
+    <div className="relative flex w-full flex-col items-center justify-center bg-background px-6 py-25 md:py-10 sm:px-12 lg:px-16 lg:w-[54%]">
       <div className="w-full max-w-[480px]">
-        <div className="mb-10 flex justify-end">
-          <Link
-            href={APP_ROUTES.home}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            {t("backToWebsite")}
-            <GoArrowRight
-              className="h-4 w-4 rtl:rotate-180 dark:text-sky text-primary"
-              aria-hidden="true"
-            />
-          </Link>
+        <div className="parent-Links flex justify-between items-center">
+          <div className=" lg:hidden">
+            <Link href={APP_ROUTES.home}>
+              <Image
+                src="/Aventra-logo.png"
+                alt="Aventra"
+                width={130}
+                height={36}
+                priority
+                className="dark:hidden"
+              />
+              <Image
+                src="/Aventra-logo-white1.png"
+                alt="Aventra"
+                width={130}
+                height={36}
+                priority
+                className="hidden dark:block"
+              />
+            </Link>
+          </div>
+
+          <div className="flex lg:items-end ">
+            <Link
+              href={APP_ROUTES.home}
+              className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {t("backToWebsite")}
+              <GoArrowRight
+                className="h-4 w-4 rtl:rotate-180 dark:text-sky text-primary"
+                aria-hidden="true"
+              />
+            </Link>
+          </div>
         </div>
 
-        <div className="mb-8 lg:hidden">
-          <Link href={APP_ROUTES.home}>
-            <Image
-              src="/Aventra-logo.png"
-              alt="Aventra"
-              width={130}
-              height={36}
-              priority
-              className="dark:hidden"
-            />
-            <Image
-              src="/Aventra-logo-white1.png"
-              alt="Aventra"
-              width={130}
-              height={36}
-              priority
-              className="hidden dark:block"
-            />
-          </Link>
-        </div>
-
-        <div className="mb-8">
+        <div className="my-3">
           <h1 className="text-xl sm:text-2xl lg:text-[2rem] font-bold leading-tight tracking-tight text-foreground">
             {t("title")}
           </h1>
@@ -176,7 +178,9 @@ export function RegisterForm() {
               <div
                 className={cn(
                   "absolute bottom-1 top-1 w-[calc(50%-0.25rem)] rounded-lg bg-primary transition-all duration-300 ease-out",
-                  role === "user" ? "start-1" : "start-[calc(50%+0.125rem)]",
+                  role === "user"
+                    ? "inset-s-1"
+                    : "inset-s-[calc(50%+0.125rem)]",
                 )}
               />
 

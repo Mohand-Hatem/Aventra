@@ -18,7 +18,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const userInfo = useAuthStore((state) => state.userInfo);
-  
+
   const isLoggedIn = !!userInfo;
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
 
@@ -58,7 +58,6 @@ export default function Navbar() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 12);
     };
-   
 
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -69,7 +68,10 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header dir="ltr" className="fixed top-2 z-50 flex w-full justify-center px-2 sm:px-6 lg:top-4">
+    <header
+      dir="ltr"
+      className="fixed top-2 z-50 flex w-full justify-center px-2 sm:px-6 lg:top-4"
+    >
       <nav
         className={cn(
           "flex w-full flex-col justify-center rounded-2xl border transition-all duration-300 ease-out",
@@ -79,39 +81,57 @@ export default function Navbar() {
           isOpen && "border-border/70 bg-background/95 backdrop-blur-xl",
         )}
       >
-        <div className="flex h-14 items-center justify-between px-4 sm:px-6 lg:h-16">
-          <Link href="/" className="hidden items-center gap-3 lg:flex">
-            <Image
-              src="/Aventra-logo.png"
-              alt="Aventra logo"
-              width={130}
-              height={130}
-              priority
-              className="block h-auto dark:hidden lg:h-auto lg:w-37.5"
-            />
-            <Image
-              src="/Aventra-logo-white1.png"
-              alt="Aventra logo"
-              width={130}
-              height={130}
-              priority
-              className="hidden h-auto dark:block lg:h-auto lg:w-37.5"
-            />
-          </Link>
+        <div className="flex h-14 items-center justify-between px-4 md:px-6 lg:h-16">
+          <div className="relative flex items-center h-12 w-36 lg:w-40">
+            <Link
+              href="/"
+              className={cn(
+                "absolute left-0 top-1/2 -translate-y-1/2 hidden xl:flex items-center gap-3 transition-all duration-300 ease-in-out origin-left",
+                isScrolled
+                  ? "pointer-events-none opacity-0 scale-90 -translate-x-4"
+                  : "opacity-100 scale-100 translate-x-0",
+              )}
+            >
+              <Image
+                src="/Aventra-logo.png"
+                alt="Aventra logo"
+                width={130}
+                height={130}
+                priority
+                className="block h-auto dark:hidden lg:h-auto lg:w-37.5"
+              />
+              <Image
+                src="/Aventra-logo-white1.png"
+                alt="Aventra logo"
+                width={130}
+                height={130}
+                priority
+                className="hidden h-auto dark:block lg:h-auto lg:w-37.5"
+              />
+            </Link>
 
-            <Link href="/" className="rounded-4xl flex lg:hidden items-center gap-3">
-            
-            <Image
-              src="/mobile-logo.png"
-              alt="Aventra logo"
-              width={50}
-              height={50}
-              priority
-              className=" h-auto rounded-4xl  lg:h-auto lg:w-37.5"
-            />
-          </Link>
+            {/* Mobile Logo */}
+            <Link
+              href="/"
+              className={cn(
+                "absolute left-0 top-1/2 -translate-y-1/2 rounded-4xl flex items-center gap-3 transition-all duration-300 ease-in-out origin-left",
+                isScrolled
+                  ? "opacity-100 scale-100 translate-x-0 pointer-events-auto"
+                  : "xl:pointer-events-none xl:opacity-0 xl:scale-90 xl:translate-x-4",
+              )}
+            >
+              <Image
+                src="/mobile-logo.png"
+                alt="Aventra logo"
+                width={50}
+                height={50}
+                priority
+                className="h-auto rounded-4xl"
+              />
+            </Link>
+          </div>
 
-          <div className="hidden items-center gap-4 lg:flex">
+          <div className="hidden items-center gap-4 xl:flex">
             <LanguageSwitcher />
             <ThemeToggle />
 
@@ -151,7 +171,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex items-center gap-2 xl:hidden">
             <LanguageSwitcher />
             <ThemeToggle />
             <button
@@ -170,7 +190,7 @@ export default function Navbar() {
         </div>
 
         {isOpen && (
-          <div className="flex animate-in flex-col gap-4 border-t border-border/40 px-6 py-5 duration-200 fade-in slide-in-from-top-5 lg:hidden">
+          <div className="flex animate-in flex-col gap-4 border-t border-border/40 px-6 py-5 duration-200 fade-in slide-in-from-top-5 xl:hidden">
             <div className="flex flex-col gap-3">
               {navLinks.map((item) => (
                 <Link

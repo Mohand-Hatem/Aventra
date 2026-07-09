@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
@@ -156,5 +156,44 @@ export function useDeleteCv() {
       const axiosErr = err as AxiosError<{ message?: string }>;
       toast.error(axiosErr.response?.data?.message ?? t("cv.deleteFailed"));
     },
+  });
+}
+
+export type CvDetailsResponse = {
+  success: boolean;
+  data: {
+    _id: string;
+    originalFile?: {
+      url?: string;
+      publicId?: string;
+      fileType?: string;
+      fileName?: string;
+      fileSize?: number;
+    };
+    extractedText?: string;
+    parsedData?: {
+      contact?: { email?: string; phone?: string; linkedin?: string; github?: string; location?: string };
+      skills?: { technical?: string[]; soft?: string[]; missingRecommended?: string[] };
+      certifications?: { name?: string; issuer?: string; date?: string }[];
+      experience?: { role?: string; company?: string; duration?: string; description?: string }[];
+      education?: { degree?: string; institution?: string; graduationDate?: string }[];
+      projects?: { title?: string; description?: string; technologies?: string[] }[];
+    };
+    aiAnalysis?: CvAnalysis;
+    atsScore?: number;
+  };
+};
+
+async function fetchCvDetails(cvId: string) {
+  const response = await axiosInstance.get<CvDetailsResponse>(`/cv/${cvId}`);
+  return response.data;
+}
+
+export function useCvDetails(cvId?: string) {
+  return useQuery({
+    queryKey: ["cv", cvId],
+    queryFn: () => fetchCvDetails(cvId!),
+    enabled: !!cvId,
+    staleTime: 5 * 60 * 1000,
   });
 }
