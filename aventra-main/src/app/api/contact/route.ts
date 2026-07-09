@@ -3,7 +3,9 @@ import { Resend } from "resend";
 import { contactSchema } from "@/schemas/contact";
 import { ContactEmail } from "@/components/emails/contact-email";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
 
 export async function POST(request: Request) {
   try {
@@ -28,7 +30,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true });
     }
 
-    if (!process.env.RESEND_API_KEY) {
+    if (!process.env.RESEND_API_KEY || !resend) {
       return NextResponse.json(
         { success: false, message: "Email service is not configured" },
         { status: 500 }

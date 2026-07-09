@@ -20,7 +20,7 @@ function inputClassName(hasError?: boolean) {
     "placeholder:text-muted-foreground/40",
     "focus:ring-2 focus:ring-primary/25 focus:border-primary",
     "dark:focus:ring-sky/25 dark:focus:border-sky",
-    hasError ? "border-destructive" : "border-border"
+    hasError ? "border-destructive" : "border-border",
   );
 }
 
@@ -30,7 +30,7 @@ export function LoginForm() {
   const [serverError, setServerError] = useState<string | null>(null);
 
   const { mutate: loginMutate, isPending } = useLogin();
-    const { login } = useGoogleLogin();
+  const { login } = useGoogleLogin();
 
   const loginSchema = useMemo(
     () =>
@@ -39,7 +39,7 @@ export function LoginForm() {
         emailInvalid: t("validation.emailInvalid"),
         passwordRequired: t("validation.passwordRequired"),
       }),
-    [t]
+    [t],
   );
 
   const {
@@ -64,7 +64,10 @@ export function LoginForm() {
             className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             {t("backToWebsite")}
-            <GoArrowRight className="h-4 w-4 rtl:rotate-180 dark:text-sky text-primary" aria-hidden="true" />
+            <GoArrowRight
+              className="h-4 w-4 rtl:rotate-180 dark:text-sky text-primary"
+              aria-hidden="true"
+            />
           </Link>
         </div>
 
@@ -160,7 +163,7 @@ export function LoginForm() {
           <div className="-mt-1 flex justify-end">
             <Link
               href={APP_ROUTES.forgotPassword}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm text-muted-foreground transition-colors hover:text-primary dark:hover:text-sky"
             >
               {t("forgotPassword")}
             </Link>

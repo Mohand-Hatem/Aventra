@@ -1,4 +1,59 @@
 {
+  "forgotPassword": {
+    "heroTitle": "Recover your account securely",
+    "heroDescription": "Enter your email and we'll send you an OTP code to reset your password.",
+    "cardEyebrow": "Password Reset",
+    "cardTitle": "Check your inbox",
+    "cardDescription": "We'll send a secure OTP code to your email. Use it on the next page to create your new password.",
+    "backToWebsite": "Back to website",
+    "title": "Forgot password?",
+    "description": "No worries. Enter your email address and we'll send you an OTP code.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@firm.com",
+    "submit": "Send OTP",
+    "submitting": "Sending OTP...",
+    "rememberPassword": "Remember your password?",
+    "signIn": "Sign in",
+    "validation": {
+      "emailRequired": "Please enter your email"
+    },
+    "messages": {
+      "otpSentSuccess": "OTP sent to your email",
+      "failedToSendOtp": "Failed to send OTP",
+      "somethingWentWrong": "Something went wrong"
+    }
+  },
+  "resetPassword": {
+    "heroTitle": "Create a new secure password",
+    "heroDescription": "Enter the OTP sent to your email and choose a strong new password.",
+    "cardEyebrow": "Reset Password",
+    "cardTitle": "Secure access",
+    "cardDescription": "Your OTP is valid for a limited time. After resetting your password, you can sign in again safely.",
+    "backToWebsite": "Back to website",
+    "title": "Reset password",
+    "description": "Enter the OTP code from your email and create your new password.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@firm.com",
+    "otpLabel": "OTP",
+    "otpPlaceholder": "Enter OTP code",
+    "newPasswordLabel": "New Password",
+    "confirmPasswordLabel": "Confirm Password",
+    "passwordPlaceholder": "••••••••",
+    "submit": "Reset Password",
+    "submitting": "Resetting...",
+    "backTo": "Back to",
+    "signIn": "Sign in",
+    "validation": {
+      "fieldsRequired": "Please fill all fields",
+      "passwordLength": "Password must be at least 8 characters",
+      "passwordMismatch": "Passwords do not match"
+    },
+    "messages": {
+      "resetSuccess": "Password reset successfully",
+      "resetFailed": "Failed to reset password",
+      "somethingWentWrong": "Something went wrong"
+    }
+  },
   "navbar": {
     "home": "Home",
     "pricing": "Pricing",
