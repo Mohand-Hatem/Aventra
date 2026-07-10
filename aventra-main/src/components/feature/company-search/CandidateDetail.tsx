@@ -1,7 +1,7 @@
 /**
  * CandidateDetail.tsx
  * Pulls full CV data from /cv/:id and displays:
- * - AI Analysis: name, Download CV, Schedule Interview
+ * - AI Analysis: name, Download CV, Reach candidate
  * - Strengths / Growth Areas (from /cv/:id aiAnalysis, fallback to search result)
  * - Experience list + PDF preview in a 2-column grid
  */
@@ -118,9 +118,14 @@ export function CandidateSummaryPanel({ candidate }: SummaryPanelProps) {
             <IconDownload size={14} />
             Download CV
           </a>
-          <button className="px-4 py-2 bg-primary hover:bg-primary/95 text-white dark:bg-sky dark:text-zinc-950 dark:hover:bg-sky/95 rounded-lg text-xs font-bold transition-colors shadow-sm">
-            Schedule Interview
-          </button>
+          <a
+            href={`https://mail.google.com/mail/?view=cm&fs=1&to=${cvData?.parsedData?.contact?.email || candidate.email || ""}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center px-4 py-2 bg-primary hover:bg-primary/95 text-white dark:bg-sky dark:text-zinc-950 dark:hover:bg-sky/95 rounded-lg text-xs font-bold transition-colors shadow-sm"
+          >
+            Reach candidate
+          </a>
         </div>
       </div>
 
@@ -237,7 +242,9 @@ export function CandidateSummaryPanel({ candidate }: SummaryPanelProps) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                     {contact.email && (
                       <a
-                        href={`mailto:${contact.email}`}
+                        href={`https://mail.google.com/mail/?view=cm&fs=1&to=${contact.email}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors py-0.5 truncate"
                       >
                         <IconMail size={14} className="text-muted-foreground/60 shrink-0" />

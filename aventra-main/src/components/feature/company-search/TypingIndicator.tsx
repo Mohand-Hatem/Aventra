@@ -21,9 +21,6 @@ export default function TypingIndicator() {
 
       {/* Bubble */}
       <div className="rounded-2xl rounded-bl-md border border-border/40 bg-card/80 px-4 py-3 shadow-sm backdrop-blur-sm">
-        <p className="mb-2 text-[10px] font-medium text-muted-foreground">
-          {t("thinking")}
-        </p>
         <div className="flex items-center gap-1">
           {[0, 1, 2].map((i) => (
             <span

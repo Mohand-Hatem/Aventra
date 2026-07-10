@@ -24,7 +24,10 @@ export function ScaleLoader({
 
   return (
     <span
-      className={cn("inline-flex items-center justify-center", className)}
+      className={cn(
+        "inline-flex items-center justify-center text-primary dark:text-sky",
+        className,
+      )}
       role="status"
       aria-label="Loading"
     >

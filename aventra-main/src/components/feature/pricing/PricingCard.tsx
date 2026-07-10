@@ -19,34 +19,47 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
   const isUnlimitedPlan = name === "Unlimited";
   const isGoldCard =
     isUnlimitedPlan && isCurrentPlan && hasUnlimitedAccess(userInfo);
-  const isHighlighted = isGoldCard || featured;
+  const isAdmin = userInfo?.role === "admin";
+  const isAdminUnlimited = isUnlimitedPlan && isAdmin;
+  const isHighlighted = (isGoldCard || featured) && !isAdminUnlimited;
+
+  const loaderColorClass = isAdminUnlimited
+    ? "text-primary-foreground dark:text-zinc-950"
+    : isGoldCard
+      ? "text-amber-600 dark:text-amber-600"
+      : featured
+        ? "text-white dark:text-white"
+        : "text-foreground dark:text-foreground";
 
   return (
     <div
       className={cn(
         "relative flex flex-col rounded-3xl border p-8 transition-all duration-300",
         isCurrentPlan && !isUnlimitedPlan && "opacity-50 cursor-not-allowed",
-        isGoldCard &&
+        isAdminUnlimited &&
+          "border-primary dark:border-sky bg-gradient-to-br from-primary/5 via-canvas to-sky/10 dark:from-primary/10 dark:via-canvas dark:to-sky/15 text-foreground border-2 shadow-2xl scale-105",
+        isGoldCard && !isAdminUnlimited &&
           "border-amber-500 bg-indigo-800 text-white",
-        !isGoldCard &&
+        !isGoldCard && !isAdminUnlimited &&
           featured &&
           "border-transparent bg-[#0B1536] text-white shadow-2xl scale-105",
-        !isGoldCard &&
+        !isGoldCard && !isAdminUnlimited &&
           !featured &&
           "border-border bg-card text-card-foreground shadow-sm hover:shadow-md hover:-translate-y-1",
       )}
     >
       {/* Featured badge */}
-      {(featured || isGoldCard) && (
+      {(featured || isGoldCard || isAdminUnlimited) && (
         <div className="absolute -top-4 right-8">
           <span
             className={cn(
-              "rounded bg-blue-600 px-3 py-1.5 text-[10px] font-bold text-white shadow tracking-widest",
-              isGoldCard && "bg-amber-500 text-white"
+              "rounded bg-blue-600 px-3 py-1.5 text-[10px] font-bold text-white shadow tracking-widest uppercase",
+              isGoldCard && "bg-amber-500 text-white",
+              isAdminUnlimited && "bg-primary dark:bg-sky text-primary-foreground dark:text-zinc-950"
             )}
             style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%)" }}
           >
-            {isGoldCard ? t("fullAccess") : t("mostPopular")}
+            {isAdminUnlimited ? t("adminAccess") : isGoldCard ? t("fullAccess") : t("mostPopular")}
           </span>
         </div>
       )}
@@ -121,9 +134,11 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
         <div
           className={cn(
             "mt-4 rounded-xl px-4 py-2 text-center text-sm font-medium",
-            isHighlighted
-              ? "bg-white/20 text-white"
-              : "bg-primary/10 dark:bg-sky/10 text-primary dark:text-sky",
+            isAdminUnlimited
+              ? "bg-primary/20 dark:bg-sky/20 text-primary dark:text-sky border border-primary/25 dark:border-sky/25"
+              : isHighlighted
+                ? "bg-white/20 text-white"
+                : "bg-primary/10 dark:bg-sky/10 text-primary dark:text-sky",
           )}
         >
           {tokens}
@@ -142,9 +157,11 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
             <div
               className={cn(
                 "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
-                isHighlighted
-                  ? "bg-emerald-500/20 text-emerald-400"
-                  : "bg-emerald-500/10 text-emerald-500",
+                isAdminUnlimited
+                  ? "bg-primary/10 text-primary dark:bg-sky/15 dark:text-sky"
+                  : isHighlighted
+                    ? "bg-emerald-500/20 text-emerald-400"
+                    : "bg-emerald-500/10 text-emerald-500",
               )}
             >
               <IconCheck size={12} stroke={3} />
@@ -165,9 +182,11 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
         <div
           className={cn(
             "mt-8 block w-full rounded-xl py-3 text-center text-sm font-semibold",
-            isHighlighted
-              ? "bg-white/20 text-white"
-              : "border-2 border-primary/30 dark:border-sky/30 text-primary dark:text-sky",
+            isAdminUnlimited
+              ? "bg-primary text-primary-foreground dark:bg-sky dark:text-zinc-950 shadow-md font-bold"
+              : isHighlighted
+                ? "bg-white/20 text-white"
+                : "border-2 border-primary/30 dark:border-sky/30 text-primary dark:text-sky",
           )}
         >
           {cta}
@@ -178,16 +197,18 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
           onClick={() => handlePlanSelection(name)}
           className={cn(
             "mt-8 block w-full rounded-xl py-3 text-center text-sm font-semibold transition-all duration-200 border-2",
-            isGoldCard
-              ? "bg-white text-amber-600 hover:bg-white/90 shadow border-transparent"
-              : featured
-                ? "bg-blue-600 text-white hover:bg-blue-700 shadow border-transparent"
-                : "bg-white border-foreground/20 text-foreground hover:bg-muted dark:bg-card dark:hover:bg-muted/50",
+            isAdminUnlimited
+              ? "bg-primary text-primary-foreground hover:bg-primary/95 dark:bg-sky dark:text-zinc-950 dark:hover:bg-sky/95 shadow-md border-transparent"
+              : isGoldCard
+                ? "bg-white text-amber-600 hover:bg-white/90 shadow border-transparent"
+                : featured
+                  ? "bg-blue-600 text-white hover:bg-blue-700 shadow border-transparent"
+                  : "bg-white border-foreground/20 text-foreground hover:bg-muted dark:bg-card dark:hover:bg-muted/50",
           )}
         >
           {isPending ? (
             <span className="inline-flex items-center justify-center gap-2">
-              <ScaleLoader size="sm" />
+              <ScaleLoader size="sm" className={loaderColorClass} />
               {t("redirecting")}
             </span>
           ) : (

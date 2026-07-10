@@ -177,7 +177,7 @@ export function LoginForm() {
           >
             {isPending ? (
               <span className="inline-flex items-center gap-2">
-                <ScaleLoader size="sm" />
+                <ScaleLoader size="sm" className="text-primary-foreground dark:text-primary-foreground" />
                 {t("signingIn")}
               </span>
             ) : (

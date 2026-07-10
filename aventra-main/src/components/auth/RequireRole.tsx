@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "@/i18n/routing";
 import { useUser } from "@/hooks/useAuth";
 import { ROLES, type Role } from "@/constants/roles";
-import { ScaleLoader } from "@/components/shared/scale-loader";
+import PageLoading from "@/components/shared/PageLoading";
 
 type RequireRoleProps = {
   allowedRoles: Role[];
@@ -49,11 +49,7 @@ export default function RequireRole({
   }, [allowedRoles, isFetching, isLoading, router, t, user]);
 
   if (isLoading || isFetching) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <ScaleLoader size="lg" className="text-primary" />
-      </div>
-    );
+    return <PageLoading title={t("checkingUser")} />;
   }
 
   if (!user || !allowedRoles.includes(user.role)) {

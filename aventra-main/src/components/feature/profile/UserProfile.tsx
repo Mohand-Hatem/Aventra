@@ -27,6 +27,10 @@ import { useUser } from "@/hooks/useAuth";
 import { useAiUsage } from "@/hooks/useAiUsage";
 import { useDeleteCv, useUploadCv, useUserCvs } from "@/hooks/useCv";
 import { useUpdateUserProfile } from "@/hooks/useProfile";
+import { useMutation } from "@tanstack/react-query";
+import { z } from "zod";
+import toast from "react-hot-toast";
+import axiosInstance from "@/lib/axios";
 import { PLANS } from "@/constants/plans";
 import { getUserDisplayName, normalizeLocalizedName } from "@/types/auth";
 import {
@@ -312,7 +316,7 @@ function ProfileSummaryPanel({
   t: ReturnType<typeof useTranslations<"profile">>;
 }) {
   return (
-    <Card className="overflow-hidden border-border/60 shadow-card dark:border-border/40">
+    <Card className="overflow-hidden border-border/60 bg-canvas shadow-md dark:border-border/40">
       <CardContent className="p-5">
         <div className="flex flex-col items-center text-center">
           <Avatar className="size-50 ring-4 ring-primary/10 dark:ring-sky/10">
@@ -392,6 +396,23 @@ function ProfileSummaryPanel({
   );
 }
 
+const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number"),
+    confirmPassword: z.string().min(1, "Please confirm your new password"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
+
 export function UserProfile() {
   const t = useTranslations("profile");
   const tRegister = useTranslations("register");
@@ -435,6 +456,38 @@ export function UserProfile() {
     resolver: zodResolver(profileSchema),
     defaultValues: {
       name: { en: "", ar: "" },
+    },
+  });
+
+  const {
+    register: registerPassword,
+    handleSubmit: handlePasswordSubmit,
+    reset: resetPassword,
+    formState: { errors: passwordErrors },
+  } = useForm<ChangePasswordFormValues>({
+    resolver: zodResolver(changePasswordSchema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
+
+  const changePasswordMutation = useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await axiosInstance.put("/users/change-password", {
+        currentPassword: payload.currentPassword,
+        newPassword: payload.newPassword,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success(t("passwordUpdateSuccess") || "Password updated successfully!");
+      resetPassword();
+    },
+    onError: (err: any) => {
+      const msg = err.response?.data?.message ?? "Failed to update password.";
+      toast.error(msg);
     },
   });
 
@@ -691,9 +744,8 @@ export function UserProfile() {
           />
         </div>
 
-        {/* CV list + summary */}
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <Card className="border-border/60 shadow-card dark:border-border/40">
+          <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
             <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
               <CardTitle className="text-base">{t("myCvs")}</CardTitle>
               <CardDescription className="text-xs">{t("myCvsHint")}</CardDescription>
@@ -701,7 +753,7 @@ export function UserProfile() {
             <CardContent className="px-4 pt-4 pb-4">
               {isCvsLoading ? (
                 <div className="flex items-center justify-center py-10">
-                  <ScaleLoader size="md" className="text-muted-foreground" />
+                  <ScaleLoader size="md" />
                 </div>
               ) : cvs.length === 0 ? (
                 <div className="flex flex-col items-center rounded-xl border border-dashed border-border/70 bg-muted/15 px-4 py-8 text-center">
@@ -728,7 +780,7 @@ export function UserProfile() {
             </CardContent>
           </Card>
 
-          <Card className="border-border/60 shadow-card dark:border-border/40">
+          <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
             <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
               <CardTitle className="text-base">{t("cvSummary")}</CardTitle>
               <CardDescription className="text-xs">{t("cvSummaryHint")}</CardDescription>
@@ -745,63 +797,68 @@ export function UserProfile() {
           </Card>
         </div>
 
-        {/* Account settings — update photo & name */}
-        <div>
-          <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted-foreground">
-            {t("accountSettings")}
-          </h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Card className="border-border/60 shadow-card dark:border-border/40">
-              <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
-                <CardTitle className="text-base">{t("changePhoto")}</CardTitle>
-                <CardDescription className="text-xs">{t("photoHint")}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3 px-4 pt-4 pb-4">
-                <div className="flex items-center gap-3">
-                  <Avatar className="size-40 ring-2 ring-background">
+        {/* Profile Settings Section */}
+        <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
+          <CardHeader className="border-b border-border/60 px-6 py-4 dark:border-border/40">
+            <CardTitle className="text-base">{t("accountSettings")}</CardTitle>
+            <CardDescription className="text-xs">
+              {t("personalInfoHint")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-[200px_1fr]">
+              {/* Left Side: Avatar / Photo Upload */}
+              <div className="flex flex-col items-center text-center space-y-4">
+                <div className="relative group cursor-pointer" onClick={() => avatarInputRef.current?.click()}>
+                  <Avatar className="size-36 ring-4 ring-primary/10 dark:ring-sky/10 transition-transform group-hover:scale-[1.02]">
                     {avatarSrc ? <AvatarImage src={avatarSrc} alt={displayName} /> : null}
-                    <AvatarFallback className="bg-primary text-sm font-semibold text-primary-foreground">
+                    <AvatarFallback className="bg-primary text-xl font-semibold text-primary-foreground">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{displayName}</p>
-                    <p className="text-xs text-muted-foreground">{t("photoHint")}</p>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <IconCamera className="size-8 text-white" />
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-2">
+
+                <div className="space-y-2 w-full">
+                  <p className="text-xs text-muted-foreground">{t("photoHint")}</p>
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="rounded-xl"
+                    className="w-full rounded-xl"
                     onClick={() => avatarInputRef.current?.click()}
                   >
-                    <IconCamera />
+                    <IconCamera className="size-4 mr-1.5" />
                     {t("choosePhoto")}
                   </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    disabled={isPending || !hasAvatarChange}
-                    className="rounded-xl"
-                    onClick={handleSubmit((values) =>
-                      submitProfileUpdate(values, ["avatar"]),
-                    )}
-                  >
-                    {isPending ? (
-                      <>
-                        <ScaleLoader size="sm" />
-                        {t("saving")}
-                      </>
-                    ) : (
-                      t("savePhoto")
-                    )}
-                  </Button>
+
+                  {hasAvatarChange && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="w-full rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-950 dark:hover:bg-sky/95"
+                      onClick={handleSubmit((values) =>
+                        submitProfileUpdate(values, ["avatar"]),
+                      )}
+                      disabled={isPending}
+                    >
+                      {isPending ? (
+                        <>
+                          <ScaleLoader size="sm" className="text-white dark:text-zinc-950" />
+                          <span className="ml-1.5">{t("saving")}</span>
+                        </>
+                      ) : (
+                        t("savePhoto")
+                      )}
+                    </Button>
+                  )}
                 </div>
+
                 {isPending && uploadProgress !== null ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="w-full space-y-2">
+                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                       <span>
                         {uploadProgress < 100
                           ? t("uploadingPhoto")
@@ -811,13 +868,15 @@ export function UserProfile() {
                     </div>
                     <Progress
                       value={uploadProgress}
-                      className="h-2 bg-muted/60 [&>div]:bg-primary dark:[&>div]:bg-sky"
+                      className="h-1.5 bg-muted/60 [&>div]:bg-primary dark:[&>div]:bg-sky"
                     />
                   </div>
                 ) : null}
+
                 {errors.avatar ? (
                   <p className="text-xs text-destructive">{errors.avatar.message}</p>
                 ) : null}
+
                 <input
                   ref={avatarInputRef}
                   type="file"
@@ -831,134 +890,153 @@ export function UserProfile() {
                     });
                   }}
                 />
-              </CardContent>
-            </Card>
+              </div>
 
-            <Card className="border-border/60 shadow-card dark:border-border/40">
-              <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
-                <CardTitle className="text-base">{t("updateName")}</CardTitle>
-                <CardDescription className="text-xs">{t("updateNameHint")}</CardDescription>
-              </CardHeader>
-              <CardContent className="px-4 pt-4 pb-4">
-                <form
-                  onSubmit={handleSubmit((values) => submitProfileUpdate(values, ["name"]))}
-                  className="space-y-3"
-                >
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="name-en">{tRegister("englishName")}</Label>
-                      <Input
-                        id="name-en"
-                        autoComplete="name"
-                        aria-invalid={!!errors.name?.en}
-                        className={inputClassName(!!errors.name?.en)}
-                        {...register("name.en")}
-                      />
-                      {errors.name?.en ? (
-                        <p className="text-sm text-destructive">{errors.name.en.message}</p>
-                      ) : null}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="name-ar">{tRegister("arabicName")}</Label>
-                      <Input
-                        id="name-ar"
-                        autoComplete="name"
-                        aria-invalid={!!errors.name?.ar}
-                        className={inputClassName(!!errors.name?.ar)}
-                        dir="rtl"
-                        {...register("name.ar")}
-                      />
-                      {errors.name?.ar ? (
-                        <p className="text-sm text-destructive">{errors.name.ar.message}</p>
-                      ) : null}
-                    </div>
-                  </div>
+              {/* Right Side: Profile Details form */}
+              <form
+                onSubmit={handleSubmit((values) => submitProfileUpdate(values, ["name"]))}
+                className="space-y-4"
+              >
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="email">{t("email")}</Label>
+                    <Label htmlFor="name-en">{tRegister("englishName")}</Label>
                     <Input
-                      id="email"
-                      value={user.email}
-                      readOnly
-                      disabled
-                      className={cn(
-                        inputClassName(),
-                        "cursor-not-allowed bg-muted/40 opacity-80",
-                      )}
+                      id="name-en"
+                      autoComplete="name"
+                      aria-invalid={!!errors.name?.en}
+                      className={inputClassName(!!errors.name?.en)}
+                      {...register("name.en")}
                     />
+                    {errors.name?.en ? (
+                      <p className="text-xs text-destructive">{errors.name.en.message}</p>
+                    ) : null}
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="name-ar">{tRegister("arabicName")}</Label>
+                    <Input
+                      id="name-ar"
+                      autoComplete="name"
+                      aria-invalid={!!errors.name?.ar}
+                      className={inputClassName(!!errors.name?.ar)}
+                      dir="rtl"
+                      {...register("name.ar")}
+                    />
+                    {errors.name?.ar ? (
+                      <p className="text-xs text-destructive">{errors.name.ar.message}</p>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">{t("email")}</Label>
+                  <Input
+                    id="email"
+                    value={user.email}
+                    readOnly
+                    disabled
+                    className={cn(
+                      inputClassName(),
+                      "cursor-not-allowed bg-muted/40 opacity-85",
+                    )}
+                  />
+                </div>
+
+                <div className="flex justify-end pt-2">
                   <Button
                     type="submit"
                     disabled={isPending || !nameChanged}
-                    className="h-10 w-full rounded-xl"
+                    className="w-full sm:w-auto px-6 h-10 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-950 dark:hover:bg-sky/95"
                   >
                     {isPending ? (
                       <>
-                        <ScaleLoader size="sm" />
-                        {t("saving")}
+                        <ScaleLoader size="sm" className="text-white dark:text-zinc-950" />
+                        <span className="ml-2">{t("saving")}</span>
                       </>
                     ) : (
                       t("saveName")
                     )}
                   </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Upload & review CV */}
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <Card className="border-border/60 shadow-card dark:border-border/40">
-            <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
-              <CardTitle className="text-base">{t("uploadCv")}</CardTitle>
-              <CardDescription className="text-xs">{t("uploadCvHint")}</CardDescription>
-            </CardHeader>
-            <CardContent className="px-4 pt-4 pb-4">
-              <div className="flex flex-col items-center rounded-2xl border border-dashed border-primary/30 bg-primary/5 px-4 py-8 text-center dark:border-sky/30 dark:bg-sky/5">
-                <div className="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary dark:bg-sky/10 dark:text-sky">
-                  <IconUpload className="size-6" />
                 </div>
-                <p className="mt-3 text-sm font-medium">{t("uploadCv")}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{t("uploadCvHint")}</p>
+              </form>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Change password section */}
+        <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
+          <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
+            <CardTitle className="text-base">{t("changePassword")}</CardTitle>
+            <CardDescription className="text-xs">{t("changePasswordHint")}</CardDescription>
+          </CardHeader>
+          <CardContent className="px-4 pt-4 pb-4">
+            <form
+              onSubmit={handlePasswordSubmit((values) => changePasswordMutation.mutate(values))}
+              className="space-y-4"
+            >
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="currentPassword">{t("currentPassword")}</Label>
+                  <Input
+                    id="currentPassword"
+                    type="password"
+                    autoComplete="current-password"
+                    className={inputClassName(!!passwordErrors.currentPassword)}
+                    {...registerPassword("currentPassword")}
+                  />
+                  {passwordErrors.currentPassword && (
+                    <p className="text-xs text-destructive">{passwordErrors.currentPassword.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">{t("newPassword")}</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    className={inputClassName(!!passwordErrors.newPassword)}
+                    {...registerPassword("newPassword")}
+                  />
+                  {passwordErrors.newPassword && (
+                    <p className="text-xs text-destructive">{passwordErrors.newPassword.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">{t("confirmPassword")}</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    className={inputClassName(!!passwordErrors.confirmPassword)}
+                    {...registerPassword("confirmPassword")}
+                  />
+                  {passwordErrors.confirmPassword && (
+                    <p className="text-xs text-destructive">{passwordErrors.confirmPassword.message}</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-2">
                 <Button
-                  type="button"
-                  className="mt-4 rounded-xl"
-                  disabled={isUploading}
-                  onClick={() => cvInputRef.current?.click()}
+                  type="submit"
+                  disabled={changePasswordMutation.isPending}
+                  className="w-full sm:w-auto px-6 h-10 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-950 dark:hover:bg-sky/95"
                 >
-                  {isUploading ? (
+                  {changePasswordMutation.isPending ? (
                     <>
-                      <ScaleLoader size="sm" />
-                      {t("uploading")}
+                      <ScaleLoader size="sm" className="text-white dark:text-zinc-950" />
+                      <span className="ml-2">{t("updatingPassword")}</span>
                     </>
                   ) : (
-                    <>
-                      <IconUpload />
-                      {t("chooseCv")}
-                    </>
+                    t("updatePassword")
                   )}
                 </Button>
-                <input
-                  ref={cvInputRef}
-                  type="file"
-                  accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                  className="hidden"
-                  onChange={(event) => handleCvUpload(event.target.files?.[0])}
-                />
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border/60 shadow-card dark:border-border/40">
-            <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
-              <CardTitle className="text-base">{t("suggestions")}</CardTitle>
-              <CardDescription className="text-xs">{t("cvInfoHint")}</CardDescription>
-            </CardHeader>
-            <CardContent className="px-4 pt-4 pb-4">
-              <CvReviewPanel cv={selectedCv} t={t} isLoading={isCvsLoading} />
-            </CardContent>
-          </Card>
-        </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
 
       <AlertDialog
@@ -1023,9 +1101,9 @@ function CvListItem({
     <li
       className={cn(
         "flex items-center gap-3 rounded-xl border p-3 transition-colors",
-        isSelected
-          ? "border-primary/40 bg-primary/5 dark:border-sky/40 dark:bg-sky/5"
-          : "border-border/60 bg-card dark:border-border/40",
+    isSelected
+      ? "border-primary/40 bg-primary/5 dark:border-sky/40 dark:bg-sky/5"
+      : "border-border/60 bg-canvas dark:border-border/40",
       )}
     >
       <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary dark:bg-sky/10 dark:text-sky">
@@ -1089,7 +1167,7 @@ function CvSummaryPanel({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-10">
-        <ScaleLoader size="md" className="text-muted-foreground" />
+        <ScaleLoader size="md" />
       </div>
     );
   }
@@ -1270,7 +1348,7 @@ function CvReviewPanel({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-10">
-        <ScaleLoader size="md" className="text-muted-foreground" />
+        <ScaleLoader size="md" />
       </div>
     );
   }

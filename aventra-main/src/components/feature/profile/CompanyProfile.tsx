@@ -135,7 +135,7 @@ function CompanySummaryPanel({
   t: ReturnType<typeof useTranslations<"companyProfile">>;
 }) {
   return (
-    <Card className="overflow-hidden border-border/60 shadow-card dark:border-border/40">
+    <Card className="overflow-hidden border-border/60 bg-canvas shadow-md dark:border-border/40">
       <CardContent className="p-5">
         <div className="flex flex-col items-center text-center">
           <Avatar className="size-50 ring-4 ring-primary/10 dark:ring-sky/10">
@@ -461,7 +461,7 @@ export function CompanyProfile() {
   if ((isError && !user) || !user) {
     return (
       <div className="flex flex-1 items-center justify-center py-24">
-        <Card className="w-full max-w-md shadow-card dark:shadow-none">
+        <Card className="w-full max-w-md bg-canvas shadow-md dark:shadow-none">
           <CardHeader>
             <CardTitle>{t("title")}</CardTitle>
             <CardDescription>{tProfile("loadError")}</CardDescription>
@@ -482,7 +482,7 @@ export function CompanyProfile() {
   return (
     <div
       className={cn(
-        "relative mx-auto mt-10 flex w-full max-w-[1550px] flex-col gap-6 lg:flex-row lg:items-start",
+        "relative mx-auto mt-10 grid w-full max-w-[1550px] grid-cols-1 xl:grid-cols-[1fr_320px] gap-6 items-start",
         isRefreshing && "opacity-90",
       )}
     >
@@ -492,7 +492,7 @@ export function CompanyProfile() {
         </div>
       ) : null}
 
-      <aside className="order-first w-full shrink-0 lg:sticky lg:top-25 lg:order-last lg:w-80">
+      <aside className="order-first col-span-1 xl:sticky xl:top-25 xl:order-last">
         <CompanySummaryPanel
           displayName={displayName}
           email={user.email}
@@ -511,9 +511,9 @@ export function CompanyProfile() {
         />
       </aside>
 
-      <div className="order-last min-w-0 flex-1 space-y-6 lg:order-first">
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,320px)_1fr]">
-          <Card className="border-border/60 shadow-card dark:border-border/40">
+      <div className="order-last min-w-0 col-span-1 space-y-6 xl:order-first">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[320px_1fr]">
+          <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
             <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
               <CardTitle className="text-base">{t("searchHistory")}</CardTitle>
               <CardDescription className="text-xs">
@@ -523,7 +523,7 @@ export function CompanyProfile() {
             <CardContent className="px-4 pt-4 pb-4">
               {isHistoryLoading ? (
                 <div className="flex items-center justify-center py-10">
-                  <ScaleLoader size="md" className="text-muted-foreground" />
+                  <ScaleLoader size="md" />
                 </div>
               ) : searches.length === 0 ? (
                 <div className="flex flex-col items-center rounded-xl border border-dashed border-border/70 bg-muted/15 px-4 py-8 text-center">
@@ -539,7 +539,7 @@ export function CompanyProfile() {
                   </Button>
                 </div>
               ) : (
-                <ul className="max-h-80 space-y-2 overflow-y-auto pr-1">
+                <ul className="min-h-80 max-h-full  overflow-y-auto space-y-2  pr-1">
                   {searches.map((entry) => (
                     <li key={entry.id}>
                       <SearchHistoryItem
@@ -556,7 +556,7 @@ export function CompanyProfile() {
             </CardContent>
           </Card>
 
-          <div className="flex min-h-[420px] flex-col gap-4">
+          <div className="flex min-h-[420px]  flex-col gap-4">
             <div className="min-h-[280px] flex-1 overflow-hidden">
               <ResultsTable
                 candidates={historyCandidates}
@@ -567,11 +567,11 @@ export function CompanyProfile() {
             </div>
 
             {selectedCandidate ? (
-              <div className="h-[min(360px,40dvh)] shrink-0 overflow-hidden lg:h-[340px]">
+              <div className="min-h-[min(360px,40dvh)] shrink-0 overflow-hidden lg:min-h-[340px]">
                 <CandidateDetail candidate={selectedCandidate} />
               </div>
             ) : searches.length > 0 ? (
-              <div className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-border/80 bg-card/60 px-6 text-center">
+              <div className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-border/80 bg-canvas/60 px-6 text-center shadow-md">
                 <div>
                   <IconUsers className="mx-auto size-8 text-muted-foreground" />
                   <p className="mt-2 text-sm text-muted-foreground">
@@ -588,7 +588,7 @@ export function CompanyProfile() {
             {tProfile("accountSettings")}
           </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Card className="border-border/60 shadow-card dark:border-border/40">
+            <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
               <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
                 <CardTitle className="text-base">
                   {tProfile("changePhoto")}
@@ -683,7 +683,7 @@ export function CompanyProfile() {
               </CardContent>
             </Card>
 
-            <Card className="border-border/60 shadow-card dark:border-border/40">
+            <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
               <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
                 <CardTitle className="text-base">
                   {tProfile("updateName")}

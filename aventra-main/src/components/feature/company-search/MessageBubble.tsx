@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { IconUser } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/stores/auth-store";
 
 interface MessageBubbleProps {
   role: "user" | "assistant";
@@ -16,6 +17,7 @@ export default function MessageBubble({
   time,
 }: MessageBubbleProps) {
   const isUser = role === "user";
+  const userInfo = useAuthStore((state) => state.userInfo);
 
   return (
     <div
@@ -45,7 +47,7 @@ export default function MessageBubble({
           className={cn(
             "rounded-2xl px-4 py-2.5 text-sm leading-6 shadow-sm",
             isUser
-              ? "rounded-br-sm bg-linear-to-br from-primary to-primary/85 text-primary-foreground"
+              ? "rounded-br-sm bg-primary text-primary-foreground dark:bg-sky/45 dark:text-zinc-200"
               : "rounded-bl-sm border border-border/40 bg-card/80 text-foreground backdrop-blur-sm",
           )}
         >
@@ -59,8 +61,18 @@ export default function MessageBubble({
 
       {/* User avatar */}
       {isUser && (
-        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/12 shadow-sm dark:bg-primary/15">
-          <IconUser size={14} className="text-primary dark:text-sky" />
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/12 overflow-hidden shadow-sm dark:bg-primary/15">
+          {userInfo?.avatar ? (
+            <img
+              src={userInfo.avatar}
+              alt={typeof userInfo.name === "string" ? userInfo.name : "User"}
+              width={28}
+              height={28}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <IconUser size={14} className="text-primary dark:text-sky" />
+          )}
         </div>
       )}
     </div>

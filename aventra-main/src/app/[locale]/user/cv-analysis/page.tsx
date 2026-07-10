@@ -175,7 +175,7 @@ function EmptyReportState({
   description: string;
 }) {
   return (
-    <Card className="min-h-72 border border-border/60 bg-card/70 shadow-card backdrop-blur">
+    <Card className="min-h-72 border border-border/60 bg-canvas/60 shadow-md backdrop-blur dark:border-border/40">
       <CardContent className="flex min-h-72 flex-col items-center justify-center px-6 text-center">
         <div className="flex size-14 items-center justify-center rounded-2xl border border-primary/15 bg-primary/8 text-primary dark:border-sky/20 dark:bg-sky/10 dark:text-sky">
           <IconSparkles className="size-6" />
@@ -330,7 +330,7 @@ function InsightListCard({
   return (
     <div
       className={cn(
-        "flex flex-col rounded-xl border border-border/50 bg-card/80 backdrop-blur",
+        "flex flex-col rounded-2xl border border-border/60 bg-canvas/50 shadow-md backdrop-blur dark:border-border/40",
         "border-l-4",
         v.border,
       )}
@@ -463,7 +463,7 @@ function ContactInfoCard({
   if (!hasContact) return null;
 
   return (
-    <div className="rounded-xl border border-border/50 bg-card/80 backdrop-blur">
+    <div className="rounded-2xl border border-border/60 bg-canvas/50 shadow-md backdrop-blur dark:border-border/40">
       <div className="flex items-center gap-2 border-b border-border/40 px-5 py-3">
         <IconMail className="size-4 text-muted-foreground" />
         <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -811,477 +811,119 @@ export default function CVAnalysisPage() {
 
   return (
     <RequireRole allowedRoles={[ROLES.user, ROLES.admin]}>
-      <div className="relative isolate overflow-hidden">
-        {/* ── Banner ── */}
-        <div className="relative w-full hidden h-[400px] dark:flex">
-          <div className="rounded-2xl absolute inset-0 z-10 bg-linear-to-t from-black/80 to-black/5" />
+      <div className="relative isolate min-h-screen bg-canvas pb-20">
+        {/* Ambient Glowing Background */}
+        <div
+          className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+          aria-hidden="true"
+        >
+          <div
+            className="relative left-[calc(50%-11rem)] aspect-1155/678 w-xl -translate-x-1/2 rotate-30 bg-linear-to-tr from-primary/10 to-sky/20 opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72rem]"
+            style={{
+              clipPath:
+                "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
+            }}
+          />
+        </div>
+
+        {/* Banner Images (Full-width custom banner styled by user) */}
+        <div className="relative w-full hidden h-[220px] dark:flex overflow-hidden border-b border-border/30">
+          <div className="absolute inset-0 z-10 bg-linear-to-t from-canvas via-canvas/40 to-transparent" />
           <Image
             src="/cv.png"
             alt="banner"
             width={1600}
             height={900}
-            className="w-full rounded-2xl object-cover"
+            className="w-full object-cover opacity-65"
           />
         </div>
-        <div
-          className="w-full rounded-2xl h-[400px] flex dark:hidden"
-        >
+        <div className="w-full h-[220px] flex dark:hidden overflow-hidden border-b border-border/30">
           <Image
             src="/cv-light.png"
             alt="banner"
             width={1600}
             height={900}
-            className="w-full rounded-2xl object-cover"
+            className="w-full object-cover opacity-60"
           />
         </div>
 
-        <div className="mx-auto flex w-full max-w-7xl flex-col px-6 py-16 sm:px-8 lg:px-10">
-          {/* ── Stats Strip (after banner) ── */}
-          <section>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-border/60 bg-card py-5 text-center">
-                <span className="text-3xl font-bold text-primary dark:text-sky">
-                  98%
+        <div className="mx-auto flex w-full max-w-[1550px] flex-col px-4 sm:px-6 lg:px-8 mt-6">
+          {/* Header Description & Integrated Stats Card */}
+          <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-canvas/50 p-6 shadow-md backdrop-blur-md dark:border-border/40 sm:p-8">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+              <div>
+                <span className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary dark:border-sky/15 dark:bg-sky/8 dark:text-sky">
+                  <IconSparkles className="size-3.5" />
+                  {t("uploadEyebrow")}
                 </span>
-                <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                  Accuracy
-                </span>
-              </div>
-              <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-border/60 bg-card py-5 text-center">
-                <span className="text-3xl font-bold text-foreground">
-                  {"<"} 30s
-                </span>
-                <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                  Analysis Time
-                </span>
-              </div>
-              <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-border/60 bg-card py-5 text-center">
-                <span className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-                  5
-                </span>
-                <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                  Score Metrics
-                </span>
-              </div>
-              <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-border/60 bg-card py-5 text-center">
-                <span className="text-3xl font-bold text-amber-600 dark:text-amber-400">
-                  AI
-                </span>
-                <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                  Powered
-                </span>
-              </div>
-            </div>
-          </section>
-
-          {/* ── Upload Your CV ── */}
-          <section className="mt-16 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(340px,420px)] lg:items-start xl:grid-cols-[minmax(0,1.08fr)_minmax(380px,440px)]">
-            <div className="max-w-2xl">
-              <span className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/7 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary dark:border-sky/15 dark:bg-sky/8 dark:text-sky">
-                <IconSparkles className="size-3.5" />
-                {t("uploadEyebrow")}
-              </span>
-
-              <h1 className="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-                {t("title")}
-              </h1>
-              <p className="mt-5 max-w-xl text-base leading-8 text-muted-foreground sm:text-lg">
-                {t("subtitle")}
-              </p>
-
-              <div className="mt-8 flex flex-wrap gap-3 text-sm text-muted-foreground">
-                <span className="rounded-full border border-border/70 bg-background/70 px-3 py-1.5">
-                  {t("fileHint")}
-                </span>
-                <span className="rounded-full border border-border/70 bg-background/70 px-3 py-1.5">
-                  {t("atsScore")}
-                </span>
-                <span className="rounded-full border border-border/70 bg-background/70 px-3 py-1.5">
-                  {t("suggestionsTitle")}
-                </span>
+                <h1 className="mt-4 font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                  {t("title")}
+                </h1>
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+                  {t("subtitle")}
+                </p>
               </div>
 
-              {/* ── Feature cards ── */}
-              <div className="mt-10 grid grid-cols-2 gap-3">
-                <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-4">
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/8 text-primary dark:border-sky/20 dark:bg-sky/10 dark:text-sky">
-                    <IconSparkles className="size-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">
-                      AI ATS Score
-                    </p>
-                    <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
-                      Instant resume scoring out of 100
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-4">
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-600 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400">
-                    <IconCheck className="size-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">
-                      Strengths
-                    </p>
-                    <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
-                      What&apos;s working well in your CV
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-4">
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-amber-200 bg-amber-50 text-amber-600 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400">
-                    <IconAlertTriangle className="size-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">
-                      Weaknesses
-                    </p>
-                    <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
-                      Areas that need improvement
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-4">
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/8 text-primary dark:border-sky/20 dark:bg-sky/10 dark:text-sky">
-                    <IconBulb className="size-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">
-                      Suggestions
-                    </p>
-                    <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
-                      Actionable tips to stand out
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <Card className="border border-border/60 bg-card/80 shadow-card backdrop-blur lg:sticky lg:top-24">
-              <CardHeader>
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <CardDescription className="text-[11px] font-semibold uppercase tracking-[0.2em]">
-                      {t("uploadEyebrow")}
-                    </CardDescription>
-                    <CardTitle className="mt-2 text-xl">
-                      {t("uploadTitle")}
-                    </CardTitle>
-                  </div>
-                  <span
-                    className={cn(
-                      "rounded-full px-2.5 py-1 text-[11px] font-medium",
-                      getStatusTone(
-                        selectedCv?.processingStatus,
-                        uploadCv.isPending,
-                      ),
-                    )}
-                  >
-                    {previewStatus}
+              {/* Stats Strip */}
+              <div className="grid grid-cols-2 gap-3 shrink-0 sm:grid-cols-4 lg:w-auto w-full">
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-canvas/60 p-4 text-center shadow-sm dark:border-border/40">
+                  <span className="text-2xl font-bold text-primary dark:text-sky">
+                    98%
+                  </span>
+                  <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Accuracy
                   </span>
                 </div>
-              </CardHeader>
-
-              <CardContent className="space-y-5">
-                <label
-                  htmlFor="cv-upload"
-                  className="block cursor-pointer rounded-[28px] border border-dashed border-border/70 bg-background/45 p-6 transition-colors hover:border-primary/35 dark:hover:border-sky/35"
-                >
-                  {previewName ? (
-                    <div className="flex min-h-44 flex-col items-center justify-center text-center">
-                      <div className="flex size-16 items-center justify-center rounded-2xl border border-primary/15 bg-primary/8 text-primary dark:border-sky/15 dark:bg-sky/10 dark:text-sky">
-                        <IconFileText className="size-7" />
-                      </div>
-                      <p className="mt-5 break-all text-sm md:text-lg font-medium text-foreground">
-                        {previewName}
-                      </p>
-                      {previewSize ? (
-                        <p className="mt-2 text-sm text-muted-foreground">
-                          {previewSize}
-                        </p>
-                      ) : null}
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {previewStatus}
-                      </p>
-                      <p className="mt-3 text-xs font-medium text-primary dark:text-sky">
-                        {t("chooseFile")}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="flex min-h-44 flex-col items-center justify-center text-center">
-                      <div className="flex size-16 items-center justify-center rounded-2xl border border-border/70 bg-muted/35 text-muted-foreground">
-                        <IconUpload className="size-7" />
-                      </div>
-                      <p className="mt-5 text-lg font-medium">
-                        {t("uploadTitle")}
-                      </p>
-                      <p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">
-                        {t("uploadToStart")}
-                      </p>
-                      <p className="mt-3 text-xs font-medium text-primary dark:text-sky">
-                        {t("chooseFile")}
-                      </p>
-                    </div>
-                  )}
-                </label>
-
-                <input
-                  id="cv-upload"
-                  type="file"
-                  accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                  className="hidden"
-                  onClick={(event) => {
-                    event.currentTarget.value = "";
-                  }}
-                  onChange={(event) =>
-                    handleFileChange(event.target.files?.[0] ?? null)
-                  }
-                />
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="lg"
-                    className="h-12 rounded-2xl border-border/70 bg-background/70"
-                    onClick={handleUpload}
-                    disabled={
-                      !file || uploadCv.isPending || analyzeCv.isPending
-                    }
-                  >
-                    {uploadCv.isPending ? (
-                      <>
-                        <ScaleLoader size="sm" />
-                        {t("uploading")}
-                      </>
-                    ) : (
-                      <>
-                        <IconUpload className="size-4" />
-                        {t("uploadTitle")}
-                      </>
-                    )}
-                  </Button>
-
-                  <Button
-                    type="button"
-                    size="lg"
-                    className="h-12 rounded-2xl"
-                    onClick={handleAnalyze}
-                    disabled={
-                      !readyToAnalyzeCvId ||
-                      uploadCv.isPending ||
-                      analyzeCv.isPending ||
-                      analyzeCv.isTokenLimitReached
-                    }
-                  >
-                    {analyzeCv.isPending || isAwaitingAnalysis ? (
-                      <>
-                        <ScaleLoader size="sm" />
-                        {t("analyzing")}
-                      </>
-                    ) : (
-                      <>
-                        <IconSparkles className="size-4" />
-                        {t("analyze")}
-                      </>
-                    )}
-                  </Button>
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-canvas/60 p-4 text-center shadow-sm dark:border-border/40">
+                  <span className="text-2xl font-bold text-foreground">
+                    {"<"} 30s
+                  </span>
+                  <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Speed
+                  </span>
                 </div>
-
-                {analyzeCv.tokenLimitError?.message ? (
-                  <p className="text-sm text-destructive">
-                    {analyzeCv.tokenLimitError.message}
-                  </p>
-                ) : null}
-
-                {sortedCvs.length > 0 ? (
-                  <div className="relative space-y-3 rounded-2xl border border-border/60 bg-background/55 p-4">
-                    <div className="space-y-1">
-                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                        {profileT("myCvs")}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {profileT("selectCvHint")}
-                      </p>
-                    </div>
-
-                    <div className="grid gap-2 lg:grid-cols-1">
-                      {sortedCvs.map((cv, index) => {
-                        const cvId = getCvId(cv, index);
-                        const isSelected = selectedCvId
-                          ? selectedCvId === cvId
-                          : index === 0;
-
-                        return (
-                          <button
-                            key={cvId}
-                            type="button"
-                            onClick={() => setSelectedCvId(cvId)}
-                            className={cn(
-                              "flex flex-1 items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition-colors",
-                              isSelected
-                                ? "border-primary bg-primary/6 dark:border-sky dark:bg-sky/10"
-                                : "border-border/60 bg-background/70 hover:border-primary/30 hover:bg-primary/4 dark:hover:border-sky/30 dark:hover:bg-sky/6",
-                            )}
-                          >
-                            <div className="min-w-0">
-                              <p className="lg:truncate break-all text-sm font-medium text-foreground">
-                                {getCvTitle(cv)}
-                              </p>
-                              <p className="mt-1 text-xs text-muted-foreground">
-                                {formatFileSize(cv.originalFile?.fileSize)}
-                              </p>
-                            </div>
-                            <span
-                              className={cn(
-                                "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium",
-                                getStatusTone(cv.processingStatus),
-                              )}
-                            >
-                              {profileT(
-                                `status.${cv.processingStatus ?? "uploaded"}`,
-                              )}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ) : null}
-
-                <p className="text-xs text-muted-foreground">{t("fileHint")}</p>
-              </CardContent>
-            </Card>
-          </section>
-
-          {/* ── How it Works (Process) ── */}
-          <section className="mt-20">
-            <div className="mb-8 text-center">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                Process
-              </p>
-              <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                How it Works
-              </h2>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground">
-                Three simple steps to get a full AI-powered breakdown of your
-                resume
-              </p>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-3">
-              {/* Step 01 */}
-              <div className="relative flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-5">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/8 text-primary dark:border-sky/20 dark:bg-sky/10 dark:text-sky">
-                  <IconUpload className="size-4" />
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-canvas/60 p-4 text-center shadow-sm dark:border-border/40">
+                  <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                    5
+                  </span>
+                  <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Metrics
+                  </span>
                 </div>
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                    Step 01
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-foreground">
-                    Upload Your CV
-                  </p>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                    Drop your PDF or DOCX resume. We accept all standard formats
-                    up to 10 MB.
-                  </p>
-                </div>
-                <div className="hidden sm:block absolute -right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 text-xl select-none">
-                  ›
-                </div>
-              </div>
-
-              {/* Step 02 */}
-              <div className="relative flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-5">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-violet-200 bg-violet-50 text-violet-600 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-400">
-                  <IconSparkles className="size-4" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                    Step 02
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-foreground">
-                    AI Analyzes It
-                  </p>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                    Our AI engine reads your CV and computes a detailed ATS
-                    compatibility score.
-                  </p>
-                </div>
-                <div className="hidden sm:block absolute -right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 text-xl select-none">
-                  ›
-                </div>
-              </div>
-
-              {/* Step 03 */}
-              <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-5">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-600 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400">
-                  <IconCheck className="size-4" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                    Step 03
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-foreground">
-                    Get Your Report
-                  </p>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                    Receive a full report with strengths, weaknesses, and
-                    prioritized suggestions in seconds.
-                  </p>
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-canvas/60 p-4 text-center shadow-sm dark:border-border/40">
+                  <span className="text-2xl font-bold text-amber-600 dark:text-amber-400">
+                    AI
+                  </span>
+                  <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Powered
+                  </span>
                 </div>
               </div>
             </div>
-          </section>
+          </div>
 
-          {/* ── ATS Report ── */}
-          <section className="mt-16">
-            <ReportSectionLabel>{t("reportEyebrow")}</ReportSectionLabel>
-
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-                  {t("reportTitle")}
-                </h2>
-                {selectedCv ? (
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {t("latestAnalysis")}: {getCvTitle(selectedCv)}
-                  </p>
-                ) : null}
-              </div>
-
-              {hasAnalysis && activeCvUrl ? (
-                <Button asChild variant="outline" className="rounded-full px-4">
-                  <a href={activeCvUrl} target="_blank" rel="noreferrer">
-                    {profileT("viewFile")}
-                  </a>
-                </Button>
-              ) : null}
-            </div>
-
-            <div className="mt-8 space-y-6">
+          {/* Main Layout Grid */}
+          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px] items-start">
+            {/* Left Area: Workspace/Results */}
+            <div className="min-w-0 space-y-6">
               {isLoading && !selectedCv ? (
-                <Card className="min-h-72 border border-border/60 bg-card/70 shadow-card backdrop-blur">
-                  <CardContent className="flex min-h-72 items-center justify-center">
-                    <ScaleLoader size="md" className="text-muted-foreground" />
-                  </CardContent>
-                </Card>
+                <div className="flex h-[450px] items-center justify-center rounded-3xl border border-border/60 bg-canvas/50 shadow-md backdrop-blur dark:border-border/40">
+                  <ScaleLoader size="lg" />
+                </div>
               ) : reportState === "ready" ? (
                 <div className="space-y-6">
-                  {/* ══ Row 1: Score hero ══ */}
-                  <div className="grid gap-5 lg:grid-cols-[280px_1fr]">
-                    {/* ATS Score card */}
-                    <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-border/50 bg-card/80 p-6 backdrop-blur">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  {/* Row 1: Score & Breakdown */}
+                  <div className="grid gap-6 md:grid-cols-[280px_1fr]">
+                    {/* Score Card */}
+                    <div className="flex flex-col items-center justify-center gap-5 rounded-2xl border border-border/60 bg-canvas/50 p-6 shadow-md backdrop-blur dark:border-border/40">
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                         {t("overallScore")}
                       </p>
 
                       <AtsScoreChart
                         score={activeAtsScore ?? 0}
                         size="lg"
-                        className="w-full max-w-[180px]"
+                        className="w-full max-w-[160px]"
                       />
 
                       {activeAtsScore !== undefined
@@ -1290,7 +932,7 @@ export default function CVAnalysisPage() {
                             return grade ? (
                               <span
                                 className={cn(
-                                  "rounded-lg border px-4 py-1.5 text-sm font-semibold",
+                                  "rounded-full border px-4 py-1.5 text-xs font-bold shadow-sm",
                                   grade.cls,
                                 )}
                               >
@@ -1324,16 +966,16 @@ export default function CVAnalysisPage() {
                       ) : null}
                     </div>
 
-                    {/* Right: metric strip + breakdown bars */}
-                    <div className="flex flex-col gap-5">
+                    {/* Breakdown Progress Bars */}
+                    <div className="flex flex-col gap-6">
                       <ScoreMetricStrip entries={breakdownEntries} />
 
                       {breakdownEntries.length > 0 ? (
-                        <div className="flex-1 rounded-xl border border-border/50 bg-card/80 px-5 py-4 backdrop-blur">
+                        <div className="flex-1 rounded-2xl border border-border/60 bg-canvas/50 p-6 shadow-md backdrop-blur dark:border-border/40">
                           <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             {t("scoreBreakdown")}
                           </p>
-                          <div className="space-y-3.5">
+                          <div className="space-y-4">
                             {breakdownEntries.map((entry, i) => {
                               const color =
                                 BREAKDOWN_TW_COLORS[
@@ -1354,7 +996,7 @@ export default function CVAnalysisPage() {
                                       {entry.value}
                                     </span>
                                   </div>
-                                  <div className="h-1.5 overflow-hidden rounded-full bg-muted/50">
+                                  <div className="h-1.5 overflow-hidden rounded-full bg-muted/30">
                                     <div
                                       className={cn(
                                         "h-full rounded-full transition-all duration-700",
@@ -1374,8 +1016,8 @@ export default function CVAnalysisPage() {
                     </div>
                   </div>
 
-                  {/* ══ Row 2: Insight panels ══ */}
-                  <div className="grid gap-5 md:grid-cols-3">
+                  {/* Row 2: Insight panels */}
+                  <div className="grid gap-6 md:grid-cols-3">
                     <InsightListCard
                       title={t("strengths")}
                       icon={IconCheck}
@@ -1402,7 +1044,7 @@ export default function CVAnalysisPage() {
                     />
                   </div>
 
-                  {/* ══ Row 3: Contact strip ══ */}
+                  {/* Row 3: Contact strip */}
                   <ContactInfoCard
                     profileT={profileT}
                     email={activeAnalysis?.email}
@@ -1428,6 +1070,281 @@ export default function CVAnalysisPage() {
                   description={t("noAnalysisDescription")}
                 />
               )}
+            </div>
+
+            {/* Right Area: Sticky Action Sidebar */}
+            <aside className="col-span-1 lg:sticky lg:top-25 lg:self-start space-y-6">
+              <Card className="border border-border/60 bg-canvas/50 shadow-md backdrop-blur rounded-3xl p-5 dark:border-border/40">
+                <CardHeader className="p-0 pb-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <CardTitle className="text-lg font-bold text-foreground">
+                      {t("uploadTitle")}
+                    </CardTitle>
+                    <span
+                      className={cn(
+                        "rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider",
+                        getStatusTone(
+                          selectedCv?.processingStatus,
+                          uploadCv.isPending,
+                        ),
+                      )}
+                    >
+                      {previewStatus}
+                    </span>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="p-0 space-y-4">
+                  <label
+                    htmlFor="cv-upload"
+                    className="relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-2xl cursor-pointer transition-all border-border/60 hover:border-primary/45 dark:hover:border-sky/45 bg-canvas/30 hover:bg-canvas/60"
+                  >
+                    {previewName ? (
+                      <div className="flex min-h-[140px] flex-col items-center justify-center text-center">
+                        <div className="flex size-14 items-center justify-center rounded-2xl border border-primary/15 bg-primary/8 text-primary dark:border-sky/15 dark:bg-sky/10 dark:text-sky">
+                          <IconFileText className="size-6" />
+                        </div>
+                        <p className="mt-4 break-all text-sm font-semibold text-foreground">
+                          {previewName}
+                        </p>
+                        {previewSize ? (
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {previewSize}
+                          </p>
+                        ) : null}
+                        <p className="mt-3 text-xs font-semibold text-primary dark:text-sky hover:underline">
+                          {t("chooseFile")}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="flex min-h-[140px] flex-col items-center justify-center text-center">
+                        <div className="flex size-14 items-center justify-center rounded-2xl border border-border/60 bg-canvas/60 text-muted-foreground">
+                          <IconUpload className="size-6" />
+                        </div>
+                        <p className="mt-4 text-sm font-semibold text-foreground">
+                          {t("uploadTitle")}
+                        </p>
+                        <p className="mt-1 max-w-[200px] text-xs leading-relaxed text-muted-foreground">
+                          {t("uploadToStart")}
+                        </p>
+                        <p className="mt-3 text-xs font-semibold text-primary dark:text-sky hover:underline">
+                          {t("chooseFile")}
+                        </p>
+                      </div>
+                    )}
+                  </label>
+
+                  <input
+                    id="cv-upload"
+                    type="file"
+                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    className="hidden"
+                    onClick={(event) => {
+                      event.currentTarget.value = "";
+                    }}
+                    onChange={(event) =>
+                      handleFileChange(event.target.files?.[0] ?? null)
+                    }
+                  />
+
+                  <div className="grid gap-3 grid-cols-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="lg"
+                      className="h-11 rounded-xl border-border/60 bg-background/50 hover:bg-muted/40"
+                      onClick={handleUpload}
+                      disabled={
+                        !file || uploadCv.isPending || analyzeCv.isPending
+                      }
+                    >
+                      {uploadCv.isPending ? (
+                        <>
+                          <ScaleLoader size="sm" />
+                          <span className="ml-1.5">{t("uploading")}</span>
+                        </>
+                      ) : (
+                        <>
+                          <IconUpload className="size-4 mr-1.5" />
+                          {t("uploadTitle")}
+                        </>
+                      )}
+                    </Button>
+
+                    <Button
+                      type="button"
+                      size="lg"
+                      className="h-11 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-950 dark:hover:bg-sky/95"
+                      onClick={handleAnalyze}
+                      disabled={
+                        !readyToAnalyzeCvId ||
+                        uploadCv.isPending ||
+                        analyzeCv.isPending ||
+                        analyzeCv.isTokenLimitReached
+                      }
+                    >
+                      {analyzeCv.isPending || isAwaitingAnalysis ? (
+                        <>
+                          <ScaleLoader size="sm" />
+                          <span className="ml-1.5">{t("analyzing")}</span>
+                        </>
+                      ) : (
+                        <>
+                          <IconSparkles className="size-4 mr-1.5" />
+                          {t("analyze")}
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  {analyzeCv.tokenLimitError?.message ? (
+                    <p className="text-xs font-medium text-destructive mt-1">
+                      {analyzeCv.tokenLimitError.message}
+                    </p>
+                  ) : null}
+
+                  {sortedCvs.length > 0 ? (
+                    <div className="relative space-y-3 rounded-2xl border border-border/60 bg-canvas/30 p-4">
+                      <div className="space-y-0.5">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                          {profileT("myCvs")}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {profileT("selectCvHint")}
+                        </p>
+                      </div>
+
+                      <div className="grid gap-2 max-h-48 overflow-y-auto pr-1">
+                        {sortedCvs.map((cv, index) => {
+                          const cvId = getCvId(cv, index);
+                          const isSelected = selectedCvId
+                            ? selectedCvId === cvId
+                            : index === 0;
+
+                          return (
+                            <button
+                              key={cvId}
+                              type="button"
+                              onClick={() => setSelectedCvId(cvId)}
+                              className={cn(
+                                "flex flex-1 items-center justify-between gap-3 rounded-xl border px-3 py-2 text-left transition-all duration-300",
+                                isSelected
+                                  ? "border-primary bg-primary/5 dark:border-sky dark:bg-sky/10 shadow-sm"
+                                  : "border-border/60 bg-canvas/40 hover:border-primary/30 dark:hover:border-sky/30 hover:bg-canvas/60",
+                              )}
+                            >
+                              <div className="min-w-0">
+                                <p className="truncate text-xs font-semibold text-foreground">
+                                  {getCvTitle(cv)}
+                                </p>
+                                <p className="mt-0.5 text-[10px] text-muted-foreground">
+                                  {formatFileSize(cv.originalFile?.fileSize)}
+                                </p>
+                              </div>
+                              <span
+                                className={cn(
+                                  "shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider",
+                                  getStatusTone(cv.processingStatus),
+                                )}
+                              >
+                                {profileT(
+                                  `status.${cv.processingStatus ?? "uploaded"}`,
+                                )}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <div className="flex items-center gap-2 text-[10px] text-muted-foreground pt-1">
+                    <IconFileText className="size-3.5 shrink-0" />
+                    <span>{t("fileHint")}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </aside>
+          </div>
+
+          {/* How it Works / Process */}
+          <section className="mt-20">
+            <div className="mb-10 text-center">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-primary dark:text-sky">
+                Process
+              </p>
+              <h2 className="mt-2 font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                How it Works
+              </h2>
+              <p className="mx-auto mt-3 max-w-md text-xs leading-relaxed text-muted-foreground">
+                Three simple steps to get a full AI-powered breakdown of your
+                resume
+              </p>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-3">
+              {/* Step 01 */}
+              <div className="relative flex items-start gap-4 rounded-2xl border border-border/60 bg-canvas/40 p-5 shadow-sm dark:border-border/40">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/8 text-primary dark:border-sky/20 dark:bg-sky/10 dark:text-sky">
+                  <IconUpload className="size-5" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Step 01
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    Upload Your CV
+                  </p>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                    Drop your PDF or DOCX resume. We accept all standard formats
+                    up to 10 MB.
+                  </p>
+                </div>
+                <div className="hidden sm:block absolute -right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 text-xl select-none">
+                  ›
+                </div>
+              </div>
+
+              {/* Step 02 */}
+              <div className="relative flex items-start gap-4 rounded-2xl border border-border/60 bg-canvas/40 p-5 shadow-sm dark:border-border/40">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/8 text-primary dark:border-sky/20 dark:bg-sky/10 dark:text-sky">
+                  <IconSparkles className="size-5" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Step 02
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    AI Analyzes It
+                  </p>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                    Our AI engine reads your CV and computes a detailed ATS
+                    compatibility score.
+                  </p>
+                </div>
+                <div className="hidden sm:block absolute -right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 text-xl select-none">
+                  ›
+                </div>
+              </div>
+
+              {/* Step 03 */}
+              <div className="flex items-start gap-4 rounded-2xl border border-border/60 bg-canvas/40 p-5 shadow-sm dark:border-border/40">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/8 text-primary dark:border-sky/20 dark:bg-sky/10 dark:text-sky">
+                  <IconCheck className="size-5" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Step 03
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    Get Your Report
+                  </p>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                    Receive a full report with strengths, weaknesses, and
+                    prioritized suggestions in seconds.
+                  </p>
+                </div>
+              </div>
             </div>
           </section>
         </div>

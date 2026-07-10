@@ -617,7 +617,14 @@
       "nameMin": "يجب أن يكون الاسم حرفين على الأقل.",
       "avatarType": "يرجى اختيار ملف صورة.",
       "avatarSize": "يجب ألا يتجاوز حجم الصورة 5 ميجابايت."
-    }
+    },
+    "changePassword": "تغيير كلمة المرور",
+    "changePasswordHint": "قم بتغيير كلمة المرور الخاصة بك لتأمين حسابك.",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "updatingPassword": "جاري التحديث...",
+    "updatePassword": "تحديث كلمة المرور"
   },
   "companyProfile": {
     "title": "ملف الشركة",
@@ -683,6 +690,7 @@
     "billedAnnually": "/شهر تدفع سنويا",
     "currentPlan": "خطتك الحالية هي {plan}",
     "redirecting": "جاري التحويل...",
+    "adminAccess": "وصول المشرف",
     "fullAccess": "وصول كامل",
     "mostPopular": "الأكثر شعبية",
     "plans": {

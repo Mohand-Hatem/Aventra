@@ -181,13 +181,14 @@ export function UserAvatarMenu({
         <DropdownMenuItem
           variant="destructive"
           disabled={isLoggingOut}
+          className="cursor-pointer"
           onSelect={(event) => {
             event.preventDefault();
             onLogout();
           }}
         >
           {isLoggingOut ? (
-            <ScaleLoader size="sm" />
+            <ScaleLoader size="sm" className="text-destructive dark:text-destructive" />
           ) : (
             <IconLogout />
           )}

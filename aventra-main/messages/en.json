@@ -578,7 +578,14 @@
       "nameMin": "Name must be at least 2 characters.",
       "avatarType": "Please choose an image file.",
       "avatarSize": "Image must be 5 MB or smaller."
-    }
+    },
+    "changePassword": "Change Password",
+    "changePasswordHint": "Change your password to secure your account.",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "updatingPassword": "Updating...",
+    "updatePassword": "Update Password"
   },
   "companyProfile": {
     "title": "Company profile",
@@ -644,6 +651,7 @@
     "billedAnnually": "/mo billed annually",
     "currentPlan": "Your Current Plan is {plan}",
     "redirecting": "Redirecting...",
+    "adminAccess": "ADMIN ACCESS",
     "fullAccess": "FULL ACCESS",
     "mostPopular": "MOST POPULAR",
     "plans": {

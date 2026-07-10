@@ -31,11 +31,9 @@ interface CandidateCardsProps {
   selectedCandidate: CandidateResult | null;
   onSelectCandidate: (c: CandidateResult) => void;
   isPending: boolean;
-  onLoadMore?: () => void;
-  hasMore?: boolean;
-  remainingCount?: number;
   minAtsScore?: number;
   setMinAtsScore?: (v: number) => void;
+  hasRawCandidates?: boolean;
 }
 
 function getJobTitle(candidate: CandidateResult): string {
@@ -154,18 +152,38 @@ function FitScoreCircle({ score }: { score: number }) {
   );
 }
 
+const getAtsColorClasses = (score: number) => {
+  if (score < 60) {
+    return {
+      bgText:
+        "bg-rose-500/10 text-rose-500 dark:bg-rose-500/20 dark:text-rose-400",
+      dot: "bg-rose-500 dark:bg-rose-400",
+    };
+  }
+  if (score < 75) {
+    return {
+      bgText:
+        "bg-orange-500/10 text-orange-500 dark:bg-orange-500/20 dark:text-orange-400",
+      dot: "bg-orange-500 dark:bg-orange-400",
+    };
+  }
+  return {
+    bgText: "bg-emerald-500/10 text-emerald-600 dark:bg-sky/20 dark:text-sky",
+    dot: "bg-emerald-500 dark:bg-sky",
+  };
+};
+
 export default function CandidateCards({
   candidates,
   selectedCandidate,
   onSelectCandidate,
   isPending,
-  onLoadMore,
-  hasMore = false,
-  remainingCount = 0,
+  minAtsScore = 0,
+  setMinAtsScore,
+  hasRawCandidates = false,
 }: CandidateCardsProps) {
   const t = useTranslations("candidateSearch");
   const locale = useLocale();
-  const [minAtsScore, setMinAtsScore] = useState<number>(0);
 
   if (isPending && !candidates.length) {
     return (
@@ -190,7 +208,7 @@ export default function CandidateCards({
     );
   }
 
-  if (!candidates.length) {
+  if (!candidates.length && !hasRawCandidates) {
     return (
       <div className="flex bg-canvas/10 h-full flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border/80  px-8 py-12 text-center shadow-card min-h-[300px] max-h-[500px] overflow-y-auto">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 dark:bg-sky/10">
@@ -221,186 +239,174 @@ export default function CandidateCards({
   }
 
   return (
-    <div className="flex flex-col gap-0 border border-border/60 bg-canvas/10 rounded-2xl shadow-sm overflow-hidden">
+    <div className="flex flex-col col-span-3 gap-0 border border-border/60 bg-canvas/10 rounded-2xl shadow-sm overflow-hidden">
       {/* Top Filter Bar */}
-      <div className="flex items-center justify-between border-b border-border/40 p-4 bg-muted/10">
+      <div className="flex items-center justify-between border-b border-border/40 py-2.5 px-4 bg-muted/10">
         <div className="flex items-center gap-6">
-          <div className="flex flex-col gap-1.5 w-48">
-            <div className="flex justify-between items-center text-[10px] font-bold text-muted-foreground tracking-wider">
+          <div className="flex flex-col justify-center gap-1 w-48 h-14">
+            <h1 className="text-md dark:text-sky text-primary font-bold">
+              Filter By ATS Score
+            </h1>
+            <div className="flex justify-between items-end text-[10px] font-bold text-muted-foreground tracking-wider uppercase">
               <span>MIN. ATS SCORE</span>
-              <span className="text-foreground">{minAtsScore || 0}+</span>
+              <span className="text-foreground font-extrabold">
+                {minAtsScore || 0}+
+              </span>
             </div>
             <input
               type="range"
               min="0"
               max="100"
-              value={minAtsScore || 0}
-              onChange={(e) => setMinAtsScore(Number(e.target.value))}
-              className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-secondary accent-primary"
+              value={minAtsScore}
+              onChange={(e) => setMinAtsScore?.(Number(e.target.value))}
+              className="h-3 w-full cursor-pointer appearance-none rounded-lg bg-secondary accent-primary dark:accent-sky "
             />
           </div>
-          <div className="w-px h-6 bg-border/60" />
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-              Skills
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="bg-muted px-2 py-1 rounded text-xs font-semibold text-foreground flex items-center gap-1.5">
-                Node.js <FaXmark className="text-muted-foreground" size={10} />
-              </span>
-              <span className="bg-muted px-2 py-1 rounded text-xs font-semibold text-foreground flex items-center gap-1.5">
-                React <FaXmark className="text-muted-foreground" size={10} />
-              </span>
-              <button className="text-xs text-primary font-medium hover:underline">
-                + Add Filter
-              </button>
-            </div>
-          </div>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+        <div className="flex items-center gap-3">
+          <span className="bg-primary/10 text-primary dark:bg-sky/20 dark:text-sky px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider">
             AI Filter Active
           </span>
-          <button className="text-[11px] text-muted-foreground hover:text-foreground hover:underline font-medium">
+          <button className="text-[10px] text-muted-foreground hover:text-foreground hover:underline font-medium">
             Clear search
           </button>
         </div>
       </div>
 
       {/* Table Header */}
-      <div className="grid grid-cols-[3.5fr_2fr_1fr_1.5fr] px-6 py-3 border-b border-border/40 bg-muted/5 text-[10px] font-bold text-muted-foreground tracking-wider uppercase">
+      <div className="grid grid-cols-[1fr_60px] sm:grid-cols-[1fr_60px_120px] md:grid-cols-[3.5fr_2fr_1fr_1.5fr] px-6 py-3 border-b border-border/40 bg-muted/5 text-[10px] font-bold text-muted-foreground tracking-wider uppercase">
         <div>Candidate</div>
-        <div>Top Skills</div>
+        <div className="hidden md:block">Top Skills</div>
         <div>ATS</div>
-        <div className="text-right">Contact</div>
+        <div className="hidden sm:block text-right">Contact</div>
       </div>
 
-      {/* Candidate List — max 4 rows visible, then scroll */}
+      {/* Candidate List — max 5 rows visible, then scroll */}
       <div
-        className="flex flex-col overflow-y-auto"
-        style={{ maxHeight: "calc(4 * 72px)" }}
+        className="flex flex-col overflow-y-auto min-h-[120px]"
+        style={{ maxHeight: "calc(5 * 72px)" }}
       >
-        {candidates.map((c) => {
-          const name = getLocalizedCandidateName(
-            c.name,
-            locale,
-            t("candidateDetail.unknown"),
-          );
-          const jobTitle = getJobTitle(c);
-          const isSelected = selectedCandidate?.cvId === c.cvId;
+        {candidates.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8 px-4 text-center gap-1.5 bg-canvas/5 my-auto">
+            <p className="text-sm font-semibold text-foreground">
+              No candidates match this ATS threshold
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Drag the MIN. ATS SCORE slider to the left to show more matches.
+            </p>
+          </div>
+        ) : (
+          candidates.map((c) => {
+            const name = getLocalizedCandidateName(
+              c.name,
+              locale,
+              t("candidateDetail.unknown"),
+            );
+            const jobTitle = getJobTitle(c);
+            const isSelected = selectedCandidate?.cvId === c.cvId;
 
-          return (
-            <div
-              key={c.cvId}
-              onClick={() => onSelectCandidate(isSelected ? c : c)}
-              className={cn(
-                "grid grid-cols-[3.5fr_2fr_1fr_1.5fr] items-center px-6 py-4 cursor-pointer transition-colors border-b border-border/40 last:border-b-0 h-[72px]",
-                isSelected
-                  ? "bg-primary/5 border-l-[3px] border-l-primary"
-                  : "hover:bg-muted/30 border-l-[3px] border-l-transparent",
-              )}
-            >
-              {/* Candidate */}
-              <div className="flex items-center gap-3 min-w-0">
-                <div
-                  className={cn(
-                    "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl font-bold text-white text-xs bg-linear-to-br",
-                    [
-                      "from-indigo-500 to-purple-600",
-                      "from-sky-500 to-blue-600",
-                      "from-emerald-500 to-teal-600",
-                      "from-amber-500 to-orange-600",
-                      "from-rose-500 to-pink-600",
-                    ][name.charCodeAt(0) % 5],
-                  )}
-                >
-                  {name
-                    .split(" ")
-                    .map((w) => w[0])
-                    .join("")
-                    .slice(0, 2)
-                    .toUpperCase()}
-                </div>
-                <div className="flex flex-col min-w-0">
-                  <span className="font-bold text-[13px] text-foreground truncate">
-                    {name}
-                  </span>
-                  <span className="text-[11px] text-muted-foreground truncate">
-                    {jobTitle}
-                  </span>
-                </div>
-              </div>
-
-              {/* Skills */}
-              <div className="flex flex-wrap gap-1.5 pr-2">
-                {c.skills.slice(0, 3).map((skill) => (
-                  <span
-                    key={skill}
-                    className="rounded bg-secondary border border-border/40 px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground"
-                  >
-                    {skill}
-                  </span>
-                ))}
-                {c.skills.length > 3 && (
-                  <span className="rounded bg-secondary border border-border/40 px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                    +{c.skills.length - 3}
-                  </span>
+            return (
+              <div
+                key={c.cvId}
+                onClick={() => onSelectCandidate(isSelected ? c : c)}
+                className={cn(
+                  "grid grid-cols-[1fr_60px] sm:grid-cols-[1fr_60px_120px] md:grid-cols-[3.5fr_2fr_1fr_1.5fr] items-center px-6 py-4 cursor-pointer transition-colors border-b border-border/40 last:border-b-0 h-[72px]",
+                  isSelected
+                    ? "bg-primary/5 border-l-[3px] border-l-primary"
+                    : "hover:bg-muted/30 border-l-[3px] border-l-transparent",
                 )}
-              </div>
-
-              {/* ATS */}
-              <div>
-                <span
-                  className={cn(
-                    "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold",
-                    c.atsScore >= 80
-                      ? "bg-primary/10 text-primary dark:bg-sky/20 dark:text-sky"
-                      : c.atsScore >= 60
-                        ? "bg-sky/10 text-sky"
-                        : "bg-muted/10 text-muted-foreground",
-                  )}
-                >
+              >
+                {/* Candidate */}
+                <div className="flex items-center gap-3 min-w-0">
                   <div
                     className={cn(
-                      "w-1.5 h-1.5 rounded-full",
-                      c.atsScore >= 80
-                        ? "bg-primary dark:bg-sky"
-                        : c.atsScore >= 60
-                          ? "bg-sky"
-                          : "bg-muted-foreground",
+                      "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl font-bold text-white text-xs bg-linear-to-br",
+                      [
+                        "from-violet-500 to-indigo-600",
+                        "from-teal-400 to-emerald-600",
+                        "from-amber-400 to-orange-500",
+                        "from-fuchsia-500 to-pink-600",
+                        "from-sky-400 to-blue-600",
+                        "from-indigo-500 to-purple-600",
+                      ][name.charCodeAt(0) % 6],
                     )}
-                  />
-                  {c.atsScore}
-                </span>
-              </div>
+                  >
+                    {name
+                      .split(" ")
+                      .map((w) => w[0])
+                      .join("")
+                      .slice(0, 2)
+                      .toUpperCase()}
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-bold text-[13px] text-foreground truncate">
+                      {name}
+                    </span>
+                    <span className="text-[11px] text-muted-foreground truncate">
+                      {jobTitle}
+                    </span>
+                  </div>
+                </div>
 
-              {/* Contact */}
-              <div className="text-right">
-                <a
-                  href={`mailto:${c.email}`}
-                  onClick={(e) => e.stopPropagation()}
-                  className="text-[11px] text-muted-foreground hover:text-primary transition-colors truncate block"
-                >
-                  {c.email || "No email"}
-                </a>
+                {/* Skills */}
+                <div className="hidden md:flex flex-wrap gap-1.5 pr-2">
+                  {c.skills.slice(0, 3).map((skill) => (
+                    <span
+                      key={skill}
+                      className="rounded bg-secondary border border-border/40 px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                  {c.skills.length > 3 && (
+                    <span className="rounded bg-secondary border border-border/40 px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                      +{c.skills.length - 3}
+                    </span>
+                  )}
+                </div>
+
+                {/* ATS */}
+                <div>
+                  {(() => {
+                    const scoreColors = getAtsColorClasses(c.atsScore);
+                    return (
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold",
+                          scoreColors.bgText,
+                        )}
+                      >
+                        <div
+                          className={cn(
+                            "w-1.5 h-1.5 rounded-full",
+                            scoreColors.dot,
+                          )}
+                        />
+                        {c.atsScore}
+                      </span>
+                    );
+                  })()}
+                </div>
+
+                {/* Contact */}
+                <div className="hidden sm:block text-right">
+                  <a
+                    href={`https://mail.google.com/mail/?view=cm&fs=1&to=${c.email}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-[11px] text-muted-foreground hover:text-primary transition-colors truncate block"
+                  >
+                    {c.email || "No email"}
+                  </a>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
 
-      {/* Load More */}
-      {hasMore && onLoadMore && (
-        <div className="flex justify-center border-t border-border/40 py-3 bg-muted/5">
-          <button
-            onClick={onLoadMore}
-            className="flex items-center gap-2 text-xs font-bold text-primary hover:underline"
-          >
-            Load {remainingCount > 0 ? `${remainingCount} ` : ""}more matches
-            <FaChevronDown size={10} />
-          </button>
-        </div>
-      )}
+
 
       {/* Selected Candidate Detail — below the list */}
       {selectedCandidate && (

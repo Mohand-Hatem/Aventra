@@ -21,6 +21,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  IconBrandNextjs,
+  IconBrandAngular,
+  IconBrandTypescript,
+  IconDatabase,
+  IconServer,
+  IconCode,
+  IconCpu,
+  IconInfinity,
+} from "@tabler/icons-react";
 
 interface FloatingChatProps {
   messages: ChatMessage[];
@@ -30,7 +40,34 @@ interface FloatingChatProps {
   tokenLimitError: TokenLimitErrorResponse | null;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  inline?: boolean;
 }
+
+const suggestionsTech = [
+  {
+    label: "Next.js",
+    query: "Find candidates with Next.js experience",
+    icon: IconBrandNextjs,
+  },
+  {
+    label: "Angular",
+    query: "Search for Angular developers",
+    icon: IconBrandAngular,
+  },
+  {
+    label: "TypeScript",
+    query: "Looking for TypeScript developers",
+    icon: IconBrandTypescript,
+  },
+  { label: "SQL", query: "Find SQL database specialists", icon: IconDatabase },
+  { label: "NoSQL", query: "Find NoSQL database experts", icon: IconServer },
+];
+
+const suggestionsTrack = [
+  { label: "Frontend", query: "Search for Frontend engineers", icon: IconCode },
+  { label: "Backend", query: "Find Backend developers", icon: IconCpu },
+  { label: "DevOps", query: "Search for DevOps engineers", icon: IconInfinity },
+];
 
 export default function FloatingChat({
   messages,
@@ -40,6 +77,7 @@ export default function FloatingChat({
   tokenLimitError,
   isOpen,
   setIsOpen,
+  inline = false,
 }: FloatingChatProps) {
   const t = useTranslations("candidateSearch.assistant");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -59,8 +97,13 @@ export default function FloatingChat({
     <>
       <aside
         className={cn(
-          "shrink-0 flex flex-col bg-canvas border-l border-border/60 rounded-2xl transition-all duration-300 ease-in-out overflow-hidden sticky top-35 h-[700px] shadow-xs ml-4",
-          isOpen ? "w-[380px] opacity-100" : "w-0 opacity-0 border-none",
+          "shrink-0 flex flex-col bg-canvas border border-border/60 rounded-2xl transition-all duration-300 ease-in-out overflow-hidden shadow-xs w-full",
+          inline
+            ? "relative h-[700px]"
+            : cn(
+                "fixed   right-5 h-[700px] ml-4 border-l",
+                isOpen ? "w-[380px] opacity-100" : "w-0 opacity-0 border-none",
+              ),
         )}
       >
         <div className="flex items-center justify-between border-b border-border/60 bg-muted/20 px-4 py-3.5">
@@ -146,9 +189,67 @@ export default function FloatingChat({
         </div>
 
         {/* Input Footer */}
-        <div className="border-t border-border/40 bg-card">
+        <div className="border-t border-border/40 bg-canvas/20 py-2.5 flex flex-col gap-1">
+          {/* Suggestion Chips */}
+          <div className="flex flex-col gap-3 px-2">
+            {/* Row 1: Tech */}
+            <div className="flex justify-center items-center gap-1.5 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth">
+              {suggestionsTech.map((s) => {
+                const Icon = s.icon;
+                return (
+                  <button
+                    key={s.label}
+                    onClick={() =>
+                      !isThinking &&
+                      !isTokenLimitReached &&
+                      sendMessage(s.query)
+                    }
+                    disabled={isThinking || isTokenLimitReached}
+                    className={cn(
+                      "flex items-center gap-1 px-2.5 py-1 rounded-full border text-[10px] font-bold transition-all duration-200 cursor-pointer select-none whitespace-nowrap shadow-xs",
+                      "border-primary/25 bg-primary/5 text-primary hover:bg-primary/10 active:scale-95",
+                      "dark:border-sky/25 dark:bg-transparent dark:text-sky dark:hover:bg-sky/15",
+                      (isThinking || isTokenLimitReached) &&
+                        "opacity-50 pointer-events-none",
+                    )}
+                  >
+                    <Icon size={15} className="shrink-0" />
+                    {s.label}
+                  </button>
+                );
+              })}
+            </div>
+            {/* Row 2: Track */}
+            <div className="flex justify-center items-center gap-1.5 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth">
+              {suggestionsTrack.map((s) => {
+                const Icon = s.icon;
+                return (
+                  <button
+                    key={s.label}
+                    onClick={() =>
+                      !isThinking &&
+                      !isTokenLimitReached &&
+                      sendMessage(s.query)
+                    }
+                    disabled={isThinking || isTokenLimitReached}
+                    className={cn(
+                      "flex items-center gap-1 px-2.5 py-1 rounded-full border text-[10px] font-bold transition-all duration-200 cursor-pointer select-none whitespace-nowrap shadow-xs",
+                      "border-primary/25 bg-primary/5 text-primary hover:bg-primary/10 active:scale-95",
+                      "dark:border-sky/25 dark:bg-transparent dark:text-sky dark:hover:bg-sky/15",
+                      (isThinking || isTokenLimitReached) &&
+                        "opacity-50 pointer-events-none",
+                    )}
+                  >
+                    <Icon size={15} className="shrink-0" />
+                    {s.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {tokenLimitError?.message ? (
-            <p className="px-4 pt-3 text-center text-xs font-semibold text-destructive">
+            <p className="px-4 text-center text-xs font-semibold text-destructive">
               {tokenLimitError.message}
             </p>
           ) : null}
@@ -159,35 +260,36 @@ export default function FloatingChat({
         </div>
       </aside>
 
-      {/* Floating Toggle Button (Always visible, slides dynamically with the sidebar) */}
-      <div
-        className={cn(
-          "fixed bottom-3 z-50 transition-all duration-300 ease-in-out",
-          isOpen ? "right-[410px]" : "right-6",
-        )}
-      >
-        <button
-          onClick={() => setIsOpen(!isOpen)}
+      {!inline && (
+        <div
           className={cn(
-            "flex h-14 w-14 items-center justify-center rounded-full shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer border border-border/40",
-            "bg-canva text-zinc-900",
-            "dark:bg-background dark:text-foreground",
+            "fixed bottom-3 z-50 transition-all duration-300 ease-in-out",
+            isOpen ? "right-[410px]" : "right-6",
           )}
-          title={isOpen ? "Close AI Assistant" : "Open AI Assistant"}
         >
-          {isOpen ? (
-            <FaXmark size={20} />
-          ) : (
-            <Image
-              src="/mobile-logo.png"
-              alt="Open"
-              width={24}
-              height={24}
-              className="h-6 w-6 object-contain"
-            />
-          )}
-        </button>
-      </div>
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className={cn(
+              "flex h-14 w-14 items-center justify-center rounded-full shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer border border-border/40",
+              "bg-canva text-zinc-900",
+              "dark:bg-background dark:text-foreground",
+            )}
+            title={isOpen ? "Close AI Assistant" : "Open AI Assistant"}
+          >
+            {isOpen ? (
+              <FaXmark size={20} />
+            ) : (
+              <Image
+                src="/mobile-logo.png"
+                alt="Open"
+                width={24}
+                height={24}
+                className="h-6 w-6 object-contain"
+              />
+            )}
+          </button>
+        </div>
+      )}
     </>
   );
 }
