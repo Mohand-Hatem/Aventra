@@ -441,8 +441,8 @@ export default function ResultsTable({
       </div>
 
       {/* Table */}
-      <div className="flex-1 overflow-x-auto overflow-y-auto">
-        <table className="w-full min-h-full text-sm">
+      <div className="flex-1 overflow-x-auto overflow-y-auto" style={{ maxHeight: "calc(5 * 80px + 48px)" }}>
+        <table className="w-full text-sm">
           <thead className="sticky top-0 bg-muted/60 backdrop-blur-sm">
             <tr>
               <th className="w-[60px] px-4 py-3 text-left text-xs font-semibold text-muted-foreground">

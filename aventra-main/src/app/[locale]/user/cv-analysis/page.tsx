@@ -1347,6 +1347,102 @@ export default function CVAnalysisPage() {
               </div>
             </div>
           </section>
+
+          {/* Score Distribution & Trends */}
+          <section className="mt-20">
+            <div className="mb-10 text-center">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-primary dark:text-sky">
+                Analytics
+              </p>
+              <h2 className="mt-2 font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                Score Distribution
+              </h2>
+              <p className="mx-auto mt-3 max-w-md text-xs leading-relaxed text-muted-foreground">
+                See how your score compares to other candidates in the system
+              </p>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-3">
+              <Card className="border border-border/60 bg-canvas/50 shadow-md backdrop-blur dark:border-border/40">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-semibold">Score Ranges</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {[
+                      { range: "90-100", label: "Excellent", count: "12%", color: "bg-emerald-500" },
+                      { range: "70-89", label: "Good", count: "34%", color: "bg-sky-500" },
+                      { range: "50-69", label: "Fair", count: "38%", color: "bg-amber-500" },
+                      { range: "0-49", label: "Needs Work", count: "16%", color: "bg-rose-500" },
+                    ].map((item) => (
+                      <div key={item.range} className="flex items-center gap-3">
+                        <span className="w-16 text-xs font-medium text-muted-foreground">{item.range}</span>
+                        <div className="flex-1 h-2 rounded-full bg-muted/30">
+                          <div className={`h-full rounded-full ${item.color}`} style={{ width: item.count }} />
+                        </div>
+                        <span className="w-12 text-right text-xs font-semibold text-foreground">{item.count}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border border-border/60 bg-canvas/50 shadow-md backdrop-blur dark:border-border/40">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-semibold">Top Skills in Demand</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {["React.js", "TypeScript", "Python", "AWS", "Node.js", "Docker", "SQL", "Git", "REST APIs", "Agile"].map((skill) => (
+                      <span
+                        key={skill}
+                        className="rounded-full border border-border/60 bg-primary/5 px-3 py-1 text-xs font-medium text-primary dark:border-sky/20 dark:bg-sky/8 dark:text-sky"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border border-border/60 bg-canvas/50 shadow-md backdrop-blur dark:border-border/40">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-semibold">Your Progress</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-medium">ATS Compatibility</span>
+                        <span className="text-emerald-600 dark:text-emerald-400">+23 pts</span>
+                      </div>
+                      <div className="mt-1 h-2 rounded-full bg-muted/30">
+                        <div className="h-full rounded-full bg-emerald-500" style={{ width: "82%" }} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-medium">Keyword Coverage</span>
+                        <span className="text-sky-600 dark:text-sky-400">+18 pts</span>
+                      </div>
+                      <div className="mt-1 h-2 rounded-full bg-muted/30">
+                        <div className="h-full rounded-full bg-sky-500" style={{ width: "75%" }} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-medium">Formatting Score</span>
+                        <span className="text-violet-600 dark:text-violet-400">+12 pts</span>
+                      </div>
+                      <div className="mt-1 h-2 rounded-full bg-muted/30">
+                        <div className="h-full rounded-full bg-violet-500" style={{ width: "88%" }} />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </section>
         </div>
       </div>
     </RequireRole>

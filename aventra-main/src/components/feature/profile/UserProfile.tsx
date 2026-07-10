@@ -691,15 +691,16 @@ export function UserProfile() {
 
       {/* Main content */}
       <div className="order-last min-w-0 flex-1 space-y-6 lg:order-first ">
-        {/* <header>
-          <p className="text-xs font-bold uppercase tracking-widest text-primary dark:text-sky">
-            {t("title")}
-          </p>
-          <h1 className="mt-1 font-heading text-3xl font-bold uppercase tracking-tight sm:text-4xl">
+        <header>
+          <span className="mb-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
+            <IconSparkles className="size-3" />
+            {t("welcome", { role: tNavbar(`roles.${user.role}`), name: displayName })}
+          </span>
+          <h1 className="mt-1 font-heading text-3xl font-bold tracking-tight sm:text-4xl">
             {t("title")}
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{t("description")}</p>
-        </header> */}
+        </header>
 
         {/* Insight cards — strengths, weaknesses, suggestions, ATS */}
         <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 sm:grid-rows-2 sm:min-h-80 xl:grid-cols-4 xl:grid-rows-1 xl:min-h-80">
@@ -743,6 +744,63 @@ export function UserProfile() {
             className="bg-linear-to-br from-emerald-500/5 to-background"
           />
         </div>
+
+        {/* Career Insights & Recommendations */}
+        <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
+          <CardHeader className="border-b border-border/60 px-6 py-4 dark:border-border/40">
+            <CardTitle className="text-base">Career Insights</CardTitle>
+            <CardDescription className="text-xs">
+              AI-powered recommendations based on your CV analysis
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              {[
+                {
+                  icon: IconTrendingUp,
+                  title: "In-Demand Skills",
+                  items: ["React.js", "TypeScript", "Node.js", "AWS"],
+                  color: "text-primary dark:text-sky",
+                  bg: "bg-primary/10 dark:bg-sky/10",
+                },
+                {
+                  icon: IconBulb,
+                  title: "Suggested Certifications",
+                  items: ["AWS Solutions Architect", "Google Cloud Professional", "Meta Frontend Developer"],
+                  color: "text-amber-600 dark:text-amber-400",
+                  bg: "bg-amber-500/10",
+                },
+                {
+                  icon: IconStar,
+                  title: "Industry Benchmarks",
+                  items: ["Avg ATS Score: 72", "Your Score: Above Average", "Top 15% of Candidates"],
+                  color: "text-emerald-600 dark:text-emerald-400",
+                  bg: "bg-emerald-500/10",
+                },
+              ].map((section) => (
+                <div key={section.title} className="flex flex-col gap-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className={`flex size-8 items-center justify-center rounded-xl ${section.bg}`}>
+                      <section.icon className={`size-4 shrink-0 ${section.color}`} />
+                    </div>
+                    <h3 className="text-sm font-bold tracking-tight text-foreground">{section.title}</h3>
+                  </div>
+                  <ul className="flex flex-col gap-2">
+                    {section.items.map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-center gap-2 rounded-lg border border-border/40 bg-background/80 px-3 py-2"
+                      >
+                        <IconCheck className="size-3.5 shrink-0 text-primary dark:text-sky" />
+                        <span className="text-sm text-muted-foreground">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">

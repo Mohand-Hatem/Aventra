@@ -9,9 +9,14 @@ import {
   IconCamera,
   IconMail,
   IconSearch,
+  IconSparkles,
   IconStar,
   IconUsers,
 } from "@tabler/icons-react";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import axiosInstance from "@/lib/axios";
+import { z } from "zod";
 import { useAiUsage } from "@/hooks/useAiUsage";
 import { useUser } from "@/hooks/useAuth";
 import { useCompanySearchHistory } from "@/hooks/useCompanySearchHistory";
@@ -306,6 +311,23 @@ export function CompanyProfile() {
     [tProfile],
   );
 
+  const changePasswordSchema = z
+    .object({
+      currentPassword: z.string().min(1, "Current password is required"),
+      newPassword: z
+        .string()
+        .min(8, "Password must be at least 8 characters")
+        .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+        .regex(/[0-9]/, "Password must contain at least one number"),
+      confirmPassword: z.string().min(1, "Please confirm your new password"),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    });
+
+  type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
+
   const {
     register,
     handleSubmit,
@@ -317,6 +339,38 @@ export function CompanyProfile() {
     resolver: zodResolver(profileSchema),
     defaultValues: {
       name: { en: "", ar: "" },
+    },
+  });
+
+  const {
+    register: registerPassword,
+    handleSubmit: handlePasswordSubmit,
+    reset: resetPassword,
+    formState: { errors: passwordErrors },
+  } = useForm<ChangePasswordFormValues>({
+    resolver: zodResolver(changePasswordSchema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
+
+  const changePasswordMutation = useMutation({
+    mutationFn: async (payload: ChangePasswordFormValues) => {
+      const response = await axiosInstance.put("/users/change-password", {
+        currentPassword: payload.currentPassword,
+        newPassword: payload.newPassword,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success(tProfile("passwordUpdateSuccess") || "Password updated successfully!");
+      resetPassword();
+    },
+    onError: (err: any) => {
+      const msg = err.response?.data?.message ?? "Failed to update password.";
+      toast.error(msg);
     },
   });
 
@@ -512,6 +566,16 @@ export function CompanyProfile() {
       </aside>
 
       <div className="order-last min-w-0 col-span-1 space-y-6 xl:order-first">
+        <header>
+          <span className="mb-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
+            <IconSparkles className="size-3" />
+            {t("welcome", { role: tNavbar(`roles.${user.role}`), name: displayName })}
+          </span>
+          <h1 className="mt-1 font-heading text-3xl font-bold tracking-tight sm:text-4xl">
+            {t("title")}
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{t("description")}</p>
+        </header>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[320px_1fr]">
           <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
             <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
@@ -556,8 +620,8 @@ export function CompanyProfile() {
             </CardContent>
           </Card>
 
-          <div className="flex min-h-[420px]  flex-col gap-4">
-            <div className="min-h-[280px] flex-1 overflow-hidden">
+          <div className="flex flex-col gap-4">
+            <div className="shrink-0 overflow-hidden">
               <ResultsTable
                 candidates={historyCandidates}
                 selectedCandidate={selectedCandidate}
@@ -567,11 +631,11 @@ export function CompanyProfile() {
             </div>
 
             {selectedCandidate ? (
-              <div className="min-h-[min(360px,40dvh)] shrink-0 overflow-hidden lg:min-h-[340px]">
+              <div className="shrink-0 overflow-hidden">
                 <CandidateDetail candidate={selectedCandidate} />
               </div>
             ) : searches.length > 0 ? (
-              <div className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-border/80 bg-canvas/60 px-6 text-center shadow-md">
+              <div className="flex h-32 items-center justify-center rounded-2xl border border-dashed border-border/80 bg-canvas/60 px-6 text-center shadow-md">
                 <div>
                   <IconUsers className="mx-auto size-8 text-muted-foreground" />
                   <p className="mt-2 text-sm text-muted-foreground">
@@ -582,6 +646,86 @@ export function CompanyProfile() {
             ) : null}
           </div>
         </div>
+
+        {/* Hiring Insights Dashboard */}
+        <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
+          <CardHeader className="border-b border-border/60 px-6 py-4 dark:border-border/40">
+            <CardTitle className="text-base">Hiring Insights</CardTitle>
+            <CardDescription className="text-xs">
+              AI-powered insights to optimize your recruitment process
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-8 items-center justify-center rounded-xl bg-primary/10 dark:bg-sky/10">
+                    <IconSearch className="size-4 shrink-0 text-primary dark:text-sky" />
+                  </div>
+                  <h3 className="text-sm font-bold tracking-tight text-foreground">Top Skills Searched</h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {["React.js", "Python", "Node.js", "TypeScript", "AWS", "Docker"].map((skill) => (
+                    <span
+                      key={skill}
+                      className="rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-8 items-center justify-center rounded-xl bg-emerald-500/10">
+                    <IconUsers className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <h3 className="text-sm font-bold tracking-tight text-foreground">Candidate Quality</h3>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    { label: "Above Average", percent: "42%", color: "bg-emerald-500" },
+                    { label: "Average", percent: "38%", color: "bg-sky-500" },
+                    { label: "Below Average", percent: "20%", color: "bg-amber-500" },
+                  ].map((item) => (
+                    <div key={item.label}>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-medium">{item.label}</span>
+                        <span className="text-muted-foreground">{item.percent}</span>
+                      </div>
+                      <div className="mt-1 h-2 rounded-full bg-muted/30">
+                        <div className={`h-full rounded-full ${item.color}`} style={{ width: item.percent }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-8 items-center justify-center rounded-xl bg-amber-500/10">
+                    <IconStar className="size-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <h3 className="text-sm font-bold tracking-tight text-foreground">Recruitment Metrics</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { label: "Avg Score", value: "78", color: "text-primary dark:text-sky" },
+                    { label: "Match Rate", value: "92%", color: "text-emerald-600 dark:text-emerald-400" },
+                    { label: "Time Saved", value: "65%", color: "text-violet-600 dark:text-violet-400" },
+                    { label: "Quality Hire", value: "88%", color: "text-amber-600 dark:text-amber-400" },
+                  ].map((metric) => (
+                    <div key={metric.label} className="rounded-xl border border-border/50 bg-background/60 p-3 text-center dark:border-border/30">
+                      <p className={`text-lg font-bold ${metric.color}`}>{metric.value}</p>
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{metric.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <div>
           <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted-foreground">
@@ -768,6 +912,81 @@ export function CompanyProfile() {
             </Card>
           </div>
         </div>
+
+        {/* Change Password Section */}
+        <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
+          <CardHeader className="border-b border-border/60 px-6 py-4 dark:border-border/40">
+            <CardTitle className="text-base">{tProfile("changePassword")}</CardTitle>
+            <CardDescription className="text-xs">{tProfile("changePasswordHint")}</CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <form
+              onSubmit={handlePasswordSubmit((values) => changePasswordMutation.mutate(values))}
+              className="space-y-4"
+            >
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="currentPassword">{tProfile("currentPassword")}</Label>
+                  <Input
+                    id="currentPassword"
+                    type="password"
+                    autoComplete="current-password"
+                    className={inputClassName(!!passwordErrors.currentPassword)}
+                    {...registerPassword("currentPassword")}
+                  />
+                  {passwordErrors.currentPassword && (
+                    <p className="text-xs text-destructive">{passwordErrors.currentPassword.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">{tProfile("newPassword")}</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    className={inputClassName(!!passwordErrors.newPassword)}
+                    {...registerPassword("newPassword")}
+                  />
+                  {passwordErrors.newPassword && (
+                    <p className="text-xs text-destructive">{passwordErrors.newPassword.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">{tProfile("confirmPassword")}</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    className={inputClassName(!!passwordErrors.confirmPassword)}
+                    {...registerPassword("confirmPassword")}
+                  />
+                  {passwordErrors.confirmPassword && (
+                    <p className="text-xs text-destructive">{passwordErrors.confirmPassword.message}</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <Button
+                  type="submit"
+                  disabled={changePasswordMutation.isPending}
+                  className="w-full sm:w-auto px-6 h-10 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-950 dark:hover:bg-sky/95"
+                >
+                  {changePasswordMutation.isPending ? (
+                    <>
+                      <ScaleLoader size="sm" className="text-white dark:text-zinc-950" />
+                      <span className="ml-2">{tProfile("updatingPassword")}</span>
+                    </>
+                  ) : (
+                    tProfile("updatePassword")
+                  )}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

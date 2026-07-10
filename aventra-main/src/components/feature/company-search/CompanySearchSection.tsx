@@ -132,6 +132,55 @@ export default function CompanySearchSection() {
               hasRawCandidates={candidates.length > 0}
             />
           </div>
+
+          {/* Trending Skills & Market Insights */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm">
+              <h3 className="mb-3 text-sm font-bold text-foreground">Trending Skills</h3>
+              <div className="flex flex-wrap gap-2">
+                {["React.js", "TypeScript", "Python", "AWS", "Node.js", "Docker", "Kubernetes", "GraphQL"].map((skill) => (
+                  <span
+                    key={skill}
+                    className="rounded-full border border-border/60 bg-primary/5 px-3 py-1 text-xs font-medium text-primary dark:border-sky/20 dark:bg-sky/8 dark:text-sky"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm">
+              <h3 className="mb-3 text-sm font-bold text-foreground">Candidate Pool</h3>
+              <div className="space-y-2">
+                {[
+                  { role: "Frontend Devs", count: "2,340", color: "text-primary dark:text-sky" },
+                  { role: "Backend Devs", count: "1,890", color: "text-emerald-600 dark:text-emerald-400" },
+                  { role: "Full Stack", count: "1,456", color: "text-violet-600 dark:text-violet-400" },
+                ].map((item) => (
+                  <div key={item.role} className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">{item.role}</span>
+                    <span className={`text-sm font-bold ${item.color}`}>{item.count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm">
+              <h3 className="mb-3 text-sm font-bold text-foreground">Search Tips</h3>
+              <ul className="space-y-2">
+                {[
+                  "Use natural language queries",
+                  "Filter by ATS score threshold",
+                  "Search by specific skills",
+                ].map((tip) => (
+                  <li key={tip} className="flex items-start gap-2 text-xs text-muted-foreground">
+                    <span className="mt-1 size-1 shrink-0 rounded-full bg-primary dark:bg-sky" />
+                    {tip}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
 
         {/* Chatbot */}

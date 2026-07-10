@@ -477,6 +477,7 @@
     }
   },
   "profile": {
+    "welcome": "Welcome {role} {name}",
     "title": "Profile",
     "description": "View your account details and update your photo or name.",
     "loadError": "We couldn't load your profile. Please refresh and try again.",
@@ -588,6 +589,7 @@
     "updatePassword": "Update Password"
   },
   "companyProfile": {
+    "welcome": "Welcome {role} {name}",
     "title": "Company profile",
     "description": "Manage your organization account, usage, and past candidate searches.",
     "tokens": "Token usage",
