@@ -164,7 +164,7 @@ export function LoginForm() {
           <div className="-mt-1 flex justify-end">
             <Link
               href={APP_ROUTES.forgotPassword}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm text-muted-foreground transition-colors hover:text-primary dark:hover:text-sky"
             >
               {t("forgotPassword")}
             </Link>

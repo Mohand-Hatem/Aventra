@@ -1,4 +1,59 @@
 {
+  "forgotPassword": {
+    "heroTitle": "استعد لاستعادة حسابك بأمان",
+    "heroDescription": "أدخل بريدك الإلكتروني وسنرسل لك رمز OTP لإعادة تعيين كلمة المرور.",
+    "cardEyebrow": "إعادة تعيين كلمة المرور",
+    "cardTitle": "تحقق من صندوق الوارد",
+    "cardDescription": "سنرسل رمز OTP آمنًا إلى بريدك الإلكتروني. استخدمه في الصفحة التالية لإنشاء كلمة المرور الجديدة.",
+    "backToWebsite": "العودة إلى الموقع",
+    "title": "هل نسيت كلمة المرور؟",
+    "description": "لا تقلق. أدخل عنوان بريدك الإلكتروني وسنرسل لك رمز OTP.",
+    "emailLabel": "البريد الإلكتروني",
+    "emailPlaceholder": "name@firm.com",
+    "submit": "إرسال رمز OTP",
+    "submitting": "جارٍ إرسال رمز OTP...",
+    "rememberPassword": "هل تتذكر كلمة المرور؟",
+    "signIn": "تسجيل الدخول",
+    "validation": {
+      "emailRequired": "يرجى إدخال بريدك الإلكتروني"
+    },
+    "messages": {
+      "otpSentSuccess": "تم إرسال رمز OTP إلى بريدك الإلكتروني",
+      "failedToSendOtp": "فشل إرسال رمز OTP",
+      "somethingWentWrong": "حدث خطأ ما"
+    }
+  },
+  "resetPassword": {
+    "heroTitle": "أنشئ كلمة مرور آمنة جديدة",
+    "heroDescription": "أدخل رمز OTP المرسل إلى بريدك الإلكتروني واختر كلمة مرور قوية جديدة.",
+    "cardEyebrow": "إعادة تعيين كلمة المرور",
+    "cardTitle": "وصول آمن",
+    "cardDescription": "رمز OTP صالح لفترة محدودة. بعد إعادة تعيين كلمة المرور، يمكنك تسجيل الدخول مرة أخرى بشكل آمن.",
+    "backToWebsite": "العودة إلى الموقع",
+    "title": "إعادة تعيين كلمة المرور",
+    "description": "أدخل رمز OTP من بريدك الإلكتروني وأنشئ كلمة المرور الجديدة.",
+    "emailLabel": "البريد الإلكتروني",
+    "emailPlaceholder": "name@firm.com",
+    "otpLabel": "رمز OTP",
+    "otpPlaceholder": "أدخل رمز OTP",
+    "newPasswordLabel": "كلمة المرور الجديدة",
+    "confirmPasswordLabel": "تأكيد كلمة المرور",
+    "passwordPlaceholder": "••••••••",
+    "submit": "إعادة تعيين كلمة المرور",
+    "submitting": "جارٍ إعادة التعيين...",
+    "backTo": "العودة إلى",
+    "signIn": "تسجيل الدخول",
+    "validation": {
+      "fieldsRequired": "يرجى ملء جميع الحقول",
+      "passwordLength": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+      "passwordMismatch": "كلمتا المرور غير متطابقتين"
+    },
+    "messages": {
+      "resetSuccess": "تمت إعادة تعيين كلمة المرور بنجاح",
+      "resetFailed": "فشل إعادة تعيين كلمة المرور",
+      "somethingWentWrong": "حدث خطأ ما"
+    }
+  },
   "navbar": {
     "home": "الرئيسية",
     "pricing": "الأسعار",
