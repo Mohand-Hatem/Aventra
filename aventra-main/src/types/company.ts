@@ -348,10 +348,14 @@ export interface CvFilterParams {
 
 export interface CandidateFilterCriteria {
   minAts: number;
+  minMatch?: number;
   hasSkills: boolean;
   hasCertifications: boolean;
   hasExperience: boolean;
   hasProjects: boolean;
+  educations?: string[];
+  strengths?: string[];
+  weaknesses?: string[];
 }
 
 export function matchesFilterCriteria(
@@ -359,6 +363,8 @@ export function matchesFilterCriteria(
   criteria: CandidateFilterCriteria,
 ) {
   if (candidate.atsScore < criteria.minAts) return false;
+  if (criteria.minMatch && candidate.matchScore < criteria.minMatch)
+    return false;
   if (criteria.hasSkills && candidate.skills.length === 0) return false;
   if (
     criteria.hasCertifications &&
@@ -369,6 +375,26 @@ export function matchesFilterCriteria(
     return false;
   if (criteria.hasProjects && (candidate.projects?.length ?? 0) === 0)
     return false;
+  if (criteria.educations && criteria.educations.length > 0) {
+    const hasEdu = candidate.education?.some(
+      (e) =>
+        criteria.educations!.includes(e.degree || "") ||
+        criteria.educations!.includes(e.institution || ""),
+    );
+    if (!hasEdu) return false;
+  }
+  if (criteria.strengths && criteria.strengths.length > 0) {
+    const hasStrength = candidate.strengths?.some((s) =>
+      criteria.strengths!.includes(s.title),
+    );
+    if (!hasStrength) return false;
+  }
+  if (criteria.weaknesses && criteria.weaknesses.length > 0) {
+    const hasWeakness = candidate.weaknesses?.some((w) =>
+      criteria.weaknesses!.includes(w.title),
+    );
+    if (!hasWeakness) return false;
+  }
   return true;
 }
 

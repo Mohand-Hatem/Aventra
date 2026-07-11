@@ -683,110 +683,119 @@ export function CompanyProfile() {
             {t("description")}
           </p>
         </header>
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
-            <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
-              <CardTitle className="text-base">{t("searchHistory")}</CardTitle>
-              <CardDescription className="text-xs">
-                {t("searchHistoryHint")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="px-4 pt-4 pb-4">
-              {isHistoryLoading ? (
-                <div className="flex items-center justify-center py-10">
-                  <ScaleLoader size="md" />
-                </div>
-              ) : searches.length === 0 ? (
-                <div className="flex flex-col items-center rounded-xl border border-dashed border-border/70 bg-muted/15 px-4 py-8 text-center">
-                  <IconSearch className="size-8 text-muted-foreground" />
-                  <p className="mt-3 text-sm font-medium">
-                    {t("noSearchesYet")}
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {t("noSearchesHint")}
-                  </p>
-                  <Button asChild className="mt-4 rounded-xl">
-                    <Link href="/company/search">{t("goToSearch")}</Link>
-                  </Button>
-                </div>
-              ) : (
-                <ul className="min-h-80 max-h-full  overflow-y-auto space-y-2  pr-1">
-                  {searches.map((entry) => (
-                    <li key={entry.id}>
-                      <SearchHistoryItem
-                        entry={entry}
-                        isSelected={
-                          resultsMode === "history" &&
-                          selectedHistoryId === entry.id
-                        }
-                        locale={locale}
-                        t={t}
-                        onSelect={() => {
-                          setSelectedHistoryId(entry.id);
-                          setResultsMode("history");
-                        }}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[360px_1fr] xl:items-start">
+          <div className="flex flex-col gap-4">
+            <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
+              <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
+                <CardTitle className="text-base">
+                  {t("searchHistory")}
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  {t("searchHistoryHint")}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="px-4 pt-4 pb-4">
+                {isHistoryLoading ? (
+                  <div className="flex items-center justify-center py-10">
+                    <ScaleLoader size="md" />
+                  </div>
+                ) : searches.length === 0 ? (
+                  <div className="flex flex-col items-center rounded-xl border border-dashed border-border/70 bg-muted/15 px-4 py-8 text-center">
+                    <IconSearch className="size-8 text-muted-foreground" />
+                    <p className="mt-3 text-sm font-medium">
+                      {t("noSearchesYet")}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {t("noSearchesHint")}
+                    </p>
+                    <Button asChild className="mt-4 rounded-xl">
+                      <Link href="/company/search">{t("goToSearch")}</Link>
+                    </Button>
+                  </div>
+                ) : (
+                  <ul className="max-h-80 overflow-y-scroll space-y-2 pr-1">
+                    {searches.map((entry) => (
+                      <li key={entry.id}>
+                        <SearchHistoryItem
+                          entry={entry}
+                          isSelected={
+                            resultsMode === "history" &&
+                            selectedHistoryId === entry.id
+                          }
+                          locale={locale}
+                          t={t}
+                          onSelect={() => {
+                            setSelectedHistoryId(entry.id);
+                            setResultsMode("history");
+                          }}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
 
-          <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
-            <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
-              <CardTitle className="text-base">
-                {t("filterCandidates")}
-              </CardTitle>
-              <CardDescription className="text-xs">
-                {t("filterCandidatesHint")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="px-4 pt-4 pb-4">
-              <CandidateFilterPanel
-                isPending={isFilterFetching}
-                t={t}
-                onApply={(criteria) => {
-                  setAppliedFilterCriteria(criteria);
-                  setResultsMode("filter");
-                }}
-                onClear={() => {
-                  setAppliedFilterCriteria(null);
-                  setResultsMode("history");
-                }}
-              />
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          <div className="shrink-0 overflow-hidden">
-            <ResultsTable
-              candidates={displayedCandidates}
-              selectedCandidate={selectedCandidate}
-              onSelectCandidate={setSelectedCandidate}
-              isPending={resultsMode === "filter" && isFilterPending}
-              hideExport={resultsMode === "filter"}
-            />
+            <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
+              <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
+                <CardTitle className="text-base">
+                  {t("filterCandidates")}
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  {t("filterCandidatesHint")}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="px-4 pt-4 pb-4">
+                <CandidateFilterPanel
+                  candidates={
+                    resultsMode === "filter"
+                      ? (filterData?.candidates ?? EMPTY_CANDIDATES)
+                      : historyCandidates
+                  }
+                  isPending={isFilterFetching}
+                  t={t}
+                  onApply={(criteria) => {
+                    setAppliedFilterCriteria(criteria);
+                    setResultsMode("filter");
+                  }}
+                  onClear={() => {
+                    setAppliedFilterCriteria(null);
+                    setResultsMode("history");
+                  }}
+                />
+              </CardContent>
+            </Card>
           </div>
 
-          {selectedCandidate ? (
+          <div className="flex flex-col gap-4">
             <div className="shrink-0 overflow-hidden">
-              <CandidateDetail candidate={selectedCandidate} />
+              <ResultsTable
+                candidates={displayedCandidates}
+                selectedCandidate={selectedCandidate}
+                onSelectCandidate={setSelectedCandidate}
+                isPending={resultsMode === "filter" && isFilterPending}
+                hideExport={resultsMode === "filter"}
+              />
             </div>
-          ) : displayedCandidates.length === 0 &&
-            (resultsMode === "history" ? searches.length > 0 : true) ? (
-            <div className="flex h-32 items-center justify-center rounded-2xl border border-dashed border-border/80 bg-canvas/60 px-6 text-center shadow-md">
-              <div>
-                <IconUsers className="mx-auto size-8 text-muted-foreground" />
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {resultsMode === "filter"
-                    ? t("noFilterResults")
-                    : t("selectSearchHint")}
-                </p>
+
+            {selectedCandidate ? (
+              <div className="shrink-0 overflow-hidden">
+                <CandidateDetail candidate={selectedCandidate} />
               </div>
-            </div>
-          ) : null}
+            ) : displayedCandidates.length === 0 &&
+              (resultsMode === "history" ? searches.length > 0 : true) ? (
+              <div className="flex h-32 items-center justify-center rounded-2xl border border-dashed border-border/80 bg-canvas/60 px-6 text-center shadow-md">
+                <div>
+                  <IconUsers className="mx-auto size-8 text-muted-foreground" />
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {resultsMode === "filter"
+                      ? t("noFilterResults")
+                      : t("selectSearchHint")}
+                  </p>
+                </div>
+              </div>
+            ) : null}
+          </div>
         </div>
 
         {/* Hiring Insights Dashboard */}
@@ -918,96 +927,106 @@ export function CompanyProfile() {
           </CardContent>
         </Card>
 
-        <div>
-          <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted-foreground">
-            {tProfile("accountSettings")}
-          </h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
-              <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
-                <CardTitle className="text-base">
-                  {tProfile("changePhoto")}
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  {tProfile("photoHint")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3 px-4 pt-4 pb-4">
-                <div className="flex items-center gap-3">
-                  <Avatar className="size-40 ring-2 ring-background">
+        {/* Account Settings Section */}
+        <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
+          <CardHeader className="border-b border-border/60 px-6 py-4 dark:border-border/40">
+            <CardTitle className="text-base">
+              {tProfile("accountSettings")}
+            </CardTitle>
+            <CardDescription className="text-xs">
+              {tProfile("personalInfoHint")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-[200px_1fr]">
+              {/* Left Side: Avatar / Photo Upload */}
+              <div className="flex flex-col items-center text-center space-y-4">
+                <div
+                  className="relative group cursor-pointer"
+                  onClick={() => avatarInputRef.current?.click()}
+                >
+                  <Avatar className="size-36 ring-4 ring-primary/10 dark:ring-sky/10 transition-transform group-hover:scale-[1.02]">
                     {avatarSrc ? (
                       <AvatarImage src={avatarSrc} alt={displayName} />
                     ) : null}
-                    <AvatarFallback className="bg-primary text-sm font-semibold text-primary-foreground">
+                    <AvatarFallback className="bg-primary text-xl font-semibold text-primary-foreground">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">
-                      {displayName}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {tProfile("photoHint")}
-                    </p>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <IconCamera className="size-8 text-white" />
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="rounded-xl"
-                    onClick={() => avatarInputRef.current?.click()}
-                  >
-                    <IconCamera className="size-4 mr-1.5" />
-                    {tProfile("choosePhoto")}
-                  </Button>
 
-                  {user?.avatar &&
-                    user.avatar !==
-                      "https://cdn-icons-png.flaticon.com/512/149/149071.png" && (
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="rounded-xl"
-                        onClick={() => deleteAvatarMutation.mutate()}
-                        disabled={deleteAvatarMutation.isPending}
-                      >
-                        <IconTrash className="size-4 mr-1.5" />
-                        {tProfile("deletePhoto") || "Delete Photo"}
-                      </Button>
-                    )}
-                  <Button
-                    type="button"
-                    size="sm"
-                    disabled={isPending || !hasAvatarChange}
-                    className="rounded-xl"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleSubmit(
-                        (values) => submitProfileUpdate(values, ["avatar"]),
-                        (errs) =>
-                          console.error(
-                            "Company avatar form validation errors:",
-                            errs,
-                          ),
-                      )(e);
-                    }}
-                  >
-                    {isPending ? (
-                      <>
-                        <ScaleLoader size="sm" />
-                        {tProfile("saving")}
-                      </>
-                    ) : (
-                      tProfile("savePhoto")
-                    )}
-                  </Button>
+                <div className="space-y-2 w-full">
+                  <p className="text-xs text-muted-foreground">
+                    {tProfile("photoHint")}
+                  </p>
+                  <div className="flex gap-2 w-full">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 rounded-xl"
+                      onClick={() => avatarInputRef.current?.click()}
+                    >
+                      <IconCamera className="size-4 mr-1.5" />
+                      {tProfile("choosePhoto")}
+                    </Button>
+
+                    {user?.avatar &&
+                      user.avatar !==
+                        "https://cdn-icons-png.flaticon.com/512/149/149071.png" && (
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="flex-1 rounded-xl"
+                          onClick={() => deleteAvatarMutation.mutate()}
+                          disabled={deleteAvatarMutation.isPending}
+                        >
+                          <IconTrash className="size-4 mr-1.5" />
+                          {tProfile("deletePhoto") || "Delete Photo"}
+                        </Button>
+                      )}
+                  </div>
+
+                  {hasAvatarChange && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="w-full rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-200 dark:hover:bg-sky/95"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleSubmit(
+                          (values) => submitProfileUpdate(values, ["avatar"]),
+                          (errs) =>
+                            console.error(
+                              "Company avatar form validation errors:",
+                              errs,
+                            ),
+                        )(e);
+                      }}
+                      disabled={isPending}
+                    >
+                      {isPending ? (
+                        <>
+                          <ScaleLoader
+                            size="sm"
+                            className="text-white dark:text-zinc-950"
+                          />
+                          <span className="ml-1.5">{tProfile("saving")}</span>
+                        </>
+                      ) : (
+                        tProfile("savePhoto")
+                      )}
+                    </Button>
+                  )}
                 </div>
+
                 {isPending && uploadProgress !== null ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="w-full space-y-2">
+                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                       <span>
                         {uploadProgress < 100
                           ? tProfile("uploadingPhoto")
@@ -1017,13 +1036,15 @@ export function CompanyProfile() {
                     </div>
                     <Progress
                       value={uploadProgress}
-                      className="h-2 bg-muted/60 [&>div]:bg-primary dark:[&>div]:bg-sky"
+                      className="h-1.5 bg-muted/60 [&>div]:bg-primary dark:[&>div]:bg-sky"
                     />
                   </div>
                 ) : null}
+
                 {errors.avatar ? (
                   <p className="text-xs text-destructive">error</p>
                 ) : null}
+
                 <input
                   ref={avatarInputRef}
                   type="file"
@@ -1037,106 +1058,103 @@ export function CompanyProfile() {
                     });
                   }}
                 />
-              </CardContent>
-            </Card>
+              </div>
 
-            <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
-              <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
-                <CardTitle className="text-base">
-                  {tProfile("updateName")}
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  {tProfile("updateNameHint")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="px-4 pt-4 pb-4">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleSubmit(
-                      (values) => submitProfileUpdate(values, ["name"]),
-                      (errs) =>
-                        console.error(
-                          "Company name form validation errors:",
-                          errs,
-                        ),
-                    )(e);
-                  }}
-                  className="space-y-3"
-                >
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="company-name-en">
-                        {tRegister("englishName")}
-                      </Label>
-                      <Input
-                        id="company-name-en"
-                        autoComplete="organization"
-                        aria-invalid={!!errors.name?.en}
-                        className={inputClassName(!!errors.name?.en)}
-                        {...register("name.en")}
-                      />
-                      {errors.name?.en ? (
-                        <p className="text-sm text-destructive">
-                          {errors.name.en.message}
-                        </p>
-                      ) : null}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="company-name-ar">
-                        {tRegister("arabicName")}
-                      </Label>
-                      <Input
-                        id="company-name-ar"
-                        autoComplete="organization"
-                        aria-invalid={!!errors.name?.ar}
-                        className={inputClassName(!!errors.name?.ar)}
-                        dir="rtl"
-                        {...register("name.ar")}
-                      />
-                      {errors.name?.ar ? (
-                        <p className="text-sm text-destructive">
-                          {errors.name.ar.message}
-                        </p>
-                      ) : null}
-                    </div>
-                  </div>
+              {/* Right Side: Profile Details form */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSubmit(
+                    (values) => submitProfileUpdate(values, ["name"]),
+                    (errs) =>
+                      console.error(
+                        "Company name form validation errors:",
+                        errs,
+                      ),
+                  )(e);
+                }}
+                className="space-y-4"
+              >
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="company-email">{tProfile("email")}</Label>
+                    <Label htmlFor="company-name-en">
+                      {tRegister("englishName")}
+                    </Label>
                     <Input
-                      id="company-email"
-                      value={user.email}
-                      readOnly
-                      disabled
-                      className={cn(
-                        inputClassName(),
-                        "cursor-not-allowed bg-muted/40 opacity-80",
-                      )}
+                      id="company-name-en"
+                      autoComplete="organization"
+                      aria-invalid={!!errors.name?.en}
+                      className={inputClassName(!!errors.name?.en)}
+                      {...register("name.en")}
                     />
+                    {errors.name?.en ? (
+                      <p className="text-xs text-destructive">
+                        {errors.name.en.message}
+                      </p>
+                    ) : null}
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="company-name-ar">
+                      {tRegister("arabicName")}
+                    </Label>
+                    <Input
+                      id="company-name-ar"
+                      autoComplete="organization"
+                      aria-invalid={!!errors.name?.ar}
+                      className={inputClassName(!!errors.name?.ar)}
+                      dir="rtl"
+                      {...register("name.ar")}
+                    />
+                    {errors.name?.ar ? (
+                      <p className="text-xs text-destructive">
+                        {errors.name.ar.message}
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="company-email">{tProfile("email")}</Label>
+                  <Input
+                    id="company-email"
+                    value={user.email}
+                    readOnly
+                    disabled
+                    className={cn(
+                      inputClassName(),
+                      "cursor-not-allowed bg-muted/40 opacity-85",
+                    )}
+                  />
+                </div>
+
+                <div className="flex justify-end pt-2">
                   <Button
                     type="submit"
                     disabled={isPending}
-                    className="h-10 w-full rounded-xl"
+                    className="w-full sm:w-auto px-6 h-10 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-200 dark:hover:bg-sky/95"
                   >
                     {isPending ? (
                       <>
-                        <ScaleLoader size="sm" />
-                        {tProfile("saving")}
+                        <ScaleLoader
+                          size="sm"
+                          className="text-white dark:text-zinc-950"
+                        />
+                        <span className="ml-2">{tProfile("saving")}</span>
                       </>
                     ) : (
                       tProfile("saveName")
                     )}
                   </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+                </div>
+              </form>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Change Password Section */}
         <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
-          <CardHeader className="border-b border-border/60 px-6 py-4 dark:border-border/40">
+          <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
             <CardTitle className="text-base">
               {tProfile("changePassword")}
             </CardTitle>
@@ -1144,7 +1162,7 @@ export function CompanyProfile() {
               {tProfile("changePasswordHint")}
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6">
+          <CardContent className="px-4 pt-4 pb-4">
             <form
               onSubmit={(e) => {
                 e.preventDefault();

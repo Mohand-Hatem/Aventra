@@ -6,26 +6,14 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
-import {
-  IconDownload,
-  IconFilter,
-  IconEye,
-  IconUsers,
-} from "@tabler/icons-react";
+import { useState } from "react";
+import { IconDownload, IconEye, IconUsers } from "@tabler/icons-react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import {
   getLocalizedCandidateName,
   type CandidateResult,
 } from "@/types/company";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
 const PAGE_SIZE = 5;
 
@@ -79,107 +67,14 @@ export default function ResultsTable({
   const locale = useLocale();
 
   const [page, setPage] = useState(1);
-  const [minAtsScore, setMinAtsScore] = useState(0);
-  const [minMatchScore, setMinMatchScore] = useState(0);
-  const [selectedEducations, setSelectedEducations] = useState<string[]>([]);
-  const [selectedStrengths, setSelectedStrengths] = useState<string[]>([]);
-  const [selectedWeaknesses, setSelectedWeaknesses] = useState<string[]>([]);
 
-  const allEducation = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          candidates
-            .flatMap(
-              (c) => c.education?.map((e) => e.degree || e.institution) || [],
-            )
-            .filter(Boolean),
-        ),
-      ),
-    [candidates],
-  );
-  const allStrengths = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          candidates
-            .flatMap((c) => c.strengths?.map((s) => s.title) || [])
-            .filter(Boolean),
-        ),
-      ),
-    [candidates],
-  );
-  const allWeaknesses = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          candidates
-            .flatMap((c) => c.weaknesses?.map((w) => w.title) || [])
-            .filter(Boolean),
-        ),
-      ),
-    [candidates],
-  );
-
-  const filteredCandidates = useMemo(() => {
-    return candidates.filter((c) => {
-      if (c.atsScore < minAtsScore) return false;
-      if (c.matchScore < minMatchScore) return false;
-
-      if (selectedEducations.length > 0) {
-        const hasEdu = c.education?.some(
-          (e) =>
-            selectedEducations.includes(e.degree || "") ||
-            selectedEducations.includes(e.institution || ""),
-        );
-        if (!hasEdu) return false;
-      }
-      if (selectedStrengths.length > 0) {
-        const hasStrength = c.strengths?.some((s) =>
-          selectedStrengths.includes(s.title),
-        );
-        if (!hasStrength) return false;
-      }
-      if (selectedWeaknesses.length > 0) {
-        const hasWeakness = c.weaknesses?.some((w) =>
-          selectedWeaknesses.includes(w.title),
-        );
-        if (!hasWeakness) return false;
-      }
-
-      return true;
-    });
-  }, [
-    candidates,
-    minAtsScore,
-    minMatchScore,
-    selectedEducations,
-    selectedStrengths,
-    selectedWeaknesses,
-  ]);
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredCandidates.length / PAGE_SIZE),
-  );
+  const totalPages = Math.max(1, Math.ceil(candidates.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
 
-  const paginated = filteredCandidates.slice(
+  const paginated = candidates.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
   );
-
-  function toggleFilter(
-    list: string[],
-    setList: (l: string[]) => void,
-    val: string,
-  ) {
-    if (list.includes(val)) {
-      setList(list.filter((v) => v !== val));
-    } else {
-      setList([...list, val]);
-    }
-  }
 
   function getName(c: CandidateResult) {
     return getLocalizedCandidateName(
@@ -246,7 +141,7 @@ export default function ResultsTable({
         <p className="text-sm font-semibold text-foreground">
           {t("resultsTable.searchResults")}{" "}
           <span className="font-normal text-muted-foreground">
-            ({filteredCandidates.length} {t("resultsTable.candidates")})
+            ({candidates.length} {t("resultsTable.candidates")})
           </span>
         </p>
 
@@ -264,183 +159,6 @@ export default function ResultsTable({
             </button>
           )}
 
-          <Dialog>
-            <DialogTrigger asChild>
-              <button className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted relative">
-                <IconFilter size={13} />
-                {t("resultsTable.filter")}
-                {(selectedEducations.length > 0 ||
-                  selectedStrengths.length > 0 ||
-                  selectedWeaknesses.length > 0 ||
-                  minAtsScore > 0 ||
-                  minMatchScore > 0) && (
-                  <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-primary text-[8px] text-primary-foreground">
-                    !
-                  </span>
-                )}
-              </button>
-            </DialogTrigger>
-            <DialogContent className="max-h-[85vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Advanced Filters</DialogTitle>
-              </DialogHeader>
-              <div className="flex flex-col gap-6 py-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm font-semibold text-foreground">
-                    <span>Minimum ATS Score</span>
-                    <span className="text-primary tabular-nums">
-                      {minAtsScore}%
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={minAtsScore}
-                    onChange={(e) => setMinAtsScore(Number(e.target.value))}
-                    className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-secondary accent-primary"
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm font-semibold text-foreground">
-                    <span>Minimum Match Score</span>
-                    <span className="text-primary tabular-nums">
-                      {minMatchScore}%
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={minMatchScore}
-                    onChange={(e) => setMinMatchScore(Number(e.target.value))}
-                    className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-secondary accent-primary"
-                  />
-                </div>
-
-                {allEducation.length > 0 && (
-                  <div className="space-y-3">
-                    <span className="text-sm font-semibold text-foreground">
-                      Education
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {allEducation.map((edu) => {
-                        const active = selectedEducations.includes(
-                          edu as string,
-                        );
-                        return (
-                          <button
-                            key={edu as string}
-                            onClick={() =>
-                              toggleFilter(
-                                selectedEducations,
-                                setSelectedEducations,
-                                edu as string,
-                              )
-                            }
-                            className={cn(
-                              "rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border",
-                              active
-                                ? "bg-primary text-primary-foreground border-primary"
-                                : "bg-muted text-muted-foreground border-transparent hover:border-border",
-                            )}
-                          >
-                            {edu as string}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {allStrengths.length > 0 && (
-                  <div className="space-y-3">
-                    <span className="text-sm font-semibold text-foreground">
-                      Strengths
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {allStrengths.map((strength) => {
-                        const active = selectedStrengths.includes(
-                          strength as string,
-                        );
-                        return (
-                          <button
-                            key={strength as string}
-                            onClick={() =>
-                              toggleFilter(
-                                selectedStrengths,
-                                setSelectedStrengths,
-                                strength as string,
-                              )
-                            }
-                            className={cn(
-                              "rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border",
-                              active
-                                ? "bg-emerald-500 text-white border-emerald-500"
-                                : "bg-muted text-muted-foreground border-transparent hover:border-border",
-                            )}
-                          >
-                            {strength as string}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {allWeaknesses.length > 0 && (
-                  <div className="space-y-3">
-                    <span className="text-sm font-semibold text-foreground">
-                      Weaknesses
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {allWeaknesses.map((weakness) => {
-                        const active = selectedWeaknesses.includes(
-                          weakness as string,
-                        );
-                        return (
-                          <button
-                            key={weakness as string}
-                            onClick={() =>
-                              toggleFilter(
-                                selectedWeaknesses,
-                                setSelectedWeaknesses,
-                                weakness as string,
-                              )
-                            }
-                            className={cn(
-                              "rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors border",
-                              active
-                                ? "bg-rose-500 text-white border-rose-500"
-                                : "bg-muted text-muted-foreground border-transparent hover:border-border",
-                            )}
-                          >
-                            {weakness as string}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                <div className="pt-2">
-                  <button
-                    onClick={() => {
-                      setMinAtsScore(0);
-                      setMinMatchScore(0);
-                      setSelectedEducations([]);
-                      setSelectedStrengths([]);
-                      setSelectedWeaknesses([]);
-                    }}
-                    className="text-xs text-muted-foreground underline hover:text-foreground"
-                  >
-                    Clear all filters
-                  </button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
         </div>
       </div>
 
