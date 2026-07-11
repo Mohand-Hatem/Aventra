@@ -18,6 +18,7 @@ type CvInsightDialogProps = {
   description?: string;
   triggerLabel: string;
   children?: ReactNode;
+  content?: ReactNode;
   items?: CvInsightItem[];
   bodyText?: string;
   triggerClassName?: string;
@@ -29,6 +30,7 @@ export function CvInsightDialog({
   description,
   triggerLabel,
   children,
+  content,
   items,
   bodyText,
   triggerClassName,
@@ -65,6 +67,7 @@ export function CvInsightDialog({
             {bodyText}
           </p>
         ) : null}
+        {content}
         {items && items.length > 0 ? (
           <ul className="space-y-3">
             {items.map((item, index) => (

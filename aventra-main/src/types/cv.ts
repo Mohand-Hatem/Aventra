@@ -27,6 +27,38 @@ export interface CvAnalysis {
   email?: string;
 }
 
+export type CvParsedCertification = {
+  name?: string;
+  issuer?: string;
+  date?: string;
+};
+
+export type CvParsedExperience = {
+  role?: string;
+  company?: string;
+  duration?: string;
+  description?: string;
+};
+
+export type CvParsedEducation = {
+  degree?: string;
+  institution?: string;
+  year?: string;
+};
+
+export type CvParsedProject = {
+  name?: string;
+  description?: string;
+  technologies: string[];
+};
+
+export type CvParsedSections = {
+  certifications: CvParsedCertification[];
+  experience: CvParsedExperience[];
+  education: CvParsedEducation[];
+  projects: CvParsedProject[];
+};
+
 export interface UserCv {
   _id?: string;
   id?: string;
@@ -152,6 +184,117 @@ function normalizeCvAnalysis(value: unknown): CvAnalysis | undefined {
     linkedin: pickStr(value.linkedin, contactNested?.linkedin ?? contactNested?.linkedIn),
     github: pickStr(value.github, contactNested?.github),
     email: pickStr(value.email, contactNested?.email),
+  };
+}
+
+function pickText(...values: unknown[]) {
+  for (const value of values) {
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed) return trimmed;
+    }
+  }
+
+  return undefined;
+}
+
+function normalizeStringList(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((item) => (typeof item === "string" ? item.trim() : ""))
+    .filter(Boolean);
+}
+
+export function getCvParsedSections(cv: UserCv | null | undefined): CvParsedSections {
+  const parsedData = cv?.parsedData;
+  if (!isRecord(parsedData)) {
+    return {
+      certifications: [],
+      experience: [],
+      education: [],
+      projects: [],
+    };
+  }
+
+  const certifications = Array.isArray(parsedData.certifications)
+    ? parsedData.certifications
+        .map((item) => {
+          if (!isRecord(item)) return null;
+
+          const normalized: CvParsedCertification = {
+            name: pickText(item.name, item.title),
+            issuer: pickText(item.issuer, item.organization),
+            date: pickText(item.date, item.year, item.issuedAt),
+          };
+
+          return normalized.name || normalized.issuer || normalized.date
+            ? normalized
+            : null;
+        })
+        .filter((item): item is CvParsedCertification => item !== null)
+    : [];
+
+  const experience = Array.isArray(parsedData.experience)
+    ? parsedData.experience
+        .map((item) => {
+          if (!isRecord(item)) return null;
+
+          const normalized: CvParsedExperience = {
+            role: pickText(item.role, item.title, item.position),
+            company: pickText(item.company, item.organization),
+            duration: pickText(item.duration, item.date, item.period),
+            description: pickText(item.description, item.summary),
+          };
+
+          return normalized.role || normalized.company || normalized.duration || normalized.description
+            ? normalized
+            : null;
+        })
+        .filter((item): item is CvParsedExperience => item !== null)
+    : [];
+
+  const education = Array.isArray(parsedData.education)
+    ? parsedData.education
+        .map((item) => {
+          if (!isRecord(item)) return null;
+
+          const normalized: CvParsedEducation = {
+            degree: pickText(item.degree, item.title),
+            institution: pickText(item.institution, item.school, item.university),
+            year: pickText(item.year, item.graduationDate, item.date),
+          };
+
+          return normalized.degree || normalized.institution || normalized.year
+            ? normalized
+            : null;
+        })
+        .filter((item): item is CvParsedEducation => item !== null)
+    : [];
+
+  const projects = Array.isArray(parsedData.projects)
+    ? parsedData.projects
+        .map((item) => {
+          if (!isRecord(item)) return null;
+
+          const normalized: CvParsedProject = {
+            name: pickText(item.name, item.title),
+            description: pickText(item.description, item.summary),
+            technologies: normalizeStringList(item.technologies),
+          };
+
+          return normalized.name || normalized.description || normalized.technologies.length > 0
+            ? normalized
+            : null;
+        })
+        .filter((item): item is CvParsedProject => item !== null)
+    : [];
+
+  return {
+    certifications,
+    experience,
+    education,
+    projects,
   };
 }
 

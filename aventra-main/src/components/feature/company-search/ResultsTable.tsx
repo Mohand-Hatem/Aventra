@@ -34,6 +34,7 @@ interface ResultsTableProps {
   selectedCandidate: CandidateResult | null;
   onSelectCandidate: (c: CandidateResult) => void;
   isPending: boolean;
+  hideExport?: boolean;
 }
 
 function ScoreBadge({ score }: { score: number }) {
@@ -72,6 +73,7 @@ export default function ResultsTable({
   selectedCandidate,
   onSelectCandidate,
   isPending,
+  hideExport = false,
 }: ResultsTableProps) {
   const t = useTranslations("candidateSearch");
   const locale = useLocale();
@@ -255,10 +257,12 @@ export default function ResultsTable({
             </span>
           ) : null}
 
-          <button className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted">
-            <IconDownload size={13} />
-            {t("resultsTable.export")}
-          </button>
+          {hideExport ? null : (
+            <button className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted">
+              <IconDownload size={13} />
+              {t("resultsTable.export")}
+            </button>
+          )}
 
           <Dialog>
             <DialogTrigger asChild>

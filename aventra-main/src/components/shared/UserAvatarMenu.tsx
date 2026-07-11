@@ -24,8 +24,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { PLANS } from "@/constants/plans";
 
-
-
 const roleIcons = {
   user: IconUser,
   company: IconBuilding,
@@ -55,7 +53,7 @@ function UserMetaBadge({
 }: {
   icon: ComponentType<{ className?: string }>;
   label: string;
-  variant?: "muted" | "accent";
+  variant?: "muted" | "accent" | "gold";
 }) {
   return (
     <span
@@ -63,7 +61,9 @@ function UserMetaBadge({
         "inline-flex max-w-full items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium leading-none",
         variant === "accent"
           ? "bg-primary/10 text-primary dark:bg-sky/10 dark:text-sky"
-          : "bg-muted text-muted-foreground",
+          : variant === "gold"
+            ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
+            : "bg-muted text-muted-foreground",
       )}
     >
       <Icon className="size-3 shrink-0" />
@@ -125,13 +125,23 @@ export function UserAvatarMenu({
         </Avatar>
 
         <div className="flex min-w-0 flex-col items-start gap-1 text-start">
-          <span className="max-w-36 truncate text-sm font-medium leading-none md:max-w-44">
+          <span
+            className={`max-w-36 truncate text-sm font-medium leading-none ${locale == "ar" && "py-1"} md:max-w-44`}
+          >
             {displayName}
           </span>
           <div className="flex max-w-44 flex-wrap items-center gap-1">
-            <UserMetaBadge icon={RoleIcon} label={t(`roles.${user.role}`)} />
+            <UserMetaBadge
+              icon={RoleIcon}
+              label={t(`roles.${user.role}`)}
+              variant={user.role === "admin" ? "gold" : "muted"}
+            />
             {planLabel ? (
-              <UserMetaBadge icon={IconStar} label={planLabel} variant="accent" />
+              <UserMetaBadge
+                icon={IconStar}
+                label={planLabel}
+                variant="accent"
+              />
             ) : null}
           </div>
         </div>
@@ -155,14 +165,26 @@ export function UserAvatarMenu({
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium leading-none">{displayName}</p>
-              <p className="mt-1 truncate text-xs text-muted-foreground">{user.email}</p>
+              <p className="truncate text-sm font-medium leading-none">
+                {displayName}
+              </p>
+              <p className="mt-1 truncate text-xs text-muted-foreground">
+                {user.email}
+              </p>
             </div>
           </div>
           <div className="flex flex-wrap gap-1">
-            <UserMetaBadge icon={RoleIcon} label={t(`roles.${user.role}`)} />
+            <UserMetaBadge
+              icon={RoleIcon}
+              label={t(`roles.${user.role}`)}
+              variant={user.role === "admin" ? "gold" : "muted"}
+            />
             {planLabel ? (
-              <UserMetaBadge icon={IconStar} label={planLabel} variant="accent" />
+              <UserMetaBadge
+                icon={IconStar}
+                label={planLabel}
+                variant="accent"
+              />
             ) : null}
           </div>
         </DropdownMenuLabel>
@@ -188,7 +210,10 @@ export function UserAvatarMenu({
           }}
         >
           {isLoggingOut ? (
-            <ScaleLoader size="sm" className="text-destructive dark:text-destructive" />
+            <ScaleLoader
+              size="sm"
+              className="text-destructive dark:text-destructive"
+            />
           ) : (
             <IconLogout />
           )}

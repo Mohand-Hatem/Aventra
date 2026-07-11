@@ -286,9 +286,10 @@ export default function AboutSection() {
       {/* AI Technology stack */}
       <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="mx-auto max-w-360">
-          <div className="rounded-3xl border border-border/50 bg-card
-border
-shadow-card p-6 sm:p-10">
+          <div
+            className="rounded-3xl border border-border/50 bg-card
+shadow-card p-6 sm:p-10"
+          >
             <div className="mb-8 flex flex-col gap-4">
               <SectionBadge>{t("aiStack.badge")}</SectionBadge>
               <h2 className="max-w-xl text-3xl font-extrabold tracking-tight sm:text-4xl">
@@ -342,7 +343,7 @@ shadow-card p-6 sm:p-10">
             <Card>
               <CardContent className="flex flex-col gap-5">
                 <div className="flex items-center gap-3">
-                  <span className="flex size-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-sky text-primary-foreground">
+                  <span className="flex size-11 items-center justify-center rounded-2xl bg-linear-to-br from-primary to-sky text-primary-foreground">
                     <IconBriefcase className="size-5" />
                   </span>
                   <p className="font-heading text-lg font-bold">
@@ -366,7 +367,7 @@ shadow-card p-6 sm:p-10">
             <Card>
               <CardContent className="flex flex-col gap-5">
                 <div className="flex items-center gap-3">
-                  <span className="flex size-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-sky text-primary-foreground">
+                  <span className="flex size-11 items-center justify-center rounded-2xl bg-linear-to-br from-primary to-sky text-primary-foreground">
                     <IconBuildingSkyscraper className="size-5" />
                   </span>
                   <p className="font-heading text-lg font-bold">
@@ -438,14 +439,13 @@ shadow-card p-6 sm:p-10">
                 className="w-[calc(50%-0.5rem)] sm:w-56 lg:w-64"
               >
                 <CardContent className="flex flex-col items-center gap-3 text-center">
-                  <span className="flex size-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-sky text-lg font-bold text-primary-foreground">
+                  <span className="flex size-16 items-center justify-center rounded-full bg-linear-to-br from-primary to-sky text-lg font-bold text-primary-foreground">
                     {getInitials(member.name)}
                   </span>
                   <div>
                     <p className="font-heading text-base font-bold">
                       {member.name}
                     </p>
-      
                   </div>
                   {member.linkedin ? (
                     <Link
@@ -461,85 +461,6 @@ shadow-card p-6 sm:p-10">
                 </CardContent>
               </Card>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Platform Impact Stats */}
-      <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-        <div className="mx-auto max-w-360">
-          <div className="mb-10 flex flex-col gap-4">
-            <SectionBadge>{t("team.badge")}</SectionBadge>
-            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-              Platform Impact
-            </h2>
-            <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
-              Real results from Aventra users improving their job applications
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {[
-              { value: "50K+", label: "CVs Analyzed", color: "text-primary dark:text-sky bg-primary/10 dark:bg-sky/10" },
-              { value: "87%", label: "Score Improvement", color: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10" },
-              { value: "12K+", label: "Companies Hiring", color: "text-violet-600 dark:text-violet-400 bg-violet-500/10" },
-              { value: "<30s", label: "Analysis Speed", color: "text-amber-600 dark:text-amber-400 bg-amber-500/10" },
-            ].map((stat) => (
-              <Card key={stat.label}>
-                <CardContent className="flex flex-col items-center gap-3 p-6 text-center">
-                  <span className={`flex size-14 items-center justify-center rounded-2xl text-xl font-bold ${stat.color}`}>
-                    {stat.value}
-                  </span>
-                  <p className="text-sm font-semibold text-muted-foreground">{stat.label}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Card>
-              <CardContent className="flex flex-col gap-4 p-6">
-                <div className="flex items-center gap-3">
-                  <span className="flex size-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-sky text-primary-foreground">
-                    <IconBriefcase className="size-5" />
-                  </span>
-                  <div>
-                    <p className="font-heading text-lg font-bold">For Job Seekers</p>
-                    <p className="text-sm text-muted-foreground">B2C Platform</p>
-                  </div>
-                </div>
-                <ul className="flex flex-col gap-2.5">
-                  {["AI-powered ATS score analysis", "Personalized improvement suggestions", "Skills gap identification", "Industry benchmarking"].map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <IconCircleCheck className="mt-0.5 size-4 shrink-0 text-primary dark:text-sky" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="flex flex-col gap-4 p-6">
-                <div className="flex items-center gap-3">
-                  <span className="flex size-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-sky text-primary-foreground">
-                    <IconBuildingSkyscraper className="size-5" />
-                  </span>
-                  <div>
-                    <p className="font-heading text-lg font-bold">For Companies</p>
-                    <p className="text-sm text-muted-foreground">B2B Platform</p>
-                  </div>
-                </div>
-                <ul className="flex flex-col gap-2.5">
-                  {["AI-ranked candidate matching", "Semantic CV search", "Score-based filtering", "Hiring pipeline optimization"].map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <IconCircleCheck className="mt-0.5 size-4 shrink-0 text-primary dark:text-sky" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </section>

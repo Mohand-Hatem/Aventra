@@ -204,7 +204,10 @@ function normalizePercent(value?: number) {
   return safeValue <= 1 ? Math.round(safeValue * 100) : Math.round(safeValue);
 }
 
-function getCandidateNameText(name: LocalizedCandidateName | undefined, fallback: string) {
+function getCandidateNameText(
+  name: LocalizedCandidateName | undefined,
+  fallback: string,
+) {
   if (typeof name === "string") return name || fallback;
   if (!name) return fallback;
   return name.en ?? name.ar ?? fallback;
@@ -213,21 +216,22 @@ function getCandidateNameText(name: LocalizedCandidateName | undefined, fallback
 export function getLocalizedCandidateName(
   name: LocalizedCandidateName | undefined,
   locale: string,
-  fallback = ""
+  fallback = "",
 ) {
   if (typeof name === "string") return name;
   if (!name) return fallback;
   return locale === "ar"
-    ? name.ar ?? name.en ?? fallback
-    : name.en ?? name.ar ?? fallback;
+    ? (name.ar ?? name.en ?? fallback)
+    : (name.en ?? name.ar ?? fallback);
 }
 
 export function normalizeCandidateResult(
-  candidate: CandidateResult | CompanySearchApiCandidate | LegacyCandidateResult
+  candidate:
+    CandidateResult | CompanySearchApiCandidate | LegacyCandidateResult,
 ): CandidateResult {
   if ("user" in candidate || "originalFile" in candidate) {
     return {
-      cvId: candidate.cvId || (candidate as any)._id || (candidate as any).id,
+      cvId: candidate.cvId || ((candidate as unknown as Record<string, unknown>)._id as string) || ((candidate as unknown as Record<string, unknown>).id as string),
       userId: candidate.userId,
       matchScore: normalizePercent(candidate.matchScore),
       atsScore: normalizePercent(candidate.atsScore),
@@ -255,8 +259,13 @@ export function normalizeCandidateResult(
     };
   }
 
-  if ("topSkills" in candidate || "cvFileUrl" in candidate || "matchedSnippet" in candidate) {
-    const actualCvId = candidate.cvId || (candidate as any)._id || (candidate as any).id;
+  if (
+    "topSkills" in candidate ||
+    "cvFileUrl" in candidate ||
+    "matchedSnippet" in candidate
+  ) {
+    const actualCvId =
+      candidate.cvId || ((candidate as unknown as Record<string, unknown>)._id as string) || ((candidate as unknown as Record<string, unknown>).id as string);
     const fallbackName = getCandidateNameText(candidate.name, actualCvId);
     return {
       cvId: actualCvId,
@@ -285,18 +294,21 @@ export function normalizeCandidateResult(
   }
 
   return {
-    cvId: candidate.cvId || (candidate as any)._id || (candidate as any).id,
+    cvId: candidate.cvId || ((candidate as unknown as Record<string, unknown>)._id as string) || ((candidate as unknown as Record<string, unknown>).id as string),
     userId: "userId" in candidate ? candidate.userId : undefined,
     matchScore: normalizePercent(candidate.matchScore),
     atsScore: normalizePercent(candidate.atsScore),
-    processingStatus: "processingStatus" in candidate ? candidate.processingStatus : undefined,
-    name: "name" in candidate ? candidate.name ?? "" : "",
-    email: "email" in candidate ? candidate.email ?? "" : "",
-    skills: "skills" in candidate ? candidate.skills ?? [] : [],
-    summary: "summary" in candidate ? candidate.summary ?? "" : "",
-    resumeUrl: "resumeUrl" in candidate ? candidate.resumeUrl ?? "" : "",
-    resumeFileName: "resumeFileName" in candidate ? candidate.resumeFileName ?? "" : "",
-    resumeFileType: "resumeFileType" in candidate ? candidate.resumeFileType : undefined,
+    processingStatus:
+      "processingStatus" in candidate ? candidate.processingStatus : undefined,
+    name: "name" in candidate ? (candidate.name ?? "") : "",
+    email: "email" in candidate ? (candidate.email ?? "") : "",
+    skills: "skills" in candidate ? (candidate.skills ?? []) : [],
+    summary: "summary" in candidate ? (candidate.summary ?? "") : "",
+    resumeUrl: "resumeUrl" in candidate ? (candidate.resumeUrl ?? "") : "",
+    resumeFileName:
+      "resumeFileName" in candidate ? (candidate.resumeFileName ?? "") : "",
+    resumeFileType:
+      "resumeFileType" in candidate ? candidate.resumeFileType : undefined,
     createdAt: "createdAt" in candidate ? candidate.createdAt : undefined,
     phone: "phone" in candidate ? candidate.phone : undefined,
     location: "location" in candidate ? candidate.location : undefined,
@@ -305,16 +317,151 @@ export function normalizeCandidateResult(
     education: "education" in candidate ? candidate.education : [],
     experience: "experience" in candidate ? candidate.experience : [],
     projects: "projects" in candidate ? candidate.projects : [],
-    certifications: "certifications" in candidate ? candidate.certifications : [],
+    certifications:
+      "certifications" in candidate ? candidate.certifications : [],
     strengths: "strengths" in candidate ? candidate.strengths : [],
     weaknesses: "weaknesses" in candidate ? candidate.weaknesses : [],
     suggestions: "suggestions" in candidate ? candidate.suggestions : [],
-    scoreBreakdown: "scoreBreakdown" in candidate ? candidate.scoreBreakdown : undefined,
+    scoreBreakdown:
+      "scoreBreakdown" in candidate ? candidate.scoreBreakdown : undefined,
   };
 }
 
 export function normalizeCandidateResults(
-  candidates: Array<CandidateResult | CompanySearchApiCandidate | LegacyCandidateResult> | undefined
+  candidates:
+    | Array<CandidateResult | CompanySearchApiCandidate | LegacyCandidateResult>
+    | undefined,
 ) {
   return (candidates ?? []).map(normalizeCandidateResult);
+}
+
+export interface CvFilterParams {
+  minAts?: number;
+  maxAts?: number;
+  skills?: string[];
+  certifications?: string[];
+  experiences?: string[];
+  projects?: string[];
+  page?: number;
+  limit?: number;
+}
+
+export interface CandidateFilterCriteria {
+  minAts: number;
+  hasSkills: boolean;
+  hasCertifications: boolean;
+  hasExperience: boolean;
+  hasProjects: boolean;
+}
+
+export function matchesFilterCriteria(
+  candidate: CandidateResult,
+  criteria: CandidateFilterCriteria,
+) {
+  if (candidate.atsScore < criteria.minAts) return false;
+  if (criteria.hasSkills && candidate.skills.length === 0) return false;
+  if (
+    criteria.hasCertifications &&
+    (candidate.certifications?.length ?? 0) === 0
+  )
+    return false;
+  if (criteria.hasExperience && (candidate.experience?.length ?? 0) === 0)
+    return false;
+  if (criteria.hasProjects && (candidate.projects?.length ?? 0) === 0)
+    return false;
+  return true;
+}
+
+export interface FilteredCvApiItem {
+  _id: string;
+  userId?: {
+    _id?: string;
+    name?: LocalizedCandidateName;
+    email?: string;
+    avatar?: string;
+  };
+  atsScore?: number;
+  processingStatus?: "uploaded" | "processing" | "analyzed";
+  originalFile?: {
+    url?: string;
+    fileName?: string;
+    fileType?: string;
+  };
+  parsedData?: {
+    contact?: {
+      linkedin?: string;
+      github?: string;
+      email?: string;
+      phone?: string;
+      location?: string;
+    };
+    skills?: {
+      technical?: string[];
+      soft?: string[];
+    };
+    certifications?: CandidateCertification[];
+    experience?: CandidateExperience[];
+    education?: CandidateEducation[];
+    projects?: CandidateProject[];
+  };
+  aiAnalysis?: {
+    summary?: string;
+    strengths?: CandidateStrengthWeakness[];
+    weaknesses?: CandidateStrengthWeakness[];
+    suggestions?: CandidateStrengthWeakness[];
+  };
+  scoreBreakdown?: CandidateScoreBreakdown;
+  createdAt?: string;
+}
+
+export interface FilterCvsResponse {
+  success: boolean;
+  count: number;
+  total: number;
+  page: number;
+  totalPages: number;
+  data: FilteredCvApiItem[];
+}
+
+export function normalizeFilteredCvItem(
+  item: FilteredCvApiItem,
+): CandidateResult {
+  const atsScore = normalizePercent(item.atsScore);
+
+  return {
+    cvId: item._id,
+    userId: item.userId?._id,
+    matchScore: atsScore,
+    atsScore,
+    processingStatus: item.processingStatus,
+    name: item.userId?.name ?? "",
+    email: item.userId?.email ?? "",
+    skills: [
+      ...(item.parsedData?.skills?.technical ?? []),
+      ...(item.parsedData?.skills?.soft ?? []),
+    ],
+    summary: item.aiAnalysis?.summary ?? "",
+    resumeUrl: item.originalFile?.url ?? "",
+    resumeFileName: item.originalFile?.fileName ?? "",
+    resumeFileType: item.originalFile?.fileType,
+    createdAt: item.createdAt,
+    phone: item.parsedData?.contact?.phone,
+    location: item.parsedData?.contact?.location,
+    linkedin: item.parsedData?.contact?.linkedin,
+    github: item.parsedData?.contact?.github,
+    education: item.parsedData?.education ?? [],
+    experience: item.parsedData?.experience ?? [],
+    projects: item.parsedData?.projects ?? [],
+    certifications: item.parsedData?.certifications ?? [],
+    strengths: item.aiAnalysis?.strengths ?? [],
+    weaknesses: item.aiAnalysis?.weaknesses ?? [],
+    suggestions: item.aiAnalysis?.suggestions ?? [],
+    scoreBreakdown: item.scoreBreakdown,
+  };
+}
+
+export function normalizeFilteredCvItems(
+  items: FilteredCvApiItem[] | undefined,
+) {
+  return (items ?? []).map(normalizeFilteredCvItem);
 }

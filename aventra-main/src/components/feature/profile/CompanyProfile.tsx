@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useMemo, useRef, useState, startTransition } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { HiEye, HiEyeOff } from "react-icons/hi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
@@ -12,14 +13,17 @@ import {
   IconSparkles,
   IconStar,
   IconUsers,
+  IconTrash,
 } from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/constants/query-keys";
 import toast from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
 import { z } from "zod";
 import { useAiUsage } from "@/hooks/useAiUsage";
 import { useUser } from "@/hooks/useAuth";
 import { useCompanySearchHistory } from "@/hooks/useCompanySearchHistory";
+import { useFilterCandidates } from "@/hooks/useFilterCandidates";
 import { useUpdateUserProfile } from "@/hooks/useProfile";
 import { PLANS } from "@/constants/plans";
 import { getUserDisplayName, normalizeLocalizedName } from "@/types/auth";
@@ -28,9 +32,15 @@ import {
   type UpdateProfileFormValues,
   type UpdateProfilePayload,
 } from "@/schemas/profile";
-import type { CandidateResult, SearchHistoryEntry } from "@/types/company";
+import {
+  matchesFilterCriteria,
+  type CandidateFilterCriteria,
+  type CandidateResult,
+  type SearchHistoryEntry,
+} from "@/types/company";
 import ResultsTable from "@/components/feature/company-search/ResultsTable";
 import CandidateDetail from "@/components/feature/company-search/CandidateDetail";
+import { CandidateFilterPanel } from "@/components/feature/profile/CandidateFilterPanel";
 import { ProfilePageSkeleton } from "@/components/feature/profile/ProfilePageSkeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScaleLoader } from "@/components/shared/scale-loader";
@@ -279,6 +289,7 @@ export function CompanyProfile() {
   const tNavbar = useTranslations("navbar");
   const locale = useLocale();
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const prevUserNameRef = useRef<string | null>(null);
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(
@@ -286,6 +297,14 @@ export function CompanyProfile() {
   );
   const [selectedCandidate, setSelectedCandidate] =
     useState<CandidateResult | null>(null);
+  const [resultsMode, setResultsMode] = useState<"history" | "filter">(
+    "history",
+  );
+  const [appliedFilterCriteria, setAppliedFilterCriteria] =
+    useState<CandidateFilterCriteria | null>(null);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { data: user, isLoading, isFetching, isError } = useUser();
   const { data: aiUsage } = useAiUsage({ enabled: !!user });
@@ -300,6 +319,22 @@ export function CompanyProfile() {
   const searches = searchHistoryData?.searches ?? EMPTY_SEARCH_HISTORY;
   const searchCount =
     searchHistoryData?.totalSearches ?? user?.searchCount ?? 0;
+
+  const {
+    data: filterData,
+    isFetching: isFilterFetching,
+    isPending: isFilterPending,
+  } = useFilterCandidates(
+    { minAts: appliedFilterCriteria?.minAts || undefined },
+    { enabled: appliedFilterCriteria !== null },
+  );
+  const filteredCandidates = useMemo(() => {
+    const candidates = filterData?.candidates ?? EMPTY_CANDIDATES;
+    if (!appliedFilterCriteria) return candidates;
+    return candidates.filter((candidate) =>
+      matchesFilterCriteria(candidate, appliedFilterCriteria),
+    );
+  }, [filterData, appliedFilterCriteria]);
 
   const profileSchema = useMemo(
     () =>
@@ -316,10 +351,13 @@ export function CompanyProfile() {
       currentPassword: z.string().min(1, "Current password is required"),
       newPassword: z
         .string()
-        .min(8, "Password must be at least 8 characters")
-        .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-        .regex(/[0-9]/, "Password must contain at least one number"),
-      confirmPassword: z.string().min(1, "Please confirm your new password"),
+        .min(8, "New password must be at least 8 characters")
+        .max(128, "New password must be at most 128 characters")
+        .regex(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+          "Password must contain uppercase, lowercase and number",
+        ),
+      confirmPassword: z.string().min(1, "Confirm password is required"),
     })
     .refine((data) => data.newPassword === data.confirmPassword, {
       message: "Passwords do not match",
@@ -333,7 +371,7 @@ export function CompanyProfile() {
     handleSubmit,
     reset,
     setValue,
-    watch,
+    control,
     formState: { errors },
   } = useForm<UpdateProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -356,26 +394,72 @@ export function CompanyProfile() {
     },
   });
 
-  const changePasswordMutation = useMutation({
-    mutationFn: async (payload: ChangePasswordFormValues) => {
-      const response = await axiosInstance.put("/users/change-password", {
-        currentPassword: payload.currentPassword,
-        newPassword: payload.newPassword,
-      });
+  const queryClient = useQueryClient();
+
+  const deleteAvatarMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axiosInstance.delete("/users/avatar");
       return response.data;
     },
     onSuccess: () => {
-      toast.success(tProfile("passwordUpdateSuccess") || "Password updated successfully!");
-      resetPassword();
+      toast.success(
+        tProfile("avatarDeletedSuccess") || "Avatar deleted successfully!",
+      );
+      queryClient.invalidateQueries({ queryKey: queryKeys.auth.user });
+      startTransition(() => {
+        setAvatarPreview(null);
+      });
     },
-    onError: (err: any) => {
-      const msg = err.response?.data?.message ?? "Failed to update password.";
+    onError: (err: unknown) => {
+      const axiosErr = err as { response?: { data?: { message?: string } } };
+      const msg =
+        axiosErr.response?.data?.message ?? "Failed to delete avatar.";
       toast.error(msg);
     },
   });
 
-  const selectedAvatar = watch("avatar");
-  const watchedName = watch("name");
+  const changePasswordMutation = useMutation({
+    mutationFn: async (payload: ChangePasswordFormValues) => {
+      const response = await axiosInstance.put("/users/update-password", {
+        currentPassword: payload.currentPassword,
+        newPassword: payload.newPassword,
+        confirmPassword: payload.confirmPassword,
+      });
+      return response.data as { success: boolean; message: string };
+    },
+    onSuccess: (data) => {
+      toast.success(
+        data.message ||
+          tProfile("passwordUpdateSuccess") ||
+          "Password updated successfully!",
+      );
+      resetPassword();
+    },
+    onError: (err: unknown) => {
+      const axiosErr = err as {
+        response?: {
+          data?: {
+            message?: string;
+            errors?: Array<{ message?: string; path?: string[] }>;
+          };
+        };
+      };
+      console.error("Password update error response:", axiosErr.response?.data);
+
+      const errors = axiosErr.response?.data?.errors;
+      if (Array.isArray(errors) && errors.length > 0) {
+        errors.forEach((e) => {
+          if (e.message) toast.error(e.message);
+        });
+      } else {
+        const msg =
+          axiosErr.response?.data?.message ?? "Failed to update password.";
+        toast.error(msg);
+      }
+    },
+  });
+
+  const selectedAvatar = useWatch({ control, name: "avatar" });
   const displayName = user ? getUserDisplayName(user.name, locale) : "";
   const currentName = user
     ? normalizeLocalizedName(user.name)
@@ -383,34 +467,47 @@ export function CompanyProfile() {
 
   useEffect(() => {
     if (!user) return;
+    const nameKey = JSON.stringify(normalizeLocalizedName(user.name));
+    if (nameKey === prevUserNameRef.current) return;
+    prevUserNameRef.current = nameKey;
     reset({ name: normalizeLocalizedName(user.name), avatar: undefined });
-    setAvatarPreview(null);
+    startTransition(() => {
+      setAvatarPreview(null);
+    });
   }, [user, reset]);
 
   useEffect(() => {
     if (!selectedAvatar) {
-      setAvatarPreview(null);
+      startTransition(() => {
+        setAvatarPreview(null);
+      });
       return;
     }
 
     const objectUrl = URL.createObjectURL(selectedAvatar);
-    setAvatarPreview(objectUrl);
+    startTransition(() => {
+      setAvatarPreview(objectUrl);
+    });
 
     return () => URL.revokeObjectURL(objectUrl);
   }, [selectedAvatar]);
 
   useEffect(() => {
     if (searches.length === 0) {
-      setSelectedHistoryId(null);
-      setSelectedCandidate(null);
+      startTransition(() => {
+        setSelectedHistoryId(null);
+        setSelectedCandidate(null);
+      });
       return;
     }
 
-    setSelectedHistoryId((current) => {
-      if (current && searches.some((entry) => entry.id === current)) {
-        return current;
-      }
-      return searches[0].id;
+    startTransition(() => {
+      setSelectedHistoryId((current) => {
+        if (current && searches.some((entry) => entry.id === current)) {
+          return current;
+        }
+        return searches[0].id;
+      });
     });
   }, [searches]);
 
@@ -420,23 +517,31 @@ export function CompanyProfile() {
   );
 
   const historyCandidates = selectedHistory?.candidates ?? EMPTY_CANDIDATES;
+  const displayedCandidates =
+    resultsMode === "filter" ? filteredCandidates : historyCandidates;
 
   useEffect(() => {
-    if (historyCandidates.length === 0) {
-      setSelectedCandidate(null);
+    if (displayedCandidates.length === 0) {
+      startTransition(() => {
+        setSelectedCandidate(null);
+      });
       return;
     }
 
-    setSelectedCandidate((current) => {
-      if (
-        current &&
-        historyCandidates.some((candidate) => candidate.cvId === current.cvId)
-      ) {
-        return current;
-      }
-      return historyCandidates[0];
+    startTransition(() => {
+      setSelectedCandidate((current) => {
+        if (
+          current &&
+          displayedCandidates.some(
+            (candidate) => candidate.cvId === current.cvId,
+          )
+        ) {
+          return current;
+        }
+        return displayedCandidates[0];
+      });
     });
-  }, [historyCandidates]);
+  }, [displayedCandidates]);
 
   const candidatesFound = useMemo(
     () =>
@@ -527,9 +632,6 @@ export function CompanyProfile() {
 
   const avatarSrc = avatarPreview ?? user.avatar ?? undefined;
   const initials = getInitials(displayName);
-  const nameChanged =
-    watchedName.en.trim() !== currentName.en.trim() ||
-    watchedName.ar.trim() !== currentName.ar.trim();
   const hasAvatarChange = !!selectedAvatar;
   const isRefreshing = isFetching && !!user;
 
@@ -569,14 +671,19 @@ export function CompanyProfile() {
         <header>
           <span className="mb-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
             <IconSparkles className="size-3" />
-            {t("welcome", { role: tNavbar(`roles.${user.role}`), name: displayName })}
+            {t("welcome", {
+              role: tNavbar(`roles.${user.role}`),
+              name: displayName,
+            })}
           </span>
           <h1 className="mt-1 font-heading text-3xl font-bold tracking-tight sm:text-4xl">
             {t("title")}
           </h1>
-          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{t("description")}</p>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            {t("description")}
+          </p>
         </header>
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[320px_1fr]">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
             <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
               <CardTitle className="text-base">{t("searchHistory")}</CardTitle>
@@ -608,10 +715,16 @@ export function CompanyProfile() {
                     <li key={entry.id}>
                       <SearchHistoryItem
                         entry={entry}
-                        isSelected={selectedHistoryId === entry.id}
+                        isSelected={
+                          resultsMode === "history" &&
+                          selectedHistoryId === entry.id
+                        }
                         locale={locale}
                         t={t}
-                        onSelect={() => setSelectedHistoryId(entry.id)}
+                        onSelect={() => {
+                          setSelectedHistoryId(entry.id);
+                          setResultsMode("history");
+                        }}
                       />
                     </li>
                   ))}
@@ -620,31 +733,60 @@ export function CompanyProfile() {
             </CardContent>
           </Card>
 
-          <div className="flex flex-col gap-4">
-            <div className="shrink-0 overflow-hidden">
-              <ResultsTable
-                candidates={historyCandidates}
-                selectedCandidate={selectedCandidate}
-                onSelectCandidate={setSelectedCandidate}
-                isPending={false}
+          <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
+            <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
+              <CardTitle className="text-base">
+                {t("filterCandidates")}
+              </CardTitle>
+              <CardDescription className="text-xs">
+                {t("filterCandidatesHint")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-4 pt-4 pb-4">
+              <CandidateFilterPanel
+                isPending={isFilterFetching}
+                t={t}
+                onApply={(criteria) => {
+                  setAppliedFilterCriteria(criteria);
+                  setResultsMode("filter");
+                }}
+                onClear={() => {
+                  setAppliedFilterCriteria(null);
+                  setResultsMode("history");
+                }}
               />
-            </div>
+            </CardContent>
+          </Card>
+        </div>
 
-            {selectedCandidate ? (
-              <div className="shrink-0 overflow-hidden">
-                <CandidateDetail candidate={selectedCandidate} />
-              </div>
-            ) : searches.length > 0 ? (
-              <div className="flex h-32 items-center justify-center rounded-2xl border border-dashed border-border/80 bg-canvas/60 px-6 text-center shadow-md">
-                <div>
-                  <IconUsers className="mx-auto size-8 text-muted-foreground" />
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {t("selectSearchHint")}
-                  </p>
-                </div>
-              </div>
-            ) : null}
+        <div className="flex flex-col gap-4">
+          <div className="shrink-0 overflow-hidden">
+            <ResultsTable
+              candidates={displayedCandidates}
+              selectedCandidate={selectedCandidate}
+              onSelectCandidate={setSelectedCandidate}
+              isPending={resultsMode === "filter" && isFilterPending}
+              hideExport={resultsMode === "filter"}
+            />
           </div>
+
+          {selectedCandidate ? (
+            <div className="shrink-0 overflow-hidden">
+              <CandidateDetail candidate={selectedCandidate} />
+            </div>
+          ) : displayedCandidates.length === 0 &&
+            (resultsMode === "history" ? searches.length > 0 : true) ? (
+            <div className="flex h-32 items-center justify-center rounded-2xl border border-dashed border-border/80 bg-canvas/60 px-6 text-center shadow-md">
+              <div>
+                <IconUsers className="mx-auto size-8 text-muted-foreground" />
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {resultsMode === "filter"
+                    ? t("noFilterResults")
+                    : t("selectSearchHint")}
+                </p>
+              </div>
+            </div>
+          ) : null}
         </div>
 
         {/* Hiring Insights Dashboard */}
@@ -662,10 +804,19 @@ export function CompanyProfile() {
                   <div className="flex size-8 items-center justify-center rounded-xl bg-primary/10 dark:bg-sky/10">
                     <IconSearch className="size-4 shrink-0 text-primary dark:text-sky" />
                   </div>
-                  <h3 className="text-sm font-bold tracking-tight text-foreground">Top Skills Searched</h3>
+                  <h3 className="text-sm font-bold tracking-tight text-foreground">
+                    Top Skills Searched
+                  </h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {["React.js", "Python", "Node.js", "TypeScript", "AWS", "Docker"].map((skill) => (
+                  {[
+                    "React.js",
+                    "Python",
+                    "Node.js",
+                    "TypeScript",
+                    "AWS",
+                    "Docker",
+                  ].map((skill) => (
                     <span
                       key={skill}
                       className="rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground"
@@ -681,21 +832,36 @@ export function CompanyProfile() {
                   <div className="flex size-8 items-center justify-center rounded-xl bg-emerald-500/10">
                     <IconUsers className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
                   </div>
-                  <h3 className="text-sm font-bold tracking-tight text-foreground">Candidate Quality</h3>
+                  <h3 className="text-sm font-bold tracking-tight text-foreground">
+                    Candidate Quality
+                  </h3>
                 </div>
                 <div className="space-y-3">
                   {[
-                    { label: "Above Average", percent: "42%", color: "bg-emerald-500" },
+                    {
+                      label: "Above Average",
+                      percent: "42%",
+                      color: "bg-emerald-500",
+                    },
                     { label: "Average", percent: "38%", color: "bg-sky-500" },
-                    { label: "Below Average", percent: "20%", color: "bg-amber-500" },
+                    {
+                      label: "Below Average",
+                      percent: "20%",
+                      color: "bg-amber-500",
+                    },
                   ].map((item) => (
                     <div key={item.label}>
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-medium">{item.label}</span>
-                        <span className="text-muted-foreground">{item.percent}</span>
+                        <span className="text-muted-foreground">
+                          {item.percent}
+                        </span>
                       </div>
                       <div className="mt-1 h-2 rounded-full bg-muted/30">
-                        <div className={`h-full rounded-full ${item.color}`} style={{ width: item.percent }} />
+                        <div
+                          className={`h-full rounded-full ${item.color}`}
+                          style={{ width: item.percent }}
+                        />
                       </div>
                     </div>
                   ))}
@@ -707,18 +873,43 @@ export function CompanyProfile() {
                   <div className="flex size-8 items-center justify-center rounded-xl bg-amber-500/10">
                     <IconStar className="size-4 shrink-0 text-amber-600 dark:text-amber-400" />
                   </div>
-                  <h3 className="text-sm font-bold tracking-tight text-foreground">Recruitment Metrics</h3>
+                  <h3 className="text-sm font-bold tracking-tight text-foreground">
+                    Recruitment Metrics
+                  </h3>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { label: "Avg Score", value: "78", color: "text-primary dark:text-sky" },
-                    { label: "Match Rate", value: "92%", color: "text-emerald-600 dark:text-emerald-400" },
-                    { label: "Time Saved", value: "65%", color: "text-violet-600 dark:text-violet-400" },
-                    { label: "Quality Hire", value: "88%", color: "text-amber-600 dark:text-amber-400" },
+                    {
+                      label: "Avg Score",
+                      value: "78",
+                      color: "text-primary dark:text-sky",
+                    },
+                    {
+                      label: "Match Rate",
+                      value: "92%",
+                      color: "text-emerald-600 dark:text-emerald-400",
+                    },
+                    {
+                      label: "Time Saved",
+                      value: "65%",
+                      color: "text-violet-600 dark:text-violet-400",
+                    },
+                    {
+                      label: "Quality Hire",
+                      value: "88%",
+                      color: "text-amber-600 dark:text-amber-400",
+                    },
                   ].map((metric) => (
-                    <div key={metric.label} className="rounded-xl border border-border/50 bg-background/60 p-3 text-center dark:border-border/30">
-                      <p className={`text-lg font-bold ${metric.color}`}>{metric.value}</p>
-                      <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{metric.label}</p>
+                    <div
+                      key={metric.label}
+                      className="rounded-xl border border-border/50 bg-background/60 p-3 text-center dark:border-border/30"
+                    >
+                      <p className={`text-lg font-bold ${metric.color}`}>
+                        {metric.value}
+                      </p>
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        {metric.label}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -768,17 +959,41 @@ export function CompanyProfile() {
                     className="rounded-xl"
                     onClick={() => avatarInputRef.current?.click()}
                   >
-                    <IconCamera />
+                    <IconCamera className="size-4 mr-1.5" />
                     {tProfile("choosePhoto")}
                   </Button>
+
+                  {user?.avatar &&
+                    user.avatar !==
+                      "https://cdn-icons-png.flaticon.com/512/149/149071.png" && (
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="rounded-xl"
+                        onClick={() => deleteAvatarMutation.mutate()}
+                        disabled={deleteAvatarMutation.isPending}
+                      >
+                        <IconTrash className="size-4 mr-1.5" />
+                        {tProfile("deletePhoto") || "Delete Photo"}
+                      </Button>
+                    )}
                   <Button
                     type="button"
                     size="sm"
                     disabled={isPending || !hasAvatarChange}
                     className="rounded-xl"
-                    onClick={handleSubmit((values) =>
-                      submitProfileUpdate(values, ["avatar"]),
-                    )}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleSubmit(
+                        (values) => submitProfileUpdate(values, ["avatar"]),
+                        (errs) =>
+                          console.error(
+                            "Company avatar form validation errors:",
+                            errs,
+                          ),
+                      )(e);
+                    }}
                   >
                     {isPending ? (
                       <>
@@ -807,9 +1022,7 @@ export function CompanyProfile() {
                   </div>
                 ) : null}
                 {errors.avatar ? (
-                  <p className="text-xs text-destructive">
-                    {errors.avatar.message}
-                  </p>
+                  <p className="text-xs text-destructive">error</p>
                 ) : null}
                 <input
                   ref={avatarInputRef}
@@ -838,9 +1051,17 @@ export function CompanyProfile() {
               </CardHeader>
               <CardContent className="px-4 pt-4 pb-4">
                 <form
-                  onSubmit={handleSubmit((values) =>
-                    submitProfileUpdate(values, ["name"]),
-                  )}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmit(
+                      (values) => submitProfileUpdate(values, ["name"]),
+                      (errs) =>
+                        console.error(
+                          "Company name form validation errors:",
+                          errs,
+                        ),
+                    )(e);
+                  }}
                   className="space-y-3"
                 >
                   <div className="grid gap-3 sm:grid-cols-2">
@@ -895,7 +1116,7 @@ export function CompanyProfile() {
                   </div>
                   <Button
                     type="submit"
-                    disabled={isPending || !nameChanged}
+                    disabled={isPending}
                     className="h-10 w-full rounded-xl"
                   >
                     {isPending ? (
@@ -916,54 +1137,125 @@ export function CompanyProfile() {
         {/* Change Password Section */}
         <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
           <CardHeader className="border-b border-border/60 px-6 py-4 dark:border-border/40">
-            <CardTitle className="text-base">{tProfile("changePassword")}</CardTitle>
-            <CardDescription className="text-xs">{tProfile("changePasswordHint")}</CardDescription>
+            <CardTitle className="text-base">
+              {tProfile("changePassword")}
+            </CardTitle>
+            <CardDescription className="text-xs">
+              {tProfile("changePasswordHint")}
+            </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
             <form
-              onSubmit={handlePasswordSubmit((values) => changePasswordMutation.mutate(values))}
+              onSubmit={(e) => {
+                e.preventDefault();
+                handlePasswordSubmit((values) =>
+                  changePasswordMutation.mutate(values),
+                )(e);
+              }}
               className="space-y-4"
             >
               <div className="grid gap-4 sm:grid-cols-3">
                 <div className="space-y-2">
-                  <Label htmlFor="currentPassword">{tProfile("currentPassword")}</Label>
-                  <Input
-                    id="currentPassword"
-                    type="password"
-                    autoComplete="current-password"
-                    className={inputClassName(!!passwordErrors.currentPassword)}
-                    {...registerPassword("currentPassword")}
-                  />
+                  <Label htmlFor="currentPassword">
+                    {tProfile("currentPassword")}
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="currentPassword"
+                      type={showCurrentPassword ? "text" : "password"}
+                      autoComplete="current-password"
+                      className={cn(
+                        inputClassName(!!passwordErrors.currentPassword),
+                        "pr-10",
+                      )}
+                      {...registerPassword("currentPassword")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowCurrentPassword(!showCurrentPassword)
+                      }
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground cursor-pointer"
+                    >
+                      {showCurrentPassword ? (
+                        <HiEyeOff className="size-5" />
+                      ) : (
+                        <HiEye className="size-5" />
+                      )}
+                    </button>
+                  </div>
                   {passwordErrors.currentPassword && (
-                    <p className="text-xs text-destructive">{passwordErrors.currentPassword.message}</p>
+                    <p className="text-xs text-destructive">
+                      {passwordErrors.currentPassword.message}
+                    </p>
                   )}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="newPassword">{tProfile("newPassword")}</Label>
-                  <Input
-                    id="newPassword"
-                    type="password"
-                    autoComplete="new-password"
-                    className={inputClassName(!!passwordErrors.newPassword)}
-                    {...registerPassword("newPassword")}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="newPassword"
+                      type={showNewPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      className={cn(
+                        inputClassName(!!passwordErrors.newPassword),
+                        "pr-10",
+                      )}
+                      {...registerPassword("newPassword")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground cursor-pointer"
+                    >
+                      {showNewPassword ? (
+                        <HiEyeOff className="size-5" />
+                      ) : (
+                        <HiEye className="size-5" />
+                      )}
+                    </button>
+                  </div>
                   {passwordErrors.newPassword && (
-                    <p className="text-xs text-destructive">{passwordErrors.newPassword.message}</p>
+                    <p className="text-xs text-destructive">
+                      {passwordErrors.newPassword.message}
+                    </p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">{tProfile("confirmPassword")}</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    autoComplete="new-password"
-                    className={inputClassName(!!passwordErrors.confirmPassword)}
-                    {...registerPassword("confirmPassword")}
-                  />
+                  <Label htmlFor="confirmPassword">
+                    {tProfile("confirmPassword")}
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      className={cn(
+                        inputClassName(!!passwordErrors.confirmPassword),
+                        "pr-10",
+                      )}
+                      {...registerPassword("confirmPassword")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground cursor-pointer"
+                    >
+                      {showConfirmPassword ? (
+                        <HiEyeOff className="size-5" />
+                      ) : (
+                        <HiEye className="size-5" />
+                      )}
+                    </button>
+                  </div>
                   {passwordErrors.confirmPassword && (
-                    <p className="text-xs text-destructive">{passwordErrors.confirmPassword.message}</p>
+                    <p className="text-xs text-destructive">
+                      {passwordErrors.confirmPassword.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -972,12 +1264,17 @@ export function CompanyProfile() {
                 <Button
                   type="submit"
                   disabled={changePasswordMutation.isPending}
-                  className="w-full sm:w-auto px-6 h-10 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-950 dark:hover:bg-sky/95"
+                  className="w-full sm:w-auto px-6 h-10 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-200 dark:hover:bg-sky/95"
                 >
                   {changePasswordMutation.isPending ? (
                     <>
-                      <ScaleLoader size="sm" className="text-white dark:text-zinc-950" />
-                      <span className="ml-2">{tProfile("updatingPassword")}</span>
+                      <ScaleLoader
+                        size="sm"
+                        className="text-white dark:text-zinc-950"
+                      />
+                      <span className="ml-2">
+                        {tProfile("updatingPassword")}
+                      </span>
                     </>
                   ) : (
                     tProfile("updatePassword")

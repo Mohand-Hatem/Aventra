@@ -18,6 +18,8 @@ export const queryKeys = {
   },
   company: {
     searchHistory: ["company", "search-history"] as const,
+    filteredCvs: (params: unknown) =>
+      ["company", "filtered-cvs", params] as const,
   },
 };
 export const GOOGLE_LOGIN_PENDING_KEY = "googleLogin";

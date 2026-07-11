@@ -122,7 +122,7 @@ export function CandidateSummaryPanel({ candidate }: SummaryPanelProps) {
             href={`https://mail.google.com/mail/?view=cm&fs=1&to=${cvData?.parsedData?.contact?.email || candidate.email || ""}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center px-4 py-2 bg-primary hover:bg-primary/95 text-white dark:bg-sky dark:text-zinc-950 dark:hover:bg-sky/95 rounded-lg text-xs font-bold transition-colors shadow-sm"
+            className="flex items-center justify-center px-4 py-2 bg-primary hover:bg-primary/95 text-white dark:bg-sky dark:text-zinc-200 dark:hover:bg-sky/95 rounded-lg text-xs font-bold transition-colors shadow-sm"
           >
             Reach candidate
           </a>
@@ -336,4 +336,3 @@ export function CandidateSummaryPanel({ candidate }: SummaryPanelProps) {
 export default function CandidateDetail(props: SummaryPanelProps) {
   return <CandidateSummaryPanel {...props} />;
 }
-

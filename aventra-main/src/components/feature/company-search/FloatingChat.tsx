@@ -169,8 +169,7 @@ export default function FloatingChat({
             <div className="flex h-full flex-col items-center justify-center text-center px-4 space-y-4">
               <WelcomeMessage />
               <p className="text-xs text-muted-foreground max-w-xs leading-relaxed">
-                Describe the candidate you're looking for, and Aventra AI will
-                query vector databases to find matches instantly!
+                {t("describePrompt")}
               </p>
             </div>
           ) : (

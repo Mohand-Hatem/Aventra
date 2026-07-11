@@ -5,12 +5,15 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
+  startTransition,
   type ReactNode,
 } from "react";
 
 const STORAGE_KEY = "aventra-theme";
+const RESOLVED_THEME_COOKIE_KEY = "aventra-resolved-theme";
 const THEMES = ["light", "dark", "system"] as const;
 
 export type ThemeSetting = (typeof THEMES)[number];
@@ -18,7 +21,9 @@ export type ResolvedTheme = "light" | "dark";
 
 type ThemeContextValue = {
   theme: ThemeSetting | undefined;
-  setTheme: (value: ThemeSetting | ((prev: ThemeSetting) => ThemeSetting)) => void;
+  setTheme: (
+    value: ThemeSetting | ((prev: ThemeSetting) => ThemeSetting),
+  ) => void;
   resolvedTheme: ResolvedTheme | undefined;
   systemTheme: ResolvedTheme | undefined;
   themes: ThemeSetting[];
@@ -27,7 +32,9 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 function getSystemTheme(): ResolvedTheme {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 }
 
 function applyResolvedTheme(resolved: ResolvedTheme) {
@@ -35,6 +42,7 @@ function applyResolvedTheme(resolved: ResolvedTheme) {
   root.classList.remove("light", "dark");
   root.classList.add(resolved);
   root.style.colorScheme = resolved;
+  document.cookie = `${RESOLVED_THEME_COOKIE_KEY}=${resolved}; Path=/; Max-Age=31536000; SameSite=Lax`;
 }
 
 function readStoredTheme(): ThemeSetting {
@@ -49,16 +57,35 @@ function readStoredTheme(): ThemeSetting {
   return "system";
 }
 
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+let globalHasMounted = false;
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeSetting | undefined>(undefined);
-  const [systemTheme, setSystemTheme] = useState<ResolvedTheme | undefined>(
-    undefined,
-  );
+  // Synchronously initialize the theme state on subsequent mounts (client-side transitions)
+  // to avoid rendering a layout with an undefined/incorrect theme class.
+  const [theme, setThemeState] = useState<ThemeSetting | undefined>(() => {
+    if (globalHasMounted) {
+      return readStoredTheme();
+    }
+    return undefined;
+  });
+  const [systemTheme, setSystemTheme] = useState<ResolvedTheme | undefined>(() => {
+    if (globalHasMounted) {
+      return getSystemTheme();
+    }
+    return undefined;
+  });
 
   useEffect(() => {
+    globalHasMounted = true;
     const stored = readStoredTheme();
-    setThemeState(stored);
-    setSystemTheme(getSystemTheme());
+    const system = getSystemTheme();
+    startTransition(() => {
+      setThemeState((prev) => prev ?? stored);
+      setSystemTheme((prev) => prev ?? system);
+    });
 
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const onSystemChange = () => setSystemTheme(getSystemTheme());
@@ -83,7 +110,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         ? systemTheme
         : theme;
 
-  useEffect(() => {
+  // Use isomorphic useLayoutEffect to synchronously add/remove the class list
+  // before the browser paints, preventing light-mode flash during client-side locale segment changes.
+  useIsomorphicLayoutEffect(() => {
     if (!resolvedTheme) return;
     applyResolvedTheme(resolvedTheme);
   }, [resolvedTheme]);

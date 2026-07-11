@@ -125,6 +125,7 @@ export function usePaymentCallback() {
     const orderId = resolveOrderId();
 
     let cancelled = false;
+    // eslint-disable-next-line prefer-const
     let intervalId: ReturnType<typeof setInterval> | undefined;
     let pollCount = 0;
     let completed = false;

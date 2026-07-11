@@ -2,16 +2,20 @@
 
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/providers/theme-provider";
-import { useEffect, useState } from "react";
+import { useEffect, useState, startTransition } from "react";
+import { useTranslations } from "next-intl";
 import { AiOutlineMoon, AiOutlineSun } from "react-icons/ai";
 
 export function ThemeToggle() {
+  const t = useTranslations("navbar");
   const [mounted, setMounted] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 
   useEffect(() => {
-    setMounted(true);
+    startTransition(() => {
+      setMounted(true);
+    });
   }, []);
 
   if (!mounted) {
@@ -29,7 +33,7 @@ export function ThemeToggle() {
       dir="ltr"
       role="switch"
       aria-checked={isDark}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-label={isDark ? t("themeToggleLight") : t("themeToggleDark")}
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className={cn(
         "relative h-9 w-20 shrink-0 rounded-full border border-border/60 bg-muted/50 p-1 shadow-inner",

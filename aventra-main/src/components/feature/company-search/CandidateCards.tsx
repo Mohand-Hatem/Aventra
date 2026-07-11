@@ -231,7 +231,7 @@ export default function CandidateCards({
             {t("resultsTable.emptyTitle")}
           </p>
           <p className="mt-1.5 text-sm text-muted-foreground">
-            Describe your search using the floating recruiter chat assistant.
+            {t("resultsTable.describeSearch")}
           </p>
         </div>
       </div>

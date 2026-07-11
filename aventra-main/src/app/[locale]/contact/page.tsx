@@ -1,14 +1,24 @@
 import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ContactPage } from "@/components/feature/contact/ContactPage";
 
 export const dynamic = "force-static";
 
-export const metadata: Metadata = {
-  title: "Contact | Aventra",
-  description:
-    "Contact Aventra support for candidate assistance, company support, pricing, partnerships, and technical issues.",
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
-export default function Page() {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "contact" });
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
+
+export default async function Page({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return <ContactPage />;
 }

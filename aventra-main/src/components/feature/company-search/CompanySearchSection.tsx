@@ -3,7 +3,7 @@ import { IconSparkles } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useSearchCandidates } from "@/hooks/useCompanySearch";
 import { useRecruiterChat } from "@/hooks/useRecruiterChat";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, startTransition } from "react";
 import CandidateCards from "./CandidateCards";
 import SidebarChat from "./FloatingChat";
 import type { CandidateResult } from "@/types/company";
@@ -41,7 +41,9 @@ export default function CompanySearchSection() {
   // Open the floating chat widget on load if there are no messages
   useEffect(() => {
     if (messages.length === 0) {
-      setIsChatOpen(true);
+      startTransition(() => {
+        setIsChatOpen(true);
+      });
     }
   }, [messages.length]);
 
@@ -81,24 +83,23 @@ export default function CompanySearchSection() {
           <header className="shrink-0 space-y-2 border-b border-border/40 pb-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-bold text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
               <IconSparkles size={13} />
-              AI SEMANTIC SEARCH
+              {t("semanticSearch")}
             </div>
 
             {currentQuery ? (
               <h1 className="font-heading text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl leading-tight">
-                Results for{" "}
+                {t("resultsFor")}{" "}
                 <span className="text-primary dark:text-sky">
-                  "{currentQuery}"
+                  &ldquo;{currentQuery}&rdquo;
                 </span>
               </h1>
             ) : (
               <div className="flex flex-col gap-1">
                 <h1 className="font-heading text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl leading-tight">
-                  Candidate Search
+                  {t("candidateSearchTitle")}
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  Ask for candidates with your requirements and get the best
-                  matches
+                  {t("searchDescription")}
                 </p>
               </div>
             )}
@@ -106,16 +107,15 @@ export default function CompanySearchSection() {
             {candidates.length > 0 && (
               <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 <span className="inline-flex items-center rounded-md bg-primary/10 text-primary dark:bg-sky/20 dark:text-sky px-2 py-0.5 text-xs font-bold">
-                  LIVE QUERY
+                  {t("liveQuery")}
                 </span>
                 <span>
-                  Found {candidates.length} matches from Vector DB & BigTable
-                  clusters
+                  {t("foundMatches", { count: candidates.length })}
                 </span>
                 <span className="hidden sm:inline text-muted-foreground/40">
                   |
                 </span>
-                <span className="italic">Search latency: {latency}ms</span>
+                <span className="italic">{t("searchLatency", { latency })}</span>
               </div>
             )}
           </header>
@@ -136,9 +136,20 @@ export default function CompanySearchSection() {
           {/* Trending Skills & Market Insights */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm">
-              <h3 className="mb-3 text-sm font-bold text-foreground">Trending Skills</h3>
+              <h3 className="mb-3 text-sm font-bold text-foreground">
+                {t("trendingSkills")}
+              </h3>
               <div className="flex flex-wrap gap-2">
-                {["React.js", "TypeScript", "Python", "AWS", "Node.js", "Docker", "Kubernetes", "GraphQL"].map((skill) => (
+                {[
+                  "React.js",
+                  "TypeScript",
+                  "Python",
+                  "AWS",
+                  "Node.js",
+                  "Docker",
+                  "Kubernetes",
+                  "GraphQL",
+                ].map((skill) => (
                   <span
                     key={skill}
                     className="rounded-full border border-border/60 bg-primary/5 px-3 py-1 text-xs font-medium text-primary dark:border-sky/20 dark:bg-sky/8 dark:text-sky"
@@ -150,30 +161,56 @@ export default function CompanySearchSection() {
             </div>
 
             <div className="rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm">
-              <h3 className="mb-3 text-sm font-bold text-foreground">Candidate Pool</h3>
+              <h3 className="mb-3 text-sm font-bold text-foreground">
+                {t("candidatePool")}
+              </h3>
               <div className="space-y-2">
                 {[
-                  { role: "Frontend Devs", count: "2,340", color: "text-primary dark:text-sky" },
-                  { role: "Backend Devs", count: "1,890", color: "text-emerald-600 dark:text-emerald-400" },
-                  { role: "Full Stack", count: "1,456", color: "text-violet-600 dark:text-violet-400" },
+                  {
+                    role: t("roles.frontendDevs"),
+                    count: "2,340",
+                    color: "text-primary dark:text-sky",
+                  },
+                  {
+                    role: t("roles.backendDevs"),
+                    count: "1,890",
+                    color: "text-emerald-600 dark:text-emerald-400",
+                  },
+                  {
+                    role: t("roles.fullStack"),
+                    count: "1,456",
+                    color: "text-violet-600 dark:text-violet-400",
+                  },
                 ].map((item) => (
-                  <div key={item.role} className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">{item.role}</span>
-                    <span className={`text-sm font-bold ${item.color}`}>{item.count}</span>
+                  <div
+                    key={item.role}
+                    className="flex items-center justify-between"
+                  >
+                    <span className="text-xs text-muted-foreground">
+                      {item.role}
+                    </span>
+                    <span className={`text-sm font-bold ${item.color}`}>
+                      {item.count}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
 
             <div className="rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm">
-              <h3 className="mb-3 text-sm font-bold text-foreground">Search Tips</h3>
+              <h3 className="mb-3 text-sm font-bold text-foreground">
+                {t("searchTips")}
+              </h3>
               <ul className="space-y-2">
-                {[
+                {(t.raw("tips") as string[] || [
                   "Use natural language queries",
                   "Filter by ATS score threshold",
                   "Search by specific skills",
-                ].map((tip) => (
-                  <li key={tip} className="flex items-start gap-2 text-xs text-muted-foreground">
+                ]).map((tip) => (
+                  <li
+                    key={tip}
+                    className="flex items-start gap-2 text-xs text-muted-foreground"
+                  >
                     <span className="mt-1 size-1 shrink-0 rounded-full bg-primary dark:bg-sky" />
                     {tip}
                   </li>

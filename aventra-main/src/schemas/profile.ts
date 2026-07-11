@@ -14,10 +14,18 @@ export function createUpdateProfileSchema(messages: {
       ar: z.string().trim().min(2, messages.nameMin),
     }),
     avatar: z
-      .instanceof(File)
-      .refine((file) => file.type.startsWith("image/"), messages.avatarType)
-      .refine((file) => file.size <= MAX_AVATAR_SIZE, messages.avatarSize)
-      .optional(),
+      .any()
+      .refine((file) => !file || file instanceof File, "Must be a file")
+      .refine(
+        (file) => !file || (file instanceof File && file.type.startsWith("image/")),
+        messages.avatarType,
+      )
+      .refine(
+        (file) => !file || (file instanceof File && file.size <= MAX_AVATAR_SIZE),
+        messages.avatarSize,
+      )
+      .optional()
+      .nullable(),
   });
 }
 

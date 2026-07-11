@@ -80,7 +80,10 @@ export function AtsScoreChart({
           </span>
           <span
             dir="ltr"
-            className={cn("mt-1 leading-none text-muted-foreground", suffixText)}
+            className={cn(
+              "mt-1 leading-none text-muted-foreground",
+              suffixText,
+            )}
           >
             /100
           </span>

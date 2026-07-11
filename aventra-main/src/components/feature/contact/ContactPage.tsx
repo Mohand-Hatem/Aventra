@@ -89,7 +89,10 @@ export function ContactPage() {
             </div>
 
             <h1 className="max-w-2xl text-5xl font-black tracking-tight md:text-6xl">
-              {t("header.titlePrefix")} <span className="text-blue-700 dark:text-cyan-400">{t("header.brand")}</span>
+              {t("header.titlePrefix")}{" "}
+              <span className="text-blue-700 dark:text-cyan-400">
+                {t("header.brand")}
+              </span>
             </h1>
 
             <p className="mt-5 max-w-xl text-lg leading-8 text-slate-600 dark:text-slate-300">
@@ -134,7 +137,10 @@ export function ContactPage() {
 
                       <div className="mt-2 space-y-1">
                         {card.lines.map((line) => (
-                          <p key={line} className="text-sm font-medium text-slate-600 dark:text-slate-300">
+                          <p
+                            key={line}
+                            className="text-sm font-medium text-slate-600 dark:text-slate-300"
+                          >
                             {line}
                           </p>
                         ))}
@@ -219,56 +225,62 @@ export function ContactPage() {
 
         {/* Success Stories */}
         <div className="mt-8 rounded-[1.6rem] border border-slate-200/80 bg-white/90 p-6 shadow-xl shadow-blue-500/5 backdrop-blur-xl dark:border-white/10 dark:bg-[#121821]/90">
-          <h2 className="text-center text-2xl font-bold">Success Stories</h2>
+          <h2 className="text-center text-2xl font-bold">{t("successStories")}</h2>
           <p className="mt-2 text-center text-sm text-slate-500 dark:text-slate-400">
-            How Aventra helps job seekers and companies succeed
+            {t("howItHelps")}
           </p>
 
           <div className="mt-8 grid gap-6 md:grid-cols-2">
-            {[
-              {
-                name: "Sarah M.",
-                role: "Frontend Developer",
-                avatar: "SM",
-                score: 92,
-                quote: "My ATS score improved from 64 to 92. Aventra helped me land my dream job at a top tech company.",
-                improvement: "+28 points",
-              },
-              {
-                name: "Ahmed K.",
-                role: "UX Designer",
-                avatar: "AK",
-                score: 88,
-                quote: "The detailed breakdown showed exactly what to fix. My resume now passes every ATS system.",
-                improvement: "+35 points",
-              },
-            ].map((story) => (
-              <div
-                key={story.name}
-                className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 dark:border-white/10 dark:bg-white/5"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="flex size-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-cyan-400 text-sm font-bold text-white">
-                    {story.avatar}
-                  </span>
-                  <div>
-                    <p className="font-bold">{story.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{story.role}</p>
+            {(() => {
+              const storiesRaw = t.raw("stories") as any;
+              const testimonialItems = [
+                {
+                  name: storiesRaw?.story1?.name || "Sarah M.",
+                  role: storiesRaw?.story1?.role || "Frontend Developer",
+                  quote: storiesRaw?.story1?.quote || "My ATS score improved from 64 to 92. Aventra helped me land my dream job at a top tech company.",
+                  improvement: storiesRaw?.story1?.improvement || "+28 points",
+                  avatar: "SM",
+                  score: 92,
+                },
+                {
+                  name: storiesRaw?.story2?.name || "Ahmed K.",
+                  role: storiesRaw?.story2?.role || "UX Designer",
+                  quote: storiesRaw?.story2?.quote || "The detailed breakdown showed exactly what to fix. My resume now passes every ATS system.",
+                  improvement: storiesRaw?.story2?.improvement || "+35 points",
+                  avatar: "AK",
+                  score: 88,
+                },
+              ];
+              return testimonialItems.map((story) => (
+                <div
+                  key={story.name}
+                  className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 dark:border-white/10 dark:bg-white/5"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="flex size-12 items-center justify-center rounded-full bg-linear-to-br from-blue-600 to-cyan-400 text-sm font-bold text-white">
+                      {story.avatar}
+                    </span>
+                    <div>
+                      <p className="font-bold">{story.name}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        {story.role}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                    &ldquo;{story.quote}&rdquo;
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                      {story.improvement}
+                    </span>
+                    <span className="text-xs font-semibold text-blue-700 dark:text-cyan-400">
+                      {t("score") || "Score"}: {story.score}/100
+                    </span>
                   </div>
                 </div>
-                <p className="flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                  "{story.quote}"
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                    {story.improvement}
-                  </span>
-                  <span className="text-xs font-semibold text-blue-700 dark:text-cyan-400">
-                    Score: {story.score}/100
-                  </span>
-                </div>
-              </div>
-            ))}
+              ));
+            })()}
           </div>
         </div>
       </section>

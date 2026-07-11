@@ -1,4 +1,5 @@
-import { setRequestLocale } from "next-intl/server";
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import Landing from "@/components/feature/Landing";
 import SliderAnimation from "@/components/feature/slideranimation";
 import GridDescription from "@/components/feature/gridDescription";
@@ -6,6 +7,30 @@ import WhatServe from "@/components/feature/whatServe";
 import SiteStats from "@/components/feature/siteStats";
 
 export const dynamic = "force-static";
+
+type Props = {
+  params: Promise<{ locale: string }>;
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "landing" });
+
+  const title = t("metaTitle");
+  const description = t("metaDescription");
+
+  return {
+    title: {
+      absolute: title,
+    },
+    description: description,
+    openGraph: {
+      title: title,
+      description: description,
+      url: "/",
+    },
+  };
+}
 
 export default async function HomePage({
   params,

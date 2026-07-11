@@ -1,16 +1,26 @@
-"use client";
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import PaymentResultContent from "./PaymentResultContent";
 
-import PageLoading from "@/components/shared/PageLoading";
-import { usePaymentCallback } from "@/hooks/usePaymentCallback";
-import { useTranslations } from "next-intl";
+type Props = {
+  params: Promise<{ locale: string }>;
+};
 
-export default function PaymentResult() {
-  const { isPending } = usePaymentCallback();
-  const t = useTranslations("payment");
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "payment" });
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+    robots: {
+      index: false,
+      follow: true,
+    },
+  };
+}
 
-  if (isPending) {
-    return <PageLoading title={t("confirming")} />;
-  }
-
-  return null;
+export default async function PaymentResultPage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  return <PaymentResultContent />;
 }

@@ -8,10 +8,21 @@ import { usePlanSelection } from "@/hooks/usePlanSelection";
 import { useAuthStore } from "@/stores/auth-store";
 import { hasUnlimitedAccess } from "@/constants/pricing";
 
-
-export default function PricingCard({ plan, isActivePlan = false }: PricingCardProps) {
+export default function PricingCard({
+  plan,
+  isActivePlan = false,
+}: PricingCardProps) {
   const t = useTranslations("pricing");
-  const { name, displayName, price, description, tokens, featured, features, cta } = plan;
+  const {
+    name,
+    displayName,
+    price,
+    description,
+    tokens,
+    featured,
+    features,
+    cta,
+  } = plan;
   const { handlePlanSelection, isPending } = usePlanSelection();
   const { userInfo } = useAuthStore();
   const { plan: userPlan } = userInfo || {};
@@ -37,13 +48,16 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
         "relative flex flex-col rounded-3xl border p-8 transition-all duration-300",
         isCurrentPlan && !isUnlimitedPlan && "opacity-50 cursor-not-allowed",
         isAdminUnlimited &&
-          "border-primary dark:border-sky bg-gradient-to-br from-primary/5 via-canvas to-sky/10 dark:from-primary/10 dark:via-canvas dark:to-sky/15 text-foreground border-2 shadow-2xl scale-105",
-        isGoldCard && !isAdminUnlimited &&
+          "border-primary dark:border-sky bg-linear-to-br from-primary/5 via-canvas to-sky/10 dark:from-primary/10 dark:via-canvas dark:to-sky/15 text-foreground border-2 shadow-2xl scale-105",
+        isGoldCard &&
+          !isAdminUnlimited &&
           "border-amber-500 bg-indigo-800 text-white",
-        !isGoldCard && !isAdminUnlimited &&
+        !isGoldCard &&
+          !isAdminUnlimited &&
           featured &&
           "border-transparent bg-[#0B1536] text-white shadow-2xl scale-105",
-        !isGoldCard && !isAdminUnlimited &&
+        !isGoldCard &&
+          !isAdminUnlimited &&
           !featured &&
           "border-border bg-card text-card-foreground shadow-sm hover:shadow-md hover:-translate-y-1",
       )}
@@ -55,11 +69,18 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
             className={cn(
               "rounded bg-blue-600 px-3 py-1.5 text-[10px] font-bold text-white shadow tracking-widest uppercase",
               isGoldCard && "bg-amber-500 text-white",
-              isAdminUnlimited && "bg-primary dark:bg-sky text-primary-foreground dark:text-zinc-950"
+              isAdminUnlimited &&
+                "bg-primary dark:bg-sky text-primary-foreground dark:text-zinc-200",
             )}
-            style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%)" }}
+            style={{
+              clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%)",
+            }}
           >
-            {isAdminUnlimited ? t("adminAccess") : isGoldCard ? t("fullAccess") : t("mostPopular")}
+            {isAdminUnlimited
+              ? t("adminAccess")
+              : isGoldCard
+                ? t("fullAccess")
+                : t("mostPopular")}
           </span>
         </div>
       )}
@@ -96,7 +117,14 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
             $
           </span>
         )}
-        <span className={cn("font-bold tracking-tight", price === "Custom" ? "text-4xl" : "text-5xl")}>{price}</span>
+        <span
+          className={cn(
+            "font-bold tracking-tight",
+            price === "Custom" ? "text-4xl" : "text-5xl",
+          )}
+        >
+          {price}
+        </span>
         {!isUnlimitedPlan && price !== "Custom" && !featured && (
           <span
             className={cn(
@@ -183,7 +211,7 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
           className={cn(
             "mt-8 block w-full rounded-xl py-3 text-center text-sm font-semibold",
             isAdminUnlimited
-              ? "bg-primary text-primary-foreground dark:bg-sky dark:text-zinc-950 shadow-md font-bold"
+              ? "bg-primary text-primary-foreground dark:bg-sky dark:text-zinc-200 shadow-md font-bold"
               : isHighlighted
                 ? "bg-white/20 text-white"
                 : "border-2 border-primary/30 dark:border-sky/30 text-primary dark:text-sky",
@@ -198,7 +226,7 @@ export default function PricingCard({ plan, isActivePlan = false }: PricingCardP
           className={cn(
             "mt-8 block w-full rounded-xl py-3 text-center text-sm font-semibold transition-all duration-200 border-2",
             isAdminUnlimited
-              ? "bg-primary text-primary-foreground hover:bg-primary/95 dark:bg-sky dark:text-zinc-950 dark:hover:bg-sky/95 shadow-md border-transparent"
+              ? "bg-primary text-primary-foreground hover:bg-primary/95 dark:bg-sky dark:text-zinc-200 dark:hover:bg-sky/95 shadow-md border-transparent"
               : isGoldCard
                 ? "bg-white text-amber-600 hover:bg-white/90 shadow border-transparent"
                 : featured

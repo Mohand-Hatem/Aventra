@@ -1,6 +1,6 @@
-import createMiddleware from 'next-intl/middleware';
-import { routing } from '@/i18n/routing';
-import { NextRequest, NextResponse } from 'next/server';
+import createMiddleware from "next-intl/middleware";
+import { routing } from "@/i18n/routing";
+import { NextRequest, NextResponse } from "next/server";
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -8,32 +8,36 @@ function getPathnameWithoutLocale(pathname: string): string {
   const locales = routing.locales;
   for (const locale of locales) {
     if (pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`) {
-      return pathname.replace(`/${locale}`, '') || '/';
+      return pathname.replace(`/${locale}`, "") || "/";
     }
   }
   return pathname;
 }
 
-const protectedRoutes = ['/profile'];
-const authRoutes = ['/login', '/register'];
+const protectedRoutes = ["/profile"];
+const authRoutes = ["/login", "/register"];
 
 export async function proxy(request: NextRequest) {
   // ensure decoded pathname for proper locale detection
   const pathname = decodeURIComponent(request.nextUrl.pathname);
 
-  if (pathname.startsWith('/api/')) {
+  if (pathname.startsWith("/api/")) {
     return NextResponse.next();
   }
 
   const pathnameWithoutLocale = getPathnameWithoutLocale(pathname);
-  const token = request.cookies.get('accessToken')?.value;
+  const token = request.cookies.get("accessToken")?.value;
   const isAuthenticated = !!token;
 
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathnameWithoutLocale === route || pathnameWithoutLocale.startsWith(`${route}/`)
+  const isProtectedRoute = protectedRoutes.some(
+    (route) =>
+      pathnameWithoutLocale === route ||
+      pathnameWithoutLocale.startsWith(`${route}/`),
   );
-  const isAuthRoute = authRoutes.some((route) =>
-    pathnameWithoutLocale === route || pathnameWithoutLocale.startsWith(`${route}/`)
+  const isAuthRoute = authRoutes.some(
+    (route) =>
+      pathnameWithoutLocale === route ||
+      pathnameWithoutLocale.startsWith(`${route}/`),
   );
 
   // Always allow auth pages to render (prevents proxy from redirecting/404ing them)
@@ -42,14 +46,14 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isProtectedRoute && !isAuthenticated) {
-    const locale = pathname.split('/')[1] || routing.defaultLocale;
+    const locale = pathname.split("/")[1] || routing.defaultLocale;
     const loginUrl = new URL(`/${locale}/login`, request.url);
-    loginUrl.searchParams.set('callbackUrl', pathname);
+    loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   if (isAuthRoute && isAuthenticated) {
-    const locale = pathname.split('/')[1] || routing.defaultLocale;
+    const locale = pathname.split("/")[1] || routing.defaultLocale;
     return NextResponse.redirect(new URL(`/${locale}`, request.url));
   }
 
@@ -58,6 +62,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|en/auth/callback|ar/auth/callback|.*\\..*).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|en/auth/callback|ar/auth/callback|.*\\..*).*)",
   ],
 };

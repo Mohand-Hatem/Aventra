@@ -7,15 +7,18 @@ import { cn } from "@/lib/utils";
 export function NavigationProgress() {
   const pathname = usePathname();
   const [isNavigating, setIsNavigating] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
 
-  useEffect(() => {
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
     setIsNavigating(false);
-  }, [pathname]);
+  }
 
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
       if (event.defaultPrevented || event.button !== 0) return;
-      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+        return;
 
       const target = event.target;
       if (!(target instanceof Element)) return;

@@ -480,16 +480,16 @@ export default function Landing() {
             {user ? (
               user.role === ROLES.company ? (
                 <Button asChild size="lg" className="rounded-xl px-6">
-                  <Link href="/company/search">Search Candidate</Link>
+                  <Link href="/company/search">{t("searchCandidate")}</Link>
                 </Button>
               ) : (
                 <Button asChild size="lg" className="rounded-xl px-6">
-                  <Link href="/user/cv-analysis">Upload Resume</Link>
+                  <Link href="/user/cv-analysis">{t("uploadResumeBtn")}</Link>
                 </Button>
               )
             ) : (
               <Button asChild size="lg" className="rounded-xl px-6">
-                <Link href="/about">Discover Features</Link>
+                <Link href="/about">{t("discoverFeatures")}</Link>
               </Button>
             )}
 

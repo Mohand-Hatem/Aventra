@@ -4,11 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import {
-  IconArrowLeft,
-  IconHome,
-  IconSearch,
-} from "@tabler/icons-react";
+import { IconArrowLeft, IconHome, IconSearch } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { APP_ROUTES } from "@/constants/routes";
 
