@@ -11,6 +11,8 @@ import type { UpdateProfilePayload } from "@/schemas/profile";
 
 const PROFILE_UPLOAD_TIMEOUT_MS = 120_000;
 
+const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
 function extractUpdatedUser(data: unknown): AuthUser | null {
   if (!data || typeof data !== "object") return null;
   const record = data as Record<string, unknown>;
@@ -26,7 +28,6 @@ function extractUpdatedUser(data: unknown): AuthUser | null {
   if ("id" in record && "email" in record) {
     return record as unknown as AuthUser;
   }
-
   return null;
 }
 
@@ -101,6 +102,7 @@ async function updateUserProfile(
   return response.data;
 }
 
+// ── useUpdateUserProfile ────────────────────────────────────────────────────
 export function useUpdateUserProfile() {
   const queryClient = useQueryClient();
   const t = useTranslations("notifications.profile");
@@ -113,7 +115,6 @@ export function useUpdateUserProfile() {
       } else {
         setUploadProgress(null);
       }
-
       return updateUserProfile(payload, setUploadProgress);
     },
     onSettled: () => {
@@ -130,9 +131,7 @@ export function useUpdateUserProfile() {
       if (payload.avatar) {
         try {
           const refetched = await fetchAuthUser();
-          if (refetched) {
-            user = refetched;
-          }
+          if (refetched) user = refetched;
         } catch {
           // Keep merged user if refetch fails.
         }
@@ -154,15 +153,47 @@ export function useUpdateUserProfile() {
     },
     onError: (err) => {
       const axiosErr = err as AxiosError<{ message?: string }>;
-
       if (axiosErr.code === "ECONNABORTED") {
         toast.error(t("uploadTimeout"));
         return;
       }
-
       toast.error(axiosErr.response?.data?.message ?? t("updateFailed"));
     },
   });
 
   return { ...mutation, uploadProgress };
+}
+
+// ── useDeleteAvatar ─────────────────────────────────────────────────────────
+export function useDeleteAvatar() {
+  const queryClient = useQueryClient();
+  const t = useTranslations("notifications.profile");
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await axiosInstance.delete("/users/avatar");
+      return response.data;
+    },
+    onSuccess: async () => {
+      // Update cache immediately with default avatar
+      const current = queryClient.getQueryData<AuthUser | null>(queryKeys.auth.user);
+      if (current) {
+        syncAuthUser(queryClient, { ...current, avatar: DEFAULT_AVATAR });
+      }
+
+      // Refetch to get fresh data from server
+      try {
+        const refetched = await fetchAuthUser();
+        if (refetched) syncAuthUser(queryClient, refetched);
+      } catch {
+        await queryClient.invalidateQueries({ queryKey: queryKeys.auth.user });
+      }
+
+      toast.success(t("deletePhotoSuccess"));
+    },
+    onError: (err) => {
+      const axiosErr = err as AxiosError<{ message?: string }>;
+      toast.error(axiosErr.response?.data?.message ?? t("deletePhotoFailed"));
+    },
+  });
 }

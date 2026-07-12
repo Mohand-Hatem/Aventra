@@ -812,6 +812,7 @@ export function UserProfile() {
   }
 
   const avatarSrc = avatarPreview ?? user.avatar ?? undefined;
+  const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
   const initials = getInitials(displayName);
   const hasAvatarChange = !!selectedAvatar;
   const insightEmpty = t("noAnalysisYet");
@@ -1378,7 +1379,6 @@ export function UserProfile() {
                     </Button>
                   )}
                 </div>
-
                 {isPending && uploadProgress !== null ? (
                   <div className="w-full space-y-2">
                     <div className="flex items-center justify-between text-[10px] text-muted-foreground">
@@ -1703,7 +1703,7 @@ export function UserProfile() {
   );
 }
 
-function CvListItem({
+function CvListItem ({
   cv,
   isSelected,
   locale,
@@ -1726,36 +1726,39 @@ function CvListItem({
   const cvUrl = getCvUrl(cv);
 
   return (
-    <li
-      className={cn(
-        "flex items-center gap-3 rounded-xl border p-3 transition-colors",
-        isSelected
-          ? "border-primary/40 bg-primary/5 dark:border-sky/40 dark:bg-sky/5"
-          : "border-border/60 bg-canvas dark:border-border/40",
-      )}
-    >
-      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary dark:bg-sky/10 dark:text-sky">
-        <IconFileText className="size-5" />
+     <li className={cn(
+      "flex flex-col gap-2 rounded-xl border p-3 transition-colors",
+      isSelected
+        ? "border-primary/40 bg-primary/5 dark:border-sky/40 dark:bg-sky/5"
+        : "border-border/60 bg-card dark:border-border/40",
+    )}>
+      {/* Row 1 — icon + name */}
+      <div className="flex items-center gap-3">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary dark:bg-sky/10 dark:text-sky">
+          <IconFileText className="size-4" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium">{title}</p>
+          <p className="text-xs text-muted-foreground">
+            {fileType?.toUpperCase() ?? t("cvs")}
+            {uploadedAt ? ` · ${uploadedAt}` : ""}
+          </p>
+        </div>
       </div>
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium">{title}</p>
-        <p className="text-xs text-muted-foreground">
-          {fileType?.toUpperCase() ?? t("cvs")}
-          {uploadedAt ? ` · ${uploadedAt}` : ""}
-        </p>
-      </div>
-      <div className="flex shrink-0 gap-1.5">
+
+      {/* Row 2 — buttons */}
+      <div className="flex gap-1.5">
         <Button
           type="button"
           variant={isSelected ? "default" : "outline"}
           size="sm"
-          className="rounded-lg"
+          className="rounded-lg flex-1 text-xs"
           onClick={onSelect}
         >
           {t("details")}
         </Button>
         {cvUrl ? (
-          <Button asChild variant="outline" size="sm" className="rounded-lg">
+          <Button asChild variant="outline" size="sm" className="rounded-lg flex-1 text-xs">
             <a href={cvUrl} target="_blank" rel="noreferrer">
               {t("reviewCv")}
             </a>
@@ -1765,10 +1768,8 @@ function CvListItem({
           type="button"
           variant="destructive"
           size="sm"
-          className="rounded-lg"
-          onClick={() => {
-            void onDelete();
-          }}
+          className="rounded-lg px-2.5"
+          onClick={() => void onDelete()}
           disabled={isDeleting}
         >
           {isDeleting ? (
@@ -1817,7 +1818,7 @@ function CvSummaryPanel({
   }
 
   const analysis = getCvAnalysis(cv);
-  const hasAnalysis = hasCvAnalysisResults(cv);
+  // const hasAnalysis = hasCvAnalysisResults(cv);
   const statusMessage = getCvAnalysisStateMessage(cv, t);
   const title = getCvTitle(cv);
   const cvUrl = getCvUrl(cv);

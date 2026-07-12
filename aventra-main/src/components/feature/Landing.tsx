@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useLocaleFormat } from "@/hooks/useLocaleFormat";
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
@@ -23,13 +23,8 @@ import {
 import { useLogin, useUser } from "@/hooks/useAuth";
 import { useAuthStore } from "@/stores/auth-store";
 import { ROLES } from "@/constants/roles";
+import toast from "react-hot-toast";
 
-/*
-  --chart-accent is set on the root section:
-    light → var(--color-primary)
-    dark  → var(--color-sky)
-  Recharts SVG elements inherit it, so chart fills switch with the theme.
-*/
 
 const gaugeConfig = {
   score: { color: "var(--chart-accent)" },
@@ -426,7 +421,22 @@ export default function Landing() {
     t("trust.freeAnalysis"),
     t("trust.resumesAnalyzed"),
   ];
+  
+const router = useRouter();
 
+function handleUploadClick() {
+  if (!user) {
+    toast.error(t("cvUploadForUsersOnly"));
+     router.push("/");
+    return;
+  }
+  if (user.role === "company") {
+    toast.error(t("cvUploadForUsersOnly"));
+    return;
+  }
+  // user or admin
+  router.push("/user/cv-analysis");
+}
   return (
     <section
       className={cn(
@@ -499,7 +509,7 @@ export default function Landing() {
               size="lg"
               className="rounded-xl px-6"
             >
-              <Link href="/pricing">{t("seeHowItWorks")}</Link>
+              <Link href="/about">{t("seeHowItWorks")}</Link>
             </Button>
           </div>
 

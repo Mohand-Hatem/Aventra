@@ -170,7 +170,9 @@
     "profile": {
       "updateSuccess": "Profile updated successfully.",
       "uploadTimeout": "Upload timed out. If your profile was updated, refresh the page.",
-      "updateFailed": "Could not update profile. Please try again."
+      "updateFailed": "Could not update profile. Please try again.",
+      "deletePhotoSuccess": "Profile photo removed successfully",
+    "deletePhotoFailed": "Failed to remove profile photo"
     },
     "cv": {
       "uploadSuccess": "CV uploaded successfully.",
@@ -257,6 +259,7 @@
     "titleLine2": "interviews",
     "subtitle": "Upload your resume. Get an instant ATS score, fixable issues, and AI-rewritten bullets — built for engineers, by engineers.",
     "uploadResume": "Upload your resume →",
+    "cvUploadForUsersOnly": "CV Analysis is available for job seekers only.",
     "seeHowItWorks": "▶ See how it works",
     "searchCandidate": "Search Candidate",
     "uploadResumeBtn": "Upload Resume",
@@ -500,6 +503,7 @@
       }
     },
     "analyzeCv": "Analyze My CV",
+   
     "seePricing": "See Pricing",
     "b2cTrust": [
       "Free first analysis",
@@ -782,6 +786,7 @@
     "updateNameHint": "Change how your name appears on your profile.",
     "saveName": "Save name",
     "savePhoto": "Save photo",
+    "deletePhoto": "Delete photo",
     "maxTokens": "Max tokens",
     "viewFile": "View file",
     "strengths": "Strengths",

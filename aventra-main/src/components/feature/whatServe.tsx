@@ -399,7 +399,7 @@ export default function WhatServe() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg" className="rounded-xl px-6">
-                <Link href="/register">
+                <Link href="/user/cv-analysis">
                   {t("analyzeCv")} <IconArrowRight className="ml-1 size-4" />
                 </Link>
               </Button>
