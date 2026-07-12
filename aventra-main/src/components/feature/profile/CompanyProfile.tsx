@@ -713,7 +713,7 @@ export function CompanyProfile() {
                     </Button>
                   </div>
                 ) : (
-                  <ul className="max-h-80 overflow-y-scroll space-y-2 pr-1">
+                  <ul className="max-h-96 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-track]:w-0.5 [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-thumb]:rounded-full space-y-2 pr-0.5">
                     {searches.map((entry) => (
                       <li key={entry.id}>
                         <SearchHistoryItem
@@ -995,7 +995,7 @@ export function CompanyProfile() {
                     <Button
                       type="button"
                       size="sm"
-                      className="w-full rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-200 dark:hover:bg-sky/95"
+                      className="w-full rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky/40 dark:text-zinc-200 dark:hover:bg-sky/60"
                       onClick={(e) => {
                         e.preventDefault();
                         handleSubmit(
@@ -1013,7 +1013,7 @@ export function CompanyProfile() {
                         <>
                           <ScaleLoader
                             size="sm"
-                            className="text-white dark:text-zinc-950"
+                            className="text-white dark:text-sky"
                           />
                           <span className="ml-1.5">{tProfile("saving")}</span>
                         </>
@@ -1132,13 +1132,13 @@ export function CompanyProfile() {
                   <Button
                     type="submit"
                     disabled={isPending}
-                    className="w-full sm:w-auto px-6 h-10 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-200 dark:hover:bg-sky/95"
+                    className="w-full sm:w-auto px-6 h-10 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky/40 dark:text-zinc-200 dark:hover:bg-sky/60"
                   >
                     {isPending ? (
                       <>
                         <ScaleLoader
                           size="sm"
-                          className="text-white dark:text-zinc-950"
+                          className="text-white dark:text-sky"
                         />
                         <span className="ml-2">{tProfile("saving")}</span>
                       </>
@@ -1282,13 +1282,13 @@ export function CompanyProfile() {
                 <Button
                   type="submit"
                   disabled={changePasswordMutation.isPending}
-                  className="w-full sm:w-auto px-6 h-10 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-200 dark:hover:bg-sky/95"
+                  className="w-full sm:w-auto px-6 h-10 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky/40 dark:text-zinc-200 dark:hover:bg-sky/60"
                 >
                   {changePasswordMutation.isPending ? (
                     <>
                       <ScaleLoader
                         size="sm"
-                        className="text-white dark:text-zinc-950"
+                        className="text-white dark:text-sky"
                       />
                       <span className="ml-2">
                         {tProfile("updatingPassword")}

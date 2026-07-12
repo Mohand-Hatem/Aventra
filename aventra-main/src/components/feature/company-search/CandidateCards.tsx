@@ -283,7 +283,7 @@ export default function CandidateCards({
 
       {/* Candidate List — max 5 rows visible, then scroll */}
       <div
-        className="flex flex-col overflow-y-auto min-h-[120px]"
+        className="flex flex-col overflow-y-auto min-h-[120px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-track]:w-0.5 [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-thumb]:rounded-full"
         style={{ maxHeight: "calc(5 * 72px)" }}
       >
         {candidates.length === 0 ? (
@@ -405,8 +405,6 @@ export default function CandidateCards({
           })
         )}
       </div>
-
-
 
       {/* Selected Candidate Detail — below the list */}
       {selectedCandidate && (

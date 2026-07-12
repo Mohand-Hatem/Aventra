@@ -332,7 +332,9 @@ function CvDataSection({
           <div className="flex size-8 items-center justify-center rounded-xl bg-primary/10 dark:bg-sky/10">
             <Icon className="size-4 shrink-0 text-primary dark:text-sky" />
           </div>
-          <h3 className="text-sm font-bold tracking-tight text-foreground">{title}</h3>
+          <h3 className="text-sm font-bold tracking-tight text-foreground">
+            {title}
+          </h3>
         </div>
         {action}
       </div>
@@ -812,7 +814,8 @@ export function UserProfile() {
   }
 
   const avatarSrc = avatarPreview ?? user.avatar ?? undefined;
-  const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+  const DEFAULT_AVATAR =
+    "https://cdn-icons-png.flaticon.com/512/149/149071.png";
   const initials = getInitials(displayName);
   const hasAvatarChange = !!selectedAvatar;
   const insightEmpty = t("noAnalysisYet");
@@ -949,21 +952,25 @@ export function UserProfile() {
                       triggerClassName={cvDataActionClassName}
                       content={
                         <div className="space-y-3">
-                          {selectedCvSections.certifications.map((item, index) => (
-                            <div
-                              key={`${item.name ?? item.issuer ?? "cert-full"}-${index}`}
-                              className="rounded-xl border border-border/60 bg-muted/20 p-4"
-                            >
-                              <p className="text-sm font-semibold text-foreground">
-                                {item.name ?? t("cvDataUnknown")}
-                              </p>
-                              {item.issuer || item.date ? (
-                                <p className="mt-1.5 text-sm text-muted-foreground">
-                                  {[item.issuer, item.date].filter(Boolean).join(" • ")}
+                          {selectedCvSections.certifications.map(
+                            (item, index) => (
+                              <div
+                                key={`${item.name ?? item.issuer ?? "cert-full"}-${index}`}
+                                className="rounded-xl border border-border/60 bg-muted/20 p-4"
+                              >
+                                <p className="text-sm font-semibold text-foreground">
+                                  {item.name ?? t("cvDataUnknown")}
                                 </p>
-                              ) : null}
-                            </div>
-                          ))}
+                                {item.issuer || item.date ? (
+                                  <p className="mt-1.5 text-sm text-muted-foreground">
+                                    {[item.issuer, item.date]
+                                      .filter(Boolean)
+                                      .join(" • ")}
+                                  </p>
+                                ) : null}
+                              </div>
+                            ),
+                          )}
                         </div>
                       }
                     />
@@ -972,21 +979,25 @@ export function UserProfile() {
               >
                 {selectedCvSections.certifications.length > 0 ? (
                   <div className="space-y-3">
-                    {selectedCvSections.certifications.slice(0, 3).map((item, index) => (
-                      <div
-                        key={`${item.name ?? item.issuer ?? "cert"}-${index}`}
-                        className="rounded-xl border border-border/40 bg-background/80 px-3 py-3"
-                      >
-                        <p className="text-sm font-semibold text-foreground">
-                          {item.name ?? t("cvDataUnknown")}
-                        </p>
-                        {item.issuer || item.date ? (
-                          <p className="mt-1 text-xs text-muted-foreground">
-                            {[item.issuer, item.date].filter(Boolean).join(" • ")}
+                    {selectedCvSections.certifications
+                      .slice(0, 3)
+                      .map((item, index) => (
+                        <div
+                          key={`${item.name ?? item.issuer ?? "cert"}-${index}`}
+                          className="rounded-xl border border-border/40 bg-background/80 px-3 py-3"
+                        >
+                          <p className="text-sm font-semibold text-foreground">
+                            {item.name ?? t("cvDataUnknown")}
                           </p>
-                        ) : null}
-                      </div>
-                    ))}
+                          {item.issuer || item.date ? (
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              {[item.issuer, item.date]
+                                .filter(Boolean)
+                                .join(" • ")}
+                            </p>
+                          ) : null}
+                        </div>
+                      ))}
                   </div>
                 ) : (
                   <CvSectionPlaceholder
@@ -1018,7 +1029,9 @@ export function UserProfile() {
                               </p>
                               {(item.company || item.duration) && (
                                 <p className="mt-1.5 text-sm text-muted-foreground">
-                                  {[item.company, item.duration].filter(Boolean).join(" • ")}
+                                  {[item.company, item.duration]
+                                    .filter(Boolean)
+                                    .join(" • ")}
                                 </p>
                               )}
                               {item.description ? (
@@ -1036,26 +1049,30 @@ export function UserProfile() {
               >
                 {selectedCvSections.experience.length > 0 ? (
                   <div className="space-y-3">
-                    {selectedCvSections.experience.slice(0, 3).map((item, index) => (
-                      <div
-                        key={`${item.role ?? item.company ?? "experience"}-${index}`}
-                        className="rounded-xl border border-border/40 bg-background/80 px-3 py-3"
-                      >
-                        <p className="text-sm font-semibold text-foreground">
-                          {item.role ?? t("cvDataUnknown")}
-                        </p>
-                        {(item.company || item.duration) && (
-                          <p className="mt-1 text-xs text-muted-foreground">
-                            {[item.company, item.duration].filter(Boolean).join(" • ")}
+                    {selectedCvSections.experience
+                      .slice(0, 3)
+                      .map((item, index) => (
+                        <div
+                          key={`${item.role ?? item.company ?? "experience"}-${index}`}
+                          className="rounded-xl border border-border/40 bg-background/80 px-3 py-3"
+                        >
+                          <p className="text-sm font-semibold text-foreground">
+                            {item.role ?? t("cvDataUnknown")}
                           </p>
-                        )}
-                        {item.description ? (
-                          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                            {item.description}
-                          </p>
-                        ) : null}
-                      </div>
-                    ))}
+                          {(item.company || item.duration) && (
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              {[item.company, item.duration]
+                                .filter(Boolean)
+                                .join(" • ")}
+                            </p>
+                          )}
+                          {item.description ? (
+                            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                              {item.description}
+                            </p>
+                          ) : null}
+                        </div>
+                      ))}
                   </div>
                 ) : (
                   <CvSectionPlaceholder
@@ -1105,26 +1122,28 @@ export function UserProfile() {
               >
                 {selectedCvSections.education.length > 0 ? (
                   <div className="space-y-3">
-                    {selectedCvSections.education.slice(0, 3).map((item, index) => (
-                      <div
-                        key={`${item.degree ?? item.institution ?? "education"}-${index}`}
-                        className="rounded-xl border border-border/40 bg-background/80 px-3 py-3"
-                      >
-                        <p className="text-sm font-semibold text-foreground">
-                          {item.degree ?? t("cvDataUnknown")}
-                        </p>
-                        {item.institution ? (
-                          <p className="mt-1 text-xs text-muted-foreground">
-                            {item.institution}
+                    {selectedCvSections.education
+                      .slice(0, 3)
+                      .map((item, index) => (
+                        <div
+                          key={`${item.degree ?? item.institution ?? "education"}-${index}`}
+                          className="rounded-xl border border-border/40 bg-background/80 px-3 py-3"
+                        >
+                          <p className="text-sm font-semibold text-foreground">
+                            {item.degree ?? t("cvDataUnknown")}
                           </p>
-                        ) : null}
-                        {item.year ? (
-                          <p className="mt-2 text-xs font-medium text-muted-foreground">
-                            {item.year}
-                          </p>
-                        ) : null}
-                      </div>
-                    ))}
+                          {item.institution ? (
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              {item.institution}
+                            </p>
+                          ) : null}
+                          {item.year ? (
+                            <p className="mt-2 text-xs font-medium text-muted-foreground">
+                              {item.year}
+                            </p>
+                          ) : null}
+                        </div>
+                      ))}
                   </div>
                 ) : (
                   <CvSectionPlaceholder
@@ -1181,33 +1200,35 @@ export function UserProfile() {
               >
                 {selectedCvSections.projects.length > 0 ? (
                   <div className="space-y-3">
-                    {selectedCvSections.projects.slice(0, 2).map((item, index) => (
-                      <div
-                        key={`${item.name ?? item.description ?? "project"}-${index}`}
-                        className="rounded-xl border border-border/40 bg-background/80 px-3 py-3"
-                      >
-                        <p className="text-sm font-semibold text-foreground">
-                          {item.name ?? t("cvDataUnknown")}
-                        </p>
-                        {item.description ? (
-                          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                            {item.description}
+                    {selectedCvSections.projects
+                      .slice(0, 2)
+                      .map((item, index) => (
+                        <div
+                          key={`${item.name ?? item.description ?? "project"}-${index}`}
+                          className="rounded-xl border border-border/40 bg-background/80 px-3 py-3"
+                        >
+                          <p className="text-sm font-semibold text-foreground">
+                            {item.name ?? t("cvDataUnknown")}
                           </p>
-                        ) : null}
-                        {item.technologies.length > 0 ? (
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {item.technologies.map((tech) => (
-                              <span
-                                key={tech}
-                                className="rounded-lg border border-border/40 bg-muted/30 px-2 py-1 text-[11px] font-medium text-muted-foreground"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                        ) : null}
-                      </div>
-                    ))}
+                          {item.description ? (
+                            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                              {item.description}
+                            </p>
+                          ) : null}
+                          {item.technologies.length > 0 ? (
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {item.technologies.map((tech) => (
+                                <span
+                                  key={tech}
+                                  className="rounded-lg border border-border/40 bg-muted/30 px-2 py-1 text-[11px] font-medium text-muted-foreground"
+                                >
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                          ) : null}
+                        </div>
+                      ))}
                   </div>
                 ) : (
                   <CvSectionPlaceholder
@@ -1347,7 +1368,7 @@ export function UserProfile() {
                     <Button
                       type="button"
                       size="sm"
-                      className="w-full rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-200 dark:hover:bg-sky/95"
+                      className="w-full rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky/40 dark:text-zinc-200 dark:hover:bg-sky/60"
                       onClick={(e) => {
                         e.preventDefault();
                         handleSubmit(
@@ -1369,7 +1390,7 @@ export function UserProfile() {
                         <>
                           <ScaleLoader
                             size="sm"
-                            className="text-white dark:text-zinc-950"
+                            className="text-white dark:text-sky"
                           />
                           <span className="ml-1.5">{t("saving")}</span>
                         </>
@@ -1491,13 +1512,13 @@ export function UserProfile() {
                   <Button
                     type="submit"
                     disabled={isPending}
-                    className="w-full sm:w-auto px-6 h-10 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-200 dark:hover:bg-sky/95"
+                    className="w-full sm:w-auto px-6 h-10 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky/40 dark:text-zinc-200 dark:hover:bg-sky/60"
                   >
                     {isPending ? (
                       <>
                         <ScaleLoader
                           size="sm"
-                          className="text-white dark:text-zinc-950"
+                          className="text-white dark:text-sky"
                         />
                         <span className="ml-2">{t("saving")}</span>
                       </>
@@ -1639,13 +1660,13 @@ export function UserProfile() {
                 <Button
                   type="submit"
                   disabled={changePasswordMutation.isPending}
-                  className="w-full sm:w-auto px-6 h-10 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-200 dark:hover:bg-sky/95"
+                  className="w-full sm:w-auto px-6 h-10 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky/40 dark:text-zinc-200 dark:hover:bg-sky/60"
                 >
                   {changePasswordMutation.isPending ? (
                     <>
                       <ScaleLoader
                         size="sm"
-                        className="text-white dark:text-zinc-950"
+                        className="text-white dark:text-sky"
                       />
                       <span className="ml-2">{t("updatingPassword")}</span>
                     </>
@@ -1703,7 +1724,7 @@ export function UserProfile() {
   );
 }
 
-function CvListItem ({
+function CvListItem({
   cv,
   isSelected,
   locale,
@@ -1726,12 +1747,14 @@ function CvListItem ({
   const cvUrl = getCvUrl(cv);
 
   return (
-     <li className={cn(
-      "flex flex-col gap-2 rounded-xl border p-3 transition-colors",
-      isSelected
-        ? "border-primary/40 bg-primary/5 dark:border-sky/40 dark:bg-sky/5"
-        : "border-border/60 bg-card dark:border-border/40",
-    )}>
+    <li
+      className={cn(
+        "flex flex-col gap-2 rounded-xl border p-3 transition-colors",
+        isSelected
+          ? "border-primary/40 bg-primary/5 dark:border-sky/40 dark:bg-sky/5"
+          : "border-border/60 bg-card dark:border-border/40",
+      )}
+    >
       {/* Row 1 — icon + name */}
       <div className="flex items-center gap-3">
         <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary dark:bg-sky/10 dark:text-sky">
@@ -1758,7 +1781,12 @@ function CvListItem ({
           {t("details")}
         </Button>
         {cvUrl ? (
-          <Button asChild variant="outline" size="sm" className="rounded-lg flex-1 text-xs">
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="rounded-lg flex-1 text-xs"
+          >
             <a href={cvUrl} target="_blank" rel="noreferrer">
               {t("reviewCv")}
             </a>

@@ -163,7 +163,7 @@ export default function FloatingChat({
         {/* Conversation Body */}
         <div
           ref={scrollRef}
-          className="flex-1 overflow-y-auto bg-muted/10 p-4 space-y-4 scroll-smooth"
+          className="flex-1 overflow-y-auto bg-muted/10 p-4 space-y-4 scroll-smooth [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-track]:w-0.5 [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-thumb]:rounded-full"
         >
           {messages.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center px-4 space-y-4">

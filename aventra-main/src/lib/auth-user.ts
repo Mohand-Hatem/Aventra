@@ -18,7 +18,13 @@ function isLocalizedName(value: unknown): value is LocalizedName {
 }
 
 function normalizeAuthUserName(value: unknown): string | LocalizedName {
-  if (typeof value === "string") return value;
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      if (isLocalizedName(parsed)) return normalizeLocalizedName(parsed);
+    } catch {}
+    return value;
+  }
   if (isLocalizedName(value)) return normalizeLocalizedName(value);
   return "";
 }

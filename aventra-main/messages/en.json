@@ -123,7 +123,7 @@
     "suggestionsTitle": "Suggestions to improve",
     "waiting": "Waiting for analysis...",
     "fileReady": "File ready for analysis",
-    "analyzing": "Analyzing your CV...",
+    "analyzing": "Analyzing...",
     "statusUploaded": "Uploaded",
     "statusAnalyzed": "Analysis ready",
     "invalidFile": "Please select a PDF or DOCX file only.",
@@ -172,7 +172,7 @@
       "uploadTimeout": "Upload timed out. If your profile was updated, refresh the page.",
       "updateFailed": "Could not update profile. Please try again.",
       "deletePhotoSuccess": "Profile photo removed successfully",
-    "deletePhotoFailed": "Failed to remove profile photo"
+      "deletePhotoFailed": "Failed to remove profile photo"
     },
     "cv": {
       "uploadSuccess": "CV uploaded successfully.",
@@ -294,27 +294,14 @@
       "Missing: React, AWS",
       "Inconsistent dates"
     ],
-    "strengthsList": [
-      "Strong metrics",
-      "Clear outcomes",
-      "Relevant stack"
-    ],
+    "strengthsList": ["Strong metrics", "Clear outcomes", "Relevant stack"],
     "suggestionsList": [
       "Add CI/CD experience",
       "Include open source",
       "Add certifications"
     ],
-    "tags": [
-      "React",
-      "TypeScript",
-      "AWS"
-    ],
-    "searchTags": [
-      "Senior FE",
-      "React",
-      "AWS",
-      "5+ yrs"
-    ],
+    "tags": ["React", "TypeScript", "AWS"],
+    "searchTags": ["Senior FE", "React", "AWS", "5+ yrs"],
     "candidates": [
       {
         "name": "Ahmed M.",
@@ -428,14 +415,7 @@
     "companySearch": "Company Search",
     "matchScore": "Match score",
     "activelySearching": "Actively Searching",
-    "weekDays": [
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri",
-      "Sat"
-    ],
+    "weekDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
     "topCandidates": [
       {
         "initials": "AM",
@@ -461,11 +441,7 @@
     "topMatchCandidate": {
       "name": "Sara K.",
       "role": "ML Engineer",
-      "tags": [
-        "Python",
-        "ML",
-        "AWS"
-      ]
+      "tags": ["Python", "ML", "AWS"]
     },
     "altAts": "ATS AI platform",
     "altCompany": "Company hiring platform",
@@ -503,13 +479,9 @@
       }
     },
     "analyzeCv": "Analyze My CV",
-   
+
     "seePricing": "See Pricing",
-    "b2cTrust": [
-      "Free first analysis",
-      "No credit card",
-      "Results in seconds"
-    ],
+    "b2cTrust": ["Free first analysis", "No credit card", "Results in seconds"],
     "cvsScored": "47,300+ CVs Scored",
     "b2bBadge": "B2B · For Companies",
     "b2bTitle": "Find your next hire with AI-ranked candidate search",
@@ -534,11 +506,7 @@
     },
     "startHiring": "Start Hiring",
     "viewPlans": "View Plans",
-    "b2bTrust": [
-      "14-day free trial",
-      "No setup fee",
-      "Cancel anytime"
-    ],
+    "b2bTrust": ["14-day free trial", "No setup fee", "Cancel anytime"],
     "aiRankedRealtime": "AI-Ranked in Real-time",
     "cvCard": {
       "title": "CV Analysis",
@@ -573,13 +541,7 @@
     "searchCard": {
       "query": "React Developer, 5+ years…",
       "smartFilters": "Smart Filters",
-      "filters": [
-        "Computer Science",
-        "React",
-        "5+ yrs",
-        "Remote",
-        "B.Sc+"
-      ],
+      "filters": ["Computer Science", "React", "5+ yrs", "Remote", "B.Sc+"],
       "aiResults": "AI-Ranked Results",
       "matches": "3 matches",
       "viewAll": "View All Candidates →",
@@ -1380,4 +1342,3 @@
     "resultsFor": "Results for"
   }
 }
-

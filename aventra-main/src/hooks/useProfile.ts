@@ -13,22 +13,10 @@ const PROFILE_UPLOAD_TIMEOUT_MS = 120_000;
 
 const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
+import { parseAuthUserPayload } from "@/lib/auth-user";
+
 function extractUpdatedUser(data: unknown): AuthUser | null {
-  if (!data || typeof data !== "object") return null;
-  const record = data as Record<string, unknown>;
-  if (record.user && typeof record.user === "object") {
-    return record.user as AuthUser;
-  }
-  if (record.data && typeof record.data === "object") {
-    const nested = record.data as Record<string, unknown>;
-    if (nested.user && typeof nested.user === "object") {
-      return nested.user as AuthUser;
-    }
-  }
-  if ("id" in record && "email" in record) {
-    return record as unknown as AuthUser;
-  }
-  return null;
+  return parseAuthUserPayload(data);
 }
 
 function extractAvatarUrl(data: unknown): string | null | undefined {
@@ -62,7 +50,17 @@ function mergeProfileIntoUser(
 
   return {
     ...current,
-    ...extracted,
+    ...(extracted || {}),
+    // Safe fallbacks for fields that the update endpoint might not return or populate
+    cvs: extracted?.cvs && extracted.cvs.length > 0 ? extracted.cvs : current.cvs,
+    plan: extracted?.plan ?? current.plan,
+    maxToken: extracted?.maxToken ?? current.maxToken,
+    tokenUsage: extracted?.tokenUsage ?? current.tokenUsage,
+    searchCount: extracted?.searchCount ?? current.searchCount,
+    googleId: extracted?.googleId ?? current.googleId,
+    createdAt: extracted?.createdAt ?? current.createdAt,
+    updatedAt: extracted?.updatedAt ?? current.updatedAt,
+    // Explicit overrides for the fields we know we just updated
     name: payload.name ?? extracted?.name ?? current.name,
     avatar: avatarUrl ?? extracted?.avatar ?? current.avatar,
   };

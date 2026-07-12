@@ -35,7 +35,7 @@ export default function PricingCard({
   const isHighlighted = (isGoldCard || featured) && !isAdminUnlimited;
 
   const loaderColorClass = isAdminUnlimited
-    ? "text-primary-foreground dark:text-zinc-950"
+    ? "text-primary-foreground dark:text-sky"
     : isGoldCard
       ? "text-amber-600 dark:text-amber-600"
       : featured
@@ -70,7 +70,7 @@ export default function PricingCard({
               "rounded bg-blue-600 px-3 py-1.5 text-[10px] font-bold text-white shadow tracking-widest uppercase",
               isGoldCard && "bg-amber-500 text-white",
               isAdminUnlimited &&
-                "bg-primary dark:bg-sky text-primary-foreground dark:text-zinc-200",
+                "bg-primary dark:bg-sky/40 text-primary-foreground dark:text-zinc-200",
             )}
             style={{
               clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%)",
@@ -211,7 +211,7 @@ export default function PricingCard({
           className={cn(
             "mt-8 block w-full rounded-xl py-3 text-center text-sm font-semibold",
             isAdminUnlimited
-              ? "bg-primary text-primary-foreground dark:bg-sky dark:text-zinc-200 shadow-md font-bold"
+              ? "bg-primary text-primary-foreground dark:bg-sky/40 dark:text-zinc-200 shadow-md font-bold"
               : isHighlighted
                 ? "bg-white/20 text-white"
                 : "border-2 border-primary/30 dark:border-sky/30 text-primary dark:text-sky",
@@ -226,7 +226,7 @@ export default function PricingCard({
           className={cn(
             "mt-8 block w-full rounded-xl py-3 text-center text-sm font-semibold transition-all duration-200 border-2",
             isAdminUnlimited
-              ? "bg-primary text-primary-foreground hover:bg-primary/95 dark:bg-sky dark:text-zinc-200 dark:hover:bg-sky/95 shadow-md border-transparent"
+              ? "bg-primary text-primary-foreground hover:bg-primary/95 dark:bg-sky/40 dark:text-zinc-200 dark:hover:bg-sky/60 shadow-md border-transparent"
               : isGoldCard
                 ? "bg-white text-amber-600 hover:bg-white/90 shadow border-transparent"
                 : featured

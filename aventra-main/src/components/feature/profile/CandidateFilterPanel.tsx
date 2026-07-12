@@ -78,7 +78,7 @@ function TagCloud({
         {icon}
         <span>{label}</span>
       </div>
-      <div className="max-h-28 overflow-y-scroll flex flex-wrap gap-1.5 rounded-xl border border-border/60 bg-background/60 p-2.5">
+      <div className="max-h-40 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-track]:w-0.5 [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-thumb]:rounded-full flex flex-wrap gap-1.5 rounded-xl border border-border/60 bg-background/60 p-2.5">
         {options.map((option) => {
           const active = selected.includes(option);
           return (
@@ -168,9 +168,7 @@ export function CandidateFilterPanel({
     value: string,
   ) {
     setList(
-      list.includes(value)
-        ? list.filter((v) => v !== value)
-        : [...list, value],
+      list.includes(value) ? list.filter((v) => v !== value) : [...list, value],
     );
   }
 
@@ -235,8 +233,12 @@ export function CandidateFilterPanel({
 
   return (
     <div className="flex h-full flex-col gap-5">
-      <div className="max-h-[420px] overflow-y-scroll space-y-5 pr-1">
-        <ScoreSlider label={t("atsRange")} value={minAts} onChange={setMinAts} />
+      <div className="max-h-[420px] overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-track]:w-0.5 [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-thumb]:rounded-full space-y-5 pr-1">
+        <ScoreSlider
+          label={t("atsRange")}
+          value={minAts}
+          onChange={setMinAts}
+        />
         <ScoreSlider
           label={t("matchRange")}
           value={minMatch}

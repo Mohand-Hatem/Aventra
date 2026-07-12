@@ -207,7 +207,7 @@ function CVAnalysisCard() {
           </div>
         </div>
 
-        <button className="w-full rounded-xl bg-primary py-2 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90 dark:bg-sky dark:text-foreground">
+        <button className="w-full rounded-xl bg-primary py-2 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90 dark:bg-sky/40 dark:text-zinc-200 dark:hover:bg-sky/60">
           {t("cvCard.improveNow")}
         </button>
       </div>
@@ -311,7 +311,7 @@ function CandidateSearchCard() {
           </div>
         </div>
 
-        <button className="w-full rounded-xl bg-primary py-2 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90 dark:bg-sky dark:text-foreground">
+        <button className="w-full rounded-xl bg-primary py-2 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90 dark:bg-sky/40 dark:text-zinc-200 dark:hover:bg-sky/60">
           {t("searchCard.viewAll")}
         </button>
       </div>

@@ -1144,7 +1144,7 @@ export default function CvAnalysisContent() {
                     }
                   />
 
-                  <div className="grid gap-3 grid-cols-2">
+                  <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
                     <Button
                       type="button"
                       variant="outline"
@@ -1171,7 +1171,7 @@ export default function CvAnalysisContent() {
                     <Button
                       type="button"
                       size="lg"
-                      className="h-11 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky dark:text-zinc-200 dark:hover:bg-sky/95"
+                      className="h-11 rounded-xl bg-primary text-white hover:bg-primary/95 dark:bg-sky/40 dark:text-zinc-200 dark:hover:bg-sky/60"
                       onClick={handleAnalyze}
                       disabled={
                         !readyToAnalyzeCvId ||
@@ -1182,7 +1182,13 @@ export default function CvAnalysisContent() {
                     >
                       {analyzeCv.isPending || isAwaitingAnalysis ? (
                         <>
-                          <ScaleLoader size="sm" />
+                          <ScaleLoader
+                            size="sm"
+                            className="text-white dark:text-sky"
+                          />
+                          <span className="ml-1.5 text-sm">
+                            {t("analyzing")}
+                          </span>
                         </>
                       ) : (
                         <>
