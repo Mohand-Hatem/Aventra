@@ -618,6 +618,9 @@ export function UserProfile() {
   });
 
   const selectedAvatar = useWatch({ control, name: "avatar" });
+  const watchNameEn = useWatch({ control, name: "name.en" });
+  const watchNameAr = useWatch({ control, name: "name.ar" });
+  const displayName = user ? getUserDisplayName(user.name, locale) : "";
   const currentName = user
     ? normalizeLocalizedName(user.name)
     : { en: "", ar: "" };
@@ -1465,6 +1468,7 @@ export function UserProfile() {
                     <Input
                       id="name-en"
                       autoComplete="off"
+                      value={watchNameEn || ""}
                       placeholder={currentName.en || displayName || ""}
                       aria-invalid={!!errors.name?.en}
                       className={inputClassName(!!errors.name?.en)}
@@ -1482,6 +1486,7 @@ export function UserProfile() {
                     <Input
                       id="name-ar"
                       autoComplete="off"
+                      value={watchNameAr || ""}
                       placeholder={currentName.ar || displayName || ""}
                       aria-invalid={!!errors.name?.ar}
                       className={inputClassName(!!errors.name?.ar)}
