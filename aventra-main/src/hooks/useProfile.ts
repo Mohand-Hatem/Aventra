@@ -93,10 +93,16 @@ async function updateUserProfile(
     return response.data;
   }
 
+  console.log("[DEBUG] Sending profile update payload to backend:", {
+    name: payload.name,
+    hasAvatar: !!payload.avatar,
+  });
+
   const response = await axiosInstance.put("/users/update-profile", {
     name: payload.name,
   });
 
+  console.log("[DEBUG] Backend JSON response:", response.data);
   return response.data;
 }
 
@@ -119,11 +125,14 @@ export function useUpdateUserProfile() {
       setUploadProgress(null);
     },
     onSuccess: async (data, payload) => {
+      console.log("[DEBUG] Mutation onSuccess triggered. Data:", data, "Payload:", payload);
       const current = queryClient.getQueryData<AuthUser | null>(queryKeys.auth.user);
       let user = extractUpdatedUser(data);
+      console.log("[DEBUG] Extracted user from backend response:", user);
 
       if (current) {
         user = mergeProfileIntoUser(current, payload, data);
+        console.log("[DEBUG] Merged user state:", user);
       }
 
       if (payload.avatar) {
