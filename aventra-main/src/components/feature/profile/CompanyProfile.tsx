@@ -433,8 +433,6 @@ export function CompanyProfile() {
   });
 
   const selectedAvatar = useWatch({ control, name: "avatar" });
-  const watchNameEn = useWatch({ control, name: "name.en" });
-  const watchNameAr = useWatch({ control, name: "name.ar" });
   const displayName = user ? getUserDisplayName(user.name, locale) : "";
   const currentName = user
     ? normalizeLocalizedName(user.name)
@@ -1051,9 +1049,10 @@ export function CompanyProfile() {
                       {tRegister("englishName")}
                     </Label>
                     <Input
+                      key={`en-${currentName.en}`}
                       id="company-name-en"
                       autoComplete="off"
-                      value={watchNameEn || ""}
+                      defaultValue={currentName.en}
                       placeholder={currentName.en || displayName || ""}
                       aria-invalid={!!errors.name?.en}
                       className={inputClassName(!!errors.name?.en)}
@@ -1071,9 +1070,10 @@ export function CompanyProfile() {
                       {tRegister("arabicName")}
                     </Label>
                     <Input
+                      key={`ar-${currentName.ar}`}
                       id="company-name-ar"
                       autoComplete="off"
-                      value={watchNameAr || ""}
+                      defaultValue={currentName.ar}
                       placeholder={currentName.ar || displayName || ""}
                       aria-invalid={!!errors.name?.ar}
                       className={inputClassName(!!errors.name?.ar)}

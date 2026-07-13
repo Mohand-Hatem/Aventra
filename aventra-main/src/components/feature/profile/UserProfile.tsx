@@ -618,8 +618,6 @@ export function UserProfile() {
   });
 
   const selectedAvatar = useWatch({ control, name: "avatar" });
-  const watchNameEn = useWatch({ control, name: "name.en" });
-  const watchNameAr = useWatch({ control, name: "name.ar" });
   const currentName = user
     ? normalizeLocalizedName(user.name)
     : { en: "", ar: "" };
@@ -1453,9 +1451,10 @@ export function UserProfile() {
                   <div className="space-y-2">
                     <Label htmlFor="name-en">{tRegister("englishName")}</Label>
                     <Input
+                      key={`en-${currentName.en}`}
                       id="name-en"
                       autoComplete="off"
-                      value={watchNameEn || ""}
+                      defaultValue={currentName.en}
                       placeholder={currentName.en || displayName || ""}
                       aria-invalid={!!errors.name?.en}
                       className={inputClassName(!!errors.name?.en)}
@@ -1471,9 +1470,10 @@ export function UserProfile() {
                   <div className="space-y-2">
                     <Label htmlFor="name-ar">{tRegister("arabicName")}</Label>
                     <Input
+                      key={`ar-${currentName.ar}`}
                       id="name-ar"
                       autoComplete="off"
-                      value={watchNameAr || ""}
+                      defaultValue={currentName.ar}
                       placeholder={currentName.ar || displayName || ""}
                       aria-invalid={!!errors.name?.ar}
                       className={inputClassName(!!errors.name?.ar)}
