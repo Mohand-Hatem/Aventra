@@ -143,9 +143,10 @@ export function useUpdateUserProfile() {
 
       if (user) {
         syncAuthUser(queryClient, user);
-      } else {
-        await queryClient.invalidateQueries({ queryKey: queryKeys.auth.user });
       }
+      
+      // Always invalidate to ensure backend state is strictly synced
+      await queryClient.invalidateQueries({ queryKey: queryKeys.auth.user });
 
       toast.success(t("updateSuccess"));
     },
