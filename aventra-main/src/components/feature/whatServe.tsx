@@ -424,8 +424,8 @@ export default function WhatServe() {
           </div>
 
           {/* Right: visual */}
-          <div className="relative flex items-center justify-center">
-            <div className="relative h-auto sm:h-[520px] w-full overflow-hidden rounded-3xl">
+          <div className="relative flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-0 mt-8 sm:mt-0">
+            <div className="relative h-[280px] sm:h-[520px] w-full overflow-hidden rounded-3xl shrink-0">
               <Image
                 src="/serve1.jpg"
                 alt={t("altJobSeeker")}
@@ -437,11 +437,11 @@ export default function WhatServe() {
               <div className="absolute inset-0 bg-linear-to-t from-background/80 via-transparent to-transparent" />
             </div>
 
-            <div className="absolute -bottom-4 -left-4 z-10 max-w-[280px] sm:-bottom-6 sm:-left-6 sm:max-w-sm">
+            <div className="relative sm:absolute sm:-bottom-6 sm:-left-6 z-10 w-full flex justify-center sm:block sm:w-auto sm:max-w-sm">
               <CVAnalysisCard />
             </div>
 
-            <div className="absolute right-4 top-4 flex items-center gap-2 rounded-full border border-border/60 bg-card/90 px-3 py-2 shadow-card backdrop-blur-sm">
+            <div className="hidden sm:flex absolute right-4 top-4 items-center gap-2 rounded-full border border-border/60 bg-card/90 px-3 py-2 shadow-card backdrop-blur-sm">
               <IconStarFilled className="size-4 text-amber-400" />
               <span className="text-xs font-semibold text-foreground">
                 {t("cvsScored")}
@@ -453,8 +453,8 @@ export default function WhatServe() {
         {/* ── B2B — For Companies ── */}
         <div className="grid items-center gap-8 md:gap-12 lg:grid-cols-2 lg:gap-20">
           {/* Left: visual */}
-          <div className="relative flex items-center justify-center order-last lg:order-first">
-            <div className="relative h-auto sm:h-[520px] w-full overflow-hidden rounded-3xl">
+          <div className="relative flex flex-col sm:flex-row items-center justify-center order-last lg:order-first gap-6 sm:gap-0 mt-8 sm:mt-0">
+            <div className="relative h-[280px] sm:h-[520px] w-full overflow-hidden rounded-3xl shrink-0">
               <Image
                 src="/serve2.jpg"
                 alt={t("altHrTeam")}
@@ -466,11 +466,11 @@ export default function WhatServe() {
               <div className="absolute inset-0 bg-linear-to-t from-background/80 via-transparent to-transparent" />
             </div>
 
-            <div className="absolute -bottom-4 -right-4 z-10 max-w-[280px] sm:-bottom-6 sm:-right-6 sm:max-w-sm">
+            <div className="relative sm:absolute sm:-bottom-6 sm:-right-6 z-10 w-full flex justify-center sm:block sm:w-auto sm:max-w-sm">
               <CandidateSearchCard />
             </div>
 
-            <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-border/60 bg-card/90 px-3 py-2 shadow-card backdrop-blur-sm">
+            <div className="hidden sm:flex absolute left-4 top-4 items-center gap-2 rounded-full border border-border/60 bg-card/90 px-3 py-2 shadow-card backdrop-blur-sm">
               <IconRobot className="size-4 text-primary dark:text-sky" />
               <span className="text-xs font-semibold text-foreground">
                 {t("aiRankedRealtime")}

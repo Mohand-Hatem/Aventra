@@ -25,7 +25,6 @@ import { useAuthStore } from "@/stores/auth-store";
 import { ROLES } from "@/constants/roles";
 import toast from "react-hot-toast";
 
-
 const gaugeConfig = {
   score: { color: "var(--chart-accent)" },
 } satisfies ChartConfig;
@@ -421,28 +420,29 @@ export default function Landing() {
     t("trust.freeAnalysis"),
     t("trust.resumesAnalyzed"),
   ];
-  
-const router = useRouter();
 
-function handleUploadClick() {
-  if (!user) {
-    toast.error(t("cvUploadForUsersOnly"));
-     router.push("/");
-    return;
+  const router = useRouter();
+
+  function handleUploadClick() {
+    if (!user) {
+      toast.error(t("cvUploadForUsersOnly"));
+      router.push("/");
+      return;
+    }
+    if (user.role === "company") {
+      toast.error(t("cvUploadForUsersOnly"));
+      return;
+    }
+    // user or admin
+    router.push("/user/cv-analysis");
   }
-  if (user.role === "company") {
-    toast.error(t("cvUploadForUsersOnly"));
-    return;
-  }
-  // user or admin
-  router.push("/user/cv-analysis");
-}
   return (
     <section
       className={cn(
         "relative min-h-screen w-full overflow-y-auto lg:overflow-hidden bg-background",
-
         "[--chart-accent:var(--color-primary)] dark:[--chart-accent:var(--color-sky)]",
+        "pt-10", // Mobile: pushes content down 16px
+        "lg:pt-0", // Desktop: reset to default (0)
       )}
     >
       {/* gradient tint */}

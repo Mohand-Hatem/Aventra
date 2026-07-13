@@ -813,7 +813,7 @@ export function UserProfile() {
   return (
     <div
       className={cn(
-        "relative mx-auto mt-10 flex w-full max-w-[1550px] flex-col gap-6 lg:flex-row lg:items-start",
+        "relative mx-auto lg:p-10 mt-5 flex  md:cc w-full max-w-[1550px] flex-col gap-6 lg:flex-row lg:items-start",
         isRefreshing && "opacity-90",
       )}
     >
