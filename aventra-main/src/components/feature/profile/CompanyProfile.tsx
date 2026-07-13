@@ -559,23 +559,11 @@ export function CompanyProfile() {
         en: values.name.en.trim(),
         ar: values.name.ar.trim(),
       };
-
-      if (
-        nextName.en !== currentName.en.trim() ||
-        nextName.ar !== currentName.ar.trim()
-      ) {
-        payload.name = nextName;
-      }
+      payload.name = nextName;
     }
 
     if (fields.includes("avatar") && values.avatar) {
       payload.avatar = values.avatar;
-    }
-
-    // No changes detected — tell the user instead of silently doing nothing.
-    if (!payload.name && !payload.avatar) {
-      toast.error(tProfile("noChangesToSave") || "No changes to save.");
-      return;
     }
 
     updateProfile(payload, {
