@@ -151,6 +151,10 @@ interface LegacyCandidateResult {
   linkedin?: string;
   github?: string;
   parsedData?: {
+    skills?: {
+      technical?: string[];
+      soft?: string[];
+    };
     education?: CandidateEducation[];
     experience?: CandidateExperience[];
     projects?: CandidateProject[];
