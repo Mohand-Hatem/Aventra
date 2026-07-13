@@ -1465,6 +1465,7 @@ export function UserProfile() {
                     <Input
                       id="name-en"
                       autoComplete="off"
+                      placeholder={currentName.en || displayName || ""}
                       aria-invalid={!!errors.name?.en}
                       className={inputClassName(!!errors.name?.en)}
                       {...register("name.en")}
@@ -1481,6 +1482,7 @@ export function UserProfile() {
                     <Input
                       id="name-ar"
                       autoComplete="off"
+                      placeholder={currentName.ar || displayName || ""}
                       aria-invalid={!!errors.name?.ar}
                       className={inputClassName(!!errors.name?.ar)}
                       dir="rtl"

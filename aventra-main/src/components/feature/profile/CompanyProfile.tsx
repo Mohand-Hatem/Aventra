@@ -570,7 +570,11 @@ export function CompanyProfile() {
       payload.avatar = values.avatar;
     }
 
-    if (!payload.name && !payload.avatar) return;
+    // No changes detected — tell the user instead of silently doing nothing.
+    if (!payload.name && !payload.avatar) {
+      toast.error(tProfile("noChangesToSave") || "No changes to save.");
+      return;
+    }
 
     updateProfile(payload, {
       onSuccess: () => {
@@ -582,6 +586,14 @@ export function CompanyProfile() {
         if (avatarInputRef.current) {
           avatarInputRef.current.value = "";
         }
+      },
+      onError: (err: unknown) => {
+        const axiosErr = err as {
+          response?: { data?: { message?: string } };
+        };
+        const msg =
+          axiosErr.response?.data?.message ?? "Failed to update profile.";
+        toast.error(msg);
       },
     });
   };
@@ -958,11 +970,15 @@ export function CompanyProfile() {
                         e.preventDefault();
                         handleSubmit(
                           (values) => submitProfileUpdate(values, ["avatar"]),
-                          (errs) =>
+                          (errs) => {
                             console.error(
                               "Company avatar form validation errors:",
                               errs,
-                            ),
+                            );
+                            if (errs.avatar?.message) {
+                              toast.error(String(errs.avatar.message));
+                            }
+                          },
                         )(e);
                       }}
                       disabled={isPending}
@@ -1024,11 +1040,17 @@ export function CompanyProfile() {
                   e.preventDefault();
                   handleSubmit(
                     (values) => submitProfileUpdate(values, ["name"]),
-                    (errs) =>
+                    (errs) => {
                       console.error(
                         "Company name form validation errors:",
                         errs,
-                      ),
+                      );
+                      const firstError =
+                        errs.name?.en?.message || errs.name?.ar?.message;
+                      if (firstError) {
+                        toast.error(String(firstError));
+                      }
+                    },
                   )(e);
                 }}
                 className="space-y-4"
@@ -1041,6 +1063,7 @@ export function CompanyProfile() {
                     <Input
                       id="company-name-en"
                       autoComplete="off"
+                      placeholder={currentName.en || displayName || ""}
                       aria-invalid={!!errors.name?.en}
                       className={inputClassName(!!errors.name?.en)}
                       {...register("name.en")}
@@ -1059,6 +1082,7 @@ export function CompanyProfile() {
                     <Input
                       id="company-name-ar"
                       autoComplete="off"
+                      placeholder={currentName.ar || displayName || ""}
                       aria-invalid={!!errors.name?.ar}
                       className={inputClassName(!!errors.name?.ar)}
                       dir="rtl"
