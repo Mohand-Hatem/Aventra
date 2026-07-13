@@ -432,11 +432,11 @@ shadow-card p-6 sm:p-10"
             </h2>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {teamMembers.map((member) => (
               <Card
                 key={member.name}
-                className="w-[calc(50%-0.5rem)] sm:w-56 lg:w-64"
+                className=""
               >
                 <CardContent className="flex flex-col items-center gap-3 text-center">
                   <span className="flex size-16 items-center justify-center rounded-full bg-linear-to-br from-primary to-sky text-lg font-bold text-primary-foreground">

@@ -330,7 +330,7 @@ export default function WhatServe() {
   const b2bTrust = t.raw("b2bTrust") as string[];
 
   return (
-    <section className="relative w-full overflow-hidden bg-background px-4 py-24 sm:px-6 [--chart-accent:var(--color-primary)] dark:[--chart-accent:var(--color-sky)]">
+    <section className="relative w-full overflow-hidden bg-background px-4 py-12 sm:py-16 sm:px-6 lg:py-24 [--chart-accent:var(--color-primary)] dark:[--chart-accent:var(--color-sky)]">
       {/* ambient glows */}
       <div
         aria-hidden
@@ -359,7 +359,7 @@ export default function WhatServe() {
         </div>
 
         {/* ── B2C — For Job Seekers ── */}
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+        <div className="grid items-center gap-8 md:gap-12 lg:grid-cols-2 lg:gap-20">
           {/* Left: copy */}
           <div className="flex flex-col">
             <Badge className="w-fit border-primary/30 bg-primary/10 text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
@@ -425,7 +425,7 @@ export default function WhatServe() {
 
           {/* Right: visual */}
           <div className="relative flex items-center justify-center">
-            <div className="relative h-[520px] w-full overflow-hidden rounded-3xl">
+            <div className="relative h-auto sm:h-[520px] w-full overflow-hidden rounded-3xl">
               <Image
                 src="/serve1.jpg"
                 alt={t("altJobSeeker")}
@@ -451,10 +451,10 @@ export default function WhatServe() {
         </div>
 
         {/* ── B2B — For Companies ── */}
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+        <div className="grid items-center gap-8 md:gap-12 lg:grid-cols-2 lg:gap-20">
           {/* Left: visual */}
           <div className="relative flex items-center justify-center order-last lg:order-first">
-            <div className="relative h-[520px] w-full overflow-hidden rounded-3xl">
+            <div className="relative h-auto sm:h-[520px] w-full overflow-hidden rounded-3xl">
               <Image
                 src="/serve2.jpg"
                 alt={t("altHrTeam")}

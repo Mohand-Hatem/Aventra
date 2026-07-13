@@ -189,7 +189,7 @@ export default function GridDescription() {
   ];
 
   return (
-    <section className="relative w-full overflow-hidden bg-background py-12 px-4 sm:px-6 sm:py-16 lg:py-20 [--chart-accent:var(--color-primary)] dark:[--chart-accent:var(--color-sky)]">
+    <section className="relative w-full overflow-hidden bg-background py-12 px-4 sm:px-6 sm:py-16 lg:py-16 xl:py-20 [--chart-accent:var(--color-primary)] dark:[--chart-accent:var(--color-sky)]">
       {/* subtle background glow */}
       <div
         aria-hidden
@@ -214,8 +214,8 @@ export default function GridDescription() {
         <div className="grid auto-rows-auto grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:grid-rows-[repeat(3,minmax(180px,1fr))]">
 
           {/* ── Cell 1 — AI Powered badge card (col 1, row 1) ── */}
-          <BentoCard className="order-1 col-span-1 min-h-[160px] sm:order-1 lg:order-0 lg:min-h-0">
-            <div className="relative h-full min-h-[160px] w-full lg:min-h-0">
+          <BentoCard className="order-1 col-span-1 min-h-[120px] sm:min-h-[160px] sm:order-1 lg:order-0 lg:min-h-0">
+            <div className="relative h-full min-h-[120px] sm:min-h-[160px] w-full lg:min-h-0">
               <Image
                 src="/ats.png"
                 alt={t("altAts")}
@@ -236,8 +236,8 @@ export default function GridDescription() {
           </BentoCard>
 
           {/* ── Cell 2 — ATS Performance (col 2-4, row 1) ── */}
-          <BentoCard className="order-2 col-span-1 min-h-[200px] sm:order-3 sm:col-span-2 lg:order-0 lg:col-span-3 lg:min-h-0">
-            <div className="relative h-full min-h-[200px] w-full lg:min-h-0">
+          <BentoCard className="order-2 col-span-1 min-h-[140px] sm:min-h-[200px] sm:order-3 sm:col-span-2 lg:order-0 lg:col-span-3 lg:min-h-0">
+            <div className="relative h-full min-h-[140px] sm:min-h-[200px] w-full lg:min-h-0">
               <Image
                 src="/comapny.png"
                 alt={t("altCompany")}
@@ -279,7 +279,7 @@ export default function GridDescription() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-xs font-semibold text-muted-foreground">{t("resumesToday")}</p>
-                <p className="mt-1 text-3xl font-extrabold text-foreground">{n(1247)}</p>
+                <p className="mt-1 text-2xl sm:text-3xl font-extrabold text-foreground">{n(1247)}</p>
               </div>
               <div className="rounded-lg bg-primary/10 p-2 dark:bg-sky/10">
                 <IconChartBar className="size-4 text-primary dark:text-sky" />
@@ -303,7 +303,7 @@ export default function GridDescription() {
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
               <div className="shrink-0">
-                <p className="text-3xl font-extrabold text-primary sm:text-4xl dark:text-sky">{n(3842)}</p>
+                <p className="text-2xl sm:text-3xl font-extrabold text-primary dark:text-sky">{n(3842)}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{t("candidatesMatched")}</p>
               </div>
               <div className="hidden flex-1 sm:block">
@@ -316,7 +316,7 @@ export default function GridDescription() {
                 />
               </div>
             </div>
-            <div className="mt-4 grid grid-cols-2 gap-2">
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
               {matchStats.map((s) => (
                 <div key={s.label} className="rounded-lg bg-muted/60 px-3 py-2">
                   <p className="text-[10px] text-muted-foreground">{s.label}</p>
@@ -369,7 +369,7 @@ export default function GridDescription() {
               </span>
             </div>
 
-            <ChartContainer config={weeklyChartConfig} className="h-28 w-full sm:h-24">
+            <ChartContainer config={weeklyChartConfig} className="h-24 w-full sm:h-28">
               <AreaChart data={weekData} margin={{ top: 4, right: 4, left: -12, bottom: 0 }}>
                 <defs>
                   <linearGradient id="gradSearches" x1="0" y1="0" x2="0" y2="1">

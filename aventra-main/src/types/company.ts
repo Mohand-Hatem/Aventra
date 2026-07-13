@@ -47,12 +47,19 @@ export interface CandidateScoreBreakdown {
 export interface CandidateResult {
   cvId: string;
   userId?: string;
-  matchScore: number;
+  // Present for AI-search-originated results; absent for deterministic
+  // /company/filter results (which have no semantic relevance score).
+  matchScore?: number;
+  // Present only for /company/filter results.
+  matchedSkills?: string[];
+  matchCount?: number;
   atsScore: number;
   processingStatus?: "uploaded" | "processing" | "analyzed";
   name: LocalizedCandidateName;
   email: string;
   skills: string[];
+  technicalSkills?: string[];
+  softSkills?: string[];
   summary: string;
   resumeUrl: string;
   resumeFileName: string;
@@ -80,6 +87,8 @@ export interface CompanySearchApiCandidate {
   atsScore?: number;
   matchScore?: number;
   matchedSnippet?: string;
+  experience?: CandidateExperience[];
+  education?: CandidateEducation[];
   cvFileUrl?: string;
   cvFileName?: string;
   cvFileType?: string;
@@ -162,6 +171,7 @@ export interface SearchCandidatesResponse {
   message?: string;
   resultsCount: number;
   results?: CompanySearchApiCandidate[];
+  uncertainCount?: number;
   usage?: {
     promptTokens?: number;
     completionTokens?: number;
@@ -198,7 +208,7 @@ export interface SearchHistoryResponse {
   history?: CompanySearchHistoryApiEntry[];
 }
 
-function normalizePercent(value?: number) {
+export function normalizePercent(value?: number) {
   if (!Number.isFinite(value)) return 0;
   const safeValue = Number(value);
   return safeValue <= 1 ? Math.round(safeValue * 100) : Math.round(safeValue);
@@ -239,6 +249,8 @@ export function normalizeCandidateResult(
       name: candidate.user?.name ?? "",
       email: candidate.user?.email ?? "",
       skills: candidate.skills ?? [],
+      technicalSkills: candidate.parsedData?.skills?.technical ?? [],
+      softSkills: candidate.parsedData?.skills?.soft ?? [],
       summary: candidate.summary ?? "",
       resumeUrl: candidate.originalFile?.url ?? "",
       resumeFileName: candidate.originalFile?.fileName ?? "",
@@ -274,6 +286,8 @@ export function normalizeCandidateResult(
       name: candidate.name ?? "",
       email: candidate.email ?? "",
       skills: candidate.topSkills ?? [],
+      technicalSkills: candidate.parsedData?.skills?.technical ?? [],
+      softSkills: candidate.parsedData?.skills?.soft ?? [],
       summary: candidate.matchedSnippet ?? "",
       resumeUrl: candidate.cvFileUrl ?? "",
       resumeFileName: candidate.cvFileName ?? `${fallbackName} CV.pdf`,
@@ -282,8 +296,8 @@ export function normalizeCandidateResult(
       location: "location" in candidate ? candidate.location : undefined,
       linkedin: "linkedin" in candidate ? candidate.linkedin : undefined,
       github: "github" in candidate ? candidate.github : undefined,
-      education: candidate.parsedData?.education ?? [],
-      experience: candidate.parsedData?.experience ?? [],
+      education: candidate.education ?? candidate.parsedData?.education ?? [],
+      experience: candidate.experience ?? candidate.parsedData?.experience ?? [],
       projects: candidate.parsedData?.projects ?? [],
       certifications: candidate.parsedData?.certifications ?? [],
       strengths: candidate.aiAnalysis?.strengths ?? [],
@@ -303,6 +317,8 @@ export function normalizeCandidateResult(
     name: "name" in candidate ? (candidate.name ?? "") : "",
     email: "email" in candidate ? (candidate.email ?? "") : "",
     skills: "skills" in candidate ? (candidate.skills ?? []) : [],
+    technicalSkills: "technicalSkills" in candidate ? candidate.technicalSkills : [],
+    softSkills: "softSkills" in candidate ? candidate.softSkills : [],
     summary: "summary" in candidate ? (candidate.summary ?? "") : "",
     resumeUrl: "resumeUrl" in candidate ? (candidate.resumeUrl ?? "") : "",
     resumeFileName:
@@ -335,159 +351,3 @@ export function normalizeCandidateResults(
   return (candidates ?? []).map(normalizeCandidateResult);
 }
 
-export interface CvFilterParams {
-  minAts?: number;
-  maxAts?: number;
-  skills?: string[];
-  certifications?: string[];
-  experiences?: string[];
-  projects?: string[];
-  page?: number;
-  limit?: number;
-}
-
-export interface CandidateFilterCriteria {
-  minAts: number;
-  minMatch?: number;
-  hasSkills: boolean;
-  hasCertifications: boolean;
-  hasExperience: boolean;
-  hasProjects: boolean;
-  educations?: string[];
-  strengths?: string[];
-  weaknesses?: string[];
-}
-
-export function matchesFilterCriteria(
-  candidate: CandidateResult,
-  criteria: CandidateFilterCriteria,
-) {
-  if (candidate.atsScore < criteria.minAts) return false;
-  if (criteria.minMatch && candidate.matchScore < criteria.minMatch)
-    return false;
-  if (criteria.hasSkills && candidate.skills.length === 0) return false;
-  if (
-    criteria.hasCertifications &&
-    (candidate.certifications?.length ?? 0) === 0
-  )
-    return false;
-  if (criteria.hasExperience && (candidate.experience?.length ?? 0) === 0)
-    return false;
-  if (criteria.hasProjects && (candidate.projects?.length ?? 0) === 0)
-    return false;
-  if (criteria.educations && criteria.educations.length > 0) {
-    const hasEdu = candidate.education?.some(
-      (e) =>
-        criteria.educations!.includes(e.degree || "") ||
-        criteria.educations!.includes(e.institution || ""),
-    );
-    if (!hasEdu) return false;
-  }
-  if (criteria.strengths && criteria.strengths.length > 0) {
-    const hasStrength = candidate.strengths?.some((s) =>
-      criteria.strengths!.includes(s.title),
-    );
-    if (!hasStrength) return false;
-  }
-  if (criteria.weaknesses && criteria.weaknesses.length > 0) {
-    const hasWeakness = candidate.weaknesses?.some((w) =>
-      criteria.weaknesses!.includes(w.title),
-    );
-    if (!hasWeakness) return false;
-  }
-  return true;
-}
-
-export interface FilteredCvApiItem {
-  _id: string;
-  userId?: {
-    _id?: string;
-    name?: LocalizedCandidateName;
-    email?: string;
-    avatar?: string;
-  };
-  atsScore?: number;
-  processingStatus?: "uploaded" | "processing" | "analyzed";
-  originalFile?: {
-    url?: string;
-    fileName?: string;
-    fileType?: string;
-  };
-  parsedData?: {
-    contact?: {
-      linkedin?: string;
-      github?: string;
-      email?: string;
-      phone?: string;
-      location?: string;
-    };
-    skills?: {
-      technical?: string[];
-      soft?: string[];
-    };
-    certifications?: CandidateCertification[];
-    experience?: CandidateExperience[];
-    education?: CandidateEducation[];
-    projects?: CandidateProject[];
-  };
-  aiAnalysis?: {
-    summary?: string;
-    strengths?: CandidateStrengthWeakness[];
-    weaknesses?: CandidateStrengthWeakness[];
-    suggestions?: CandidateStrengthWeakness[];
-  };
-  scoreBreakdown?: CandidateScoreBreakdown;
-  createdAt?: string;
-}
-
-export interface FilterCvsResponse {
-  success: boolean;
-  count: number;
-  total: number;
-  page: number;
-  totalPages: number;
-  data: FilteredCvApiItem[];
-}
-
-export function normalizeFilteredCvItem(
-  item: FilteredCvApiItem,
-): CandidateResult {
-  const atsScore = normalizePercent(item.atsScore);
-
-  return {
-    cvId: item._id,
-    userId: item.userId?._id,
-    matchScore: atsScore,
-    atsScore,
-    processingStatus: item.processingStatus,
-    name: item.userId?.name ?? "",
-    email: item.userId?.email ?? "",
-    skills: [
-      ...(item.parsedData?.skills?.technical ?? []),
-      ...(item.parsedData?.skills?.soft ?? []),
-    ],
-    summary: item.aiAnalysis?.summary ?? "",
-    resumeUrl: item.originalFile?.url ?? "",
-    resumeFileName: item.originalFile?.fileName ?? "",
-    resumeFileType: item.originalFile?.fileType,
-    createdAt: item.createdAt,
-    phone: item.parsedData?.contact?.phone,
-    location: item.parsedData?.contact?.location,
-    linkedin: item.parsedData?.contact?.linkedin,
-    github: item.parsedData?.contact?.github,
-    education: item.parsedData?.education ?? [],
-    experience: item.parsedData?.experience ?? [],
-    projects: item.parsedData?.projects ?? [],
-    certifications: item.parsedData?.certifications ?? [],
-    strengths: item.aiAnalysis?.strengths ?? [],
-    weaknesses: item.aiAnalysis?.weaknesses ?? [],
-    suggestions: item.aiAnalysis?.suggestions ?? [],
-    scoreBreakdown: item.scoreBreakdown,
-  };
-}
-
-export function normalizeFilteredCvItems(
-  items: FilteredCvApiItem[] | undefined,
-) {
-  return (items ?? []).map(normalizeFilteredCvItem);
-}

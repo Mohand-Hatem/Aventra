@@ -23,7 +23,7 @@ import { z } from "zod";
 import { useAiUsage } from "@/hooks/useAiUsage";
 import { useUser } from "@/hooks/useAuth";
 import { useCompanySearchHistory } from "@/hooks/useCompanySearchHistory";
-import { useFilterCandidates } from "@/hooks/useFilterCandidates";
+import { useFilterableCandidateResults } from "@/hooks/useFilterableCandidateResults";
 import { useUpdateUserProfile } from "@/hooks/useProfile";
 import { PLANS } from "@/constants/plans";
 import { getUserDisplayName, normalizeLocalizedName } from "@/types/auth";
@@ -32,15 +32,10 @@ import {
   type UpdateProfileFormValues,
   type UpdateProfilePayload,
 } from "@/schemas/profile";
-import {
-  matchesFilterCriteria,
-  type CandidateFilterCriteria,
-  type CandidateResult,
-  type SearchHistoryEntry,
-} from "@/types/company";
+import { type CandidateResult, type SearchHistoryEntry } from "@/types/company";
 import ResultsTable from "@/components/feature/company-search/ResultsTable";
 import CandidateDetail from "@/components/feature/company-search/CandidateDetail";
-import { CandidateFilterPanel } from "@/components/feature/profile/CandidateFilterPanel";
+import { FilterCandidatesPanel } from "@/components/feature/company-search/FilterCandidatesPanel";
 import { ProfilePageSkeleton } from "@/components/feature/profile/ProfilePageSkeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScaleLoader } from "@/components/shared/scale-loader";
@@ -295,13 +290,7 @@ export function CompanyProfile() {
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(
     null,
   );
-  const [selectedCandidate, setSelectedCandidate] =
-    useState<CandidateResult | null>(null);
-  const [resultsMode, setResultsMode] = useState<"history" | "filter">(
-    "history",
-  );
-  const [appliedFilterCriteria, setAppliedFilterCriteria] =
-    useState<CandidateFilterCriteria | null>(null);
+  const [noLastSearchOnServer, setNoLastSearchOnServer] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -319,22 +308,6 @@ export function CompanyProfile() {
   const searches = searchHistoryData?.searches ?? EMPTY_SEARCH_HISTORY;
   const searchCount =
     searchHistoryData?.totalSearches ?? user?.searchCount ?? 0;
-
-  const {
-    data: filterData,
-    isFetching: isFilterFetching,
-    isPending: isFilterPending,
-  } = useFilterCandidates(
-    { minAts: appliedFilterCriteria?.minAts || undefined },
-    { enabled: appliedFilterCriteria !== null },
-  );
-  const filteredCandidates = useMemo(() => {
-    const candidates = filterData?.candidates ?? EMPTY_CANDIDATES;
-    if (!appliedFilterCriteria) return candidates;
-    return candidates.filter((candidate) =>
-      matchesFilterCriteria(candidate, appliedFilterCriteria),
-    );
-  }, [filterData, appliedFilterCriteria]);
 
   const profileSchema = useMemo(
     () =>
@@ -496,7 +469,6 @@ export function CompanyProfile() {
     if (searches.length === 0) {
       startTransition(() => {
         setSelectedHistoryId(null);
-        setSelectedCandidate(null);
       });
       return;
     }
@@ -517,31 +489,32 @@ export function CompanyProfile() {
   );
 
   const historyCandidates = selectedHistory?.candidates ?? EMPTY_CANDIDATES;
-  const displayedCandidates =
-    resultsMode === "filter" ? filteredCandidates : historyCandidates;
 
-  useEffect(() => {
-    if (displayedCandidates.length === 0) {
-      startTransition(() => {
-        setSelectedCandidate(null);
-      });
-      return;
-    }
+  const {
+    displayedCandidates,
+    selectedCandidate,
+    setSelectedCandidate,
+    applyFilterResults,
+    resetFilterResults,
+  } = useFilterableCandidateResults(historyCandidates);
 
-    startTransition(() => {
-      setSelectedCandidate((current) => {
-        if (
-          current &&
-          displayedCandidates.some(
-            (candidate) => candidate.cvId === current.cvId,
-          )
-        ) {
-          return current;
-        }
-        return displayedCandidates[0];
-      });
-    });
-  }, [displayedCandidates]);
+  // The deterministic filter always operates on the company's most recent AI
+  // search, so only reveal/apply it while that specific entry is selected.
+  const isViewingMostRecentSearch =
+    searches.length > 0 && selectedHistoryId === searches[0].id;
+  // Reset the "no previous search" override whenever the selected history
+  // entry changes — derived during render rather than via an effect.
+  const [prevSelectedHistoryId, setPrevSelectedHistoryId] =
+    useState(selectedHistoryId);
+  if (prevSelectedHistoryId !== selectedHistoryId) {
+    setPrevSelectedHistoryId(selectedHistoryId);
+    setNoLastSearchOnServer(false);
+  }
+
+  const showFilterSection =
+    isViewingMostRecentSearch &&
+    historyCandidates.length > 0 &&
+    !noLastSearchOnServer;
 
   const candidatesFound = useMemo(
     () =>
@@ -671,13 +644,13 @@ export function CompanyProfile() {
         <header>
           <span className="mb-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
             <IconSparkles className="size-3" />
+            {t("title")}
+          </span>
+          <h1 className="mt-1 font-heading text-3xl font-bold tracking-tight sm:text-4xl">
             {t("welcome", {
               role: tNavbar(`roles.${user.role}`),
               name: displayName,
             })}
-          </span>
-          <h1 className="mt-1 font-heading text-3xl font-bold tracking-tight sm:text-4xl">
-            {t("title")}
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
             {t("description")}
@@ -718,16 +691,10 @@ export function CompanyProfile() {
                       <li key={entry.id}>
                         <SearchHistoryItem
                           entry={entry}
-                          isSelected={
-                            resultsMode === "history" &&
-                            selectedHistoryId === entry.id
-                          }
+                          isSelected={selectedHistoryId === entry.id}
                           locale={locale}
                           t={t}
-                          onSelect={() => {
-                            setSelectedHistoryId(entry.id);
-                            setResultsMode("history");
-                          }}
+                          onSelect={() => setSelectedHistoryId(entry.id)}
                         />
                       </li>
                     ))}
@@ -736,35 +703,30 @@ export function CompanyProfile() {
               </CardContent>
             </Card>
 
-            <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
-              <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
-                <CardTitle className="text-base">
-                  {t("filterCandidates")}
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  {t("filterCandidatesHint")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="px-4 pt-4 pb-4">
-                <CandidateFilterPanel
-                  candidates={
-                    resultsMode === "filter"
-                      ? (filterData?.candidates ?? EMPTY_CANDIDATES)
-                      : historyCandidates
-                  }
-                  isPending={isFilterFetching}
-                  t={t}
-                  onApply={(criteria) => {
-                    setAppliedFilterCriteria(criteria);
-                    setResultsMode("filter");
-                  }}
-                  onClear={() => {
-                    setAppliedFilterCriteria(null);
-                    setResultsMode("history");
-                  }}
-                />
-              </CardContent>
-            </Card>
+            {showFilterSection && (
+              <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
+                <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
+                  <CardTitle className="text-base">
+                    {t("filterCandidates")}
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {t("filterCandidatesHint")}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="px-4 pt-4 pb-4">
+                  <FilterCandidatesPanel
+                    key={selectedHistoryId}
+                    onApply={applyFilterResults}
+                    onReset={resetFilterResults}
+                    onNoLastSearch={(message) => {
+                      toast.error(message);
+                      setNoLastSearchOnServer(true);
+                      resetFilterResults();
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           <div className="flex flex-col gap-4">
@@ -773,8 +735,7 @@ export function CompanyProfile() {
                 candidates={displayedCandidates}
                 selectedCandidate={selectedCandidate}
                 onSelectCandidate={setSelectedCandidate}
-                isPending={resultsMode === "filter" && isFilterPending}
-                hideExport={resultsMode === "filter"}
+                isPending={false}
               />
             </div>
 
@@ -782,15 +743,12 @@ export function CompanyProfile() {
               <div className="shrink-0 overflow-hidden">
                 <CandidateDetail candidate={selectedCandidate} />
               </div>
-            ) : displayedCandidates.length === 0 &&
-              (resultsMode === "history" ? searches.length > 0 : true) ? (
+            ) : displayedCandidates.length === 0 && searches.length > 0 ? (
               <div className="flex h-32 items-center justify-center rounded-2xl border border-dashed border-border/80 bg-canvas/60 px-6 text-center shadow-md">
                 <div>
                   <IconUsers className="mx-auto size-8 text-muted-foreground" />
                   <p className="mt-2 text-sm text-muted-foreground">
-                    {resultsMode === "filter"
-                      ? t("noFilterResults")
-                      : t("selectSearchHint")}
+                    {t("selectSearchHint")}
                   </p>
                 </div>
               </div>
@@ -807,7 +765,7 @@ export function CompanyProfile() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
               <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-2.5">
                   <div className="flex size-8 items-center justify-center rounded-xl bg-primary/10 dark:bg-sky/10">
@@ -1082,7 +1040,7 @@ export function CompanyProfile() {
                     </Label>
                     <Input
                       id="company-name-en"
-                      autoComplete="organization"
+                      autoComplete="off"
                       aria-invalid={!!errors.name?.en}
                       className={inputClassName(!!errors.name?.en)}
                       {...register("name.en")}
@@ -1100,7 +1058,7 @@ export function CompanyProfile() {
                     </Label>
                     <Input
                       id="company-name-ar"
-                      autoComplete="organization"
+                      autoComplete="off"
                       aria-invalid={!!errors.name?.ar}
                       className={inputClassName(!!errors.name?.ar)}
                       dir="rtl"

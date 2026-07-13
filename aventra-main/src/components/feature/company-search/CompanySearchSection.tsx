@@ -1,29 +1,51 @@
 "use client";
 import { IconSparkles } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
+import toast from "react-hot-toast";
 import { useSearchCandidates } from "@/hooks/useCompanySearch";
 import { useRecruiterChat } from "@/hooks/useRecruiterChat";
-import { useState, useMemo, useEffect, startTransition } from "react";
+import { useFilterableCandidateResults } from "@/hooks/useFilterableCandidateResults";
+import { useState, useMemo, useEffect, useCallback, startTransition } from "react";
+import type { CandidateResult } from "@/types/company";
 import CandidateCards from "./CandidateCards";
 import SidebarChat from "./FloatingChat";
-import type { CandidateResult } from "@/types/company";
+import { FilterCandidatesPanel } from "./FilterCandidatesPanel";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 export default function CompanySearchSection() {
   const t = useTranslations("candidateSearch");
+  const tProfile = useTranslations("companyProfile");
 
-  const [minScore, setMinScore] = useState<number>(0);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [searchGeneration, setSearchGeneration] = useState(0);
+  const [lastSearchHadResults, setLastSearchHadResults] = useState(false);
+  const [noLastSearchOnServer, setNoLastSearchOnServer] = useState(false);
+
+  const { setSearchResults, setChatSearching, isPending, candidates } =
+    useSearchCandidates();
+
+  const handleSearchResults = useCallback(
+    (results: CandidateResult[]) => {
+      setSearchResults(results);
+      setSearchGeneration((g) => g + 1);
+    },
+    [setSearchResults],
+  );
+
+  const handleSearchOutcome = useCallback((hasResults: boolean) => {
+    setLastSearchHadResults(hasResults);
+    setNoLastSearchOnServer(false);
+  }, []);
 
   const {
-    setSearchResults,
-    setChatSearching,
-    isPending,
-    candidates,
+    displayedCandidates,
     selectedCandidate,
     setSelectedCandidate,
-  } = useSearchCandidates();
+    applyFilterResults,
+    resetFilterResults,
+  } = useFilterableCandidateResults(candidates);
 
   const {
     messages,
@@ -31,7 +53,12 @@ export default function CompanySearchSection() {
     isThinking,
     isTokenLimitReached,
     tokenLimitError,
-  } = useRecruiterChat({ onSearch: setSearchResults });
+  } = useRecruiterChat({
+    onSearch: handleSearchResults,
+    onSearchOutcome: handleSearchOutcome,
+  });
+
+  const showFilterSection = lastSearchHadResults && !noLastSearchOnServer;
 
   // Sync searching loading indicator
   useEffect(() => {
@@ -62,18 +89,9 @@ export default function CompanySearchSection() {
     return (hash % 26) + 32;
   }, [candidates.length, currentQuery]);
 
-  // Filter candidates list
-  const filteredCandidates = useMemo(() => {
-    return candidates.filter((c) => {
-      // Min score check
-      if (c.atsScore < minScore) return false;
-      return true;
-    });
-  }, [candidates, minScore]);
-
   return (
-    <div className="relative min-h-[calc(100vh-4rem)] rounded-xl w-full bg-canvas shadow-md px-4 sm:px-6 md:px-8 py-8 ">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-4">
+    <div className="relative min-h-[calc(100vh-4rem)] rounded-xl w-full bg-canvas shadow-md px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8 ">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-2 xl:gap-4">
         <div
           className={cn(
             "row-span-10 flex flex-col gap-6 col-span-12",
@@ -110,27 +128,57 @@ export default function CompanySearchSection() {
                   {t("liveQuery")}
                 </span>
                 <span>
-                  {t("foundMatches", { count: candidates.length })}
+                  {t("foundMatches", { count: displayedCandidates.length })}
                 </span>
                 <span className="hidden sm:inline text-muted-foreground/40">
                   |
                 </span>
-                <span className="italic">{t("searchLatency", { latency })}</span>
+                <span className="italic">
+                  {t("searchLatency", { latency })}
+                </span>
               </div>
             )}
           </header>
 
-          <div className="flex flex-col gap-4 w-full max-w-full mx-auto">
-            <CandidateCards
-              candidates={filteredCandidates}
-              selectedCandidate={selectedCandidate}
-              onSelectCandidate={setSelectedCandidate}
-              isPending={isPending}
-              // Pass new states for top bar filters
-              minAtsScore={minScore}
-              setMinAtsScore={setMinScore}
-              hasRawCandidates={candidates.length > 0}
-            />
+          <div className="flex flex-col gap-6 w-full max-w-full mx-auto items-stretch">
+            {/* Filter Section — hidden until the AI search returns candidates */}
+            {showFilterSection && (
+              <div className="w-full">
+                <Card className="border-border/60 bg-canvas shadow-md dark:border-border/40">
+                  <CardHeader className="border-b border-border/60 px-4 py-3 dark:border-border/40">
+                    <CardTitle className="text-base">
+                      {tProfile("filterCandidates")}
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      {tProfile("filterCandidatesHint")}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="px-4 pt-4 pb-4">
+                    <FilterCandidatesPanel
+                      key={searchGeneration}
+                      onApply={applyFilterResults}
+                      onReset={resetFilterResults}
+                      onNoLastSearch={(message) => {
+                        toast.error(message);
+                        setNoLastSearchOnServer(true);
+                        resetFilterResults();
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {/* Main Candidates List */}
+            <div className="flex-1 w-full min-w-0">
+              <CandidateCards
+                candidates={displayedCandidates}
+                selectedCandidate={selectedCandidate}
+                onSelectCandidate={setSelectedCandidate}
+                isPending={isPending}
+                hasRawCandidates={candidates.length > 0}
+              />
+            </div>
           </div>
 
           {/* Trending Skills & Market Insights */}
@@ -202,11 +250,13 @@ export default function CompanySearchSection() {
                 {t("searchTips")}
               </h3>
               <ul className="space-y-2">
-                {(t.raw("tips") as string[] || [
-                  "Use natural language queries",
-                  "Filter by ATS score threshold",
-                  "Search by specific skills",
-                ]).map((tip) => (
+                {(
+                  (t.raw("tips") as string[]) || [
+                    "Use natural language queries",
+                    "Filter by ATS score threshold",
+                    "Search by specific skills",
+                  ]
+                ).map((tip) => (
                   <li
                     key={tip}
                     className="flex items-start gap-2 text-xs text-muted-foreground"
@@ -222,7 +272,7 @@ export default function CompanySearchSection() {
 
         {/* Chatbot */}
         {isChatOpen && (
-          <div className="col-span-12 lg:col-span-4 lg:col-start-9 lg:sticky lg:top-30 lg:mt-13.5 lg:self-start">
+          <div className="col-span-12 lg:col-span-4 lg:col-start-9 lg:sticky lg:top-20 lg:mt-4 lg:self-start xl:top-30 xl:mt-13.5">
             <SidebarChat
               messages={messages}
               sendMessage={sendMessage}

@@ -251,14 +251,14 @@ function ScoreMetricStrip({
 }) {
   if (entries.length === 0) return null;
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 2xl:gap-4">
       {entries.map((entry, i) => {
         const color = BREAKDOWN_TW_COLORS[i % BREAKDOWN_TW_COLORS.length];
         return (
           <div
             key={entry.key}
             className={cn(
-              "flex flex-col gap-1.5 rounded-xl border p-4",
+              "flex flex-col gap-1.5 rounded-xl border p-3 xl:p-4",
               color.bg,
               "border-border/40",
             )}
@@ -474,7 +474,7 @@ function ContactInfoCard({
         {items.map(({ icon: ItemIcon, label, value, href, external }) => (
           <div
             key={label}
-            className="flex flex-col gap-0.5 px-5 py-3 min-w-[140px]"
+            className="flex flex-col gap-0.5 px-5 py-3 min-w-[120px] sm:min-w-[140px]"
           >
             <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
               {label}
@@ -862,7 +862,7 @@ export default function CvAnalysisContent() {
               </div>
 
               {/* Stats Strip */}
-              <div className="grid grid-cols-2 gap-3 shrink-0 sm:grid-cols-4 lg:w-auto w-full">
+              <div className="grid grid-cols-2 gap-3 shrink-0 sm:grid-cols-3 md:grid-cols-4 lg:w-auto w-full">
                 <div className="flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-canvas/60 p-4 text-center shadow-sm dark:border-border/40">
                   <span className="text-2xl font-bold text-primary dark:text-sky">
                     98%
@@ -1070,7 +1070,7 @@ export default function CvAnalysisContent() {
             </div>
 
             {/* Right Area: Sticky Action Sidebar */}
-            <aside className="col-span-1 lg:sticky lg:top-25 lg:self-start space-y-6">
+            <aside className="col-span-1 lg:sticky sm:top-16 md:top-20 lg:top-25 lg:self-start space-y-6">
               <Card className="border border-border/60 bg-canvas/50 shadow-md backdrop-blur rounded-3xl p-5 dark:border-border/40">
                 <CardHeader className="p-0 pb-4">
                   <div className="flex items-center justify-between gap-3">
@@ -1216,7 +1216,7 @@ export default function CvAnalysisContent() {
                         </p>
                       </div>
 
-                      <div className="grid gap-2 max-h-48 overflow-y-auto pr-1">
+                      <div className="grid gap-2 max-h-40 sm:max-h-56 md:max-h-72 overflow-y-auto pr-1">
                         {sortedCvs.map((cv, index) => {
                           const cvId = getCvId(cv, index);
                           const isSelected = selectedCvId

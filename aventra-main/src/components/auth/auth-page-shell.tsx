@@ -19,6 +19,6 @@ export function AuthPageShell({ children }: { children: ReactNode }) {
   if (userInfo) return null;
 
   return (
-    <div className="flex min-h-screen w-full bg-background">{children}</div>
+    <div className="flex min-h-screen w-full bg-background pt-16 lg:pt-20">{children}</div>
   );
 }

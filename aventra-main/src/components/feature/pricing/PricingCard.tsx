@@ -45,17 +45,17 @@ export default function PricingCard({
   return (
     <div
       className={cn(
-        "relative flex flex-col rounded-3xl border p-8 transition-all duration-300",
+        "relative flex flex-col rounded-3xl border p-4 sm:p-6 md:p-8 transition-all duration-300",
         isCurrentPlan && !isUnlimitedPlan && "opacity-50 cursor-not-allowed",
         isAdminUnlimited &&
-          "border-primary dark:border-sky bg-linear-to-br from-primary/5 via-canvas to-sky/10 dark:from-primary/10 dark:via-canvas dark:to-sky/15 text-foreground border-2 shadow-2xl scale-105",
+          "border-primary dark:border-sky bg-linear-to-br from-primary/5 via-canvas to-sky/10 dark:from-primary/10 dark:via-canvas dark:to-sky/15 text-foreground border-2 shadow-2xl sm:scale-105",
         isGoldCard &&
           !isAdminUnlimited &&
           "border-amber-500 bg-indigo-800 text-white",
         !isGoldCard &&
           !isAdminUnlimited &&
           featured &&
-          "border-transparent bg-[#0B1536] text-white shadow-2xl scale-105",
+          "border-transparent bg-[#0B1536] text-white shadow-2xl sm:scale-105",
         !isGoldCard &&
           !isAdminUnlimited &&
           !featured &&
@@ -67,7 +67,7 @@ export default function PricingCard({
         <div className="absolute -top-4 right-8">
           <span
             className={cn(
-              "rounded bg-blue-600 px-3 py-1.5 text-[10px] font-bold text-white shadow tracking-widest uppercase",
+              "rounded bg-blue-600 px-3 py-1.5 text-xs font-bold text-white shadow tracking-widest uppercase",
               isGoldCard && "bg-amber-500 text-white",
               isAdminUnlimited &&
                 "bg-primary dark:bg-sky/40 text-primary-foreground dark:text-zinc-200",
@@ -120,7 +120,7 @@ export default function PricingCard({
         <span
           className={cn(
             "font-bold tracking-tight",
-            price === "Custom" ? "text-4xl" : "text-5xl",
+            price === "Custom" ? "text-4xl" : "text-3xl sm:text-4xl md:text-5xl",
           )}
         >
           {price}

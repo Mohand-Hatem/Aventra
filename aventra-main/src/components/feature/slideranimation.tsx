@@ -56,7 +56,7 @@ function Dot({ variant }: { variant: BadgeVariant }) {
 
 function Separator() {
   return (
-    <span className="mx-4 flex items-center opacity-30">
+    <span className="mx-2 sm:mx-4 flex items-center opacity-30">
       <span className="h-4 w-px bg-border" />
     </span>
   );
@@ -74,7 +74,7 @@ function Badge({
   return (
     <span
       dir="auto"
-      className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-medium leading-none ${variantStyles[variant]}`}
+      className={`inline-flex items-center gap-2 rounded-full border px-2 py-1 text-[11px] sm:px-3.5 sm:py-1.5 sm:text-xs font-medium leading-none ${variantStyles[variant]}`}
     >
       <Dot variant={variant} />
       {icon}

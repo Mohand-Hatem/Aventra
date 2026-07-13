@@ -22,14 +22,14 @@ export function LoginHero() {
       />
 
       <div className="relative z-10 flex h-full w-full flex-col justify-between">
-        <div className="mt-3 flex h-[15%] flex-col justify-end px-10">
-          <p className="text-[0.62rem] font-bold uppercase tracking-[0.22em] text-primary dark:text-sky">
+        <div className=" flex h-auto sm:h-[15%] flex-col justify-end px-4 md:px-8 lg:px-10 ">
+          <p className="text-[0.55rem] sm:text-[0.62rem] font-bold uppercase tracking-[0.22em] text-primary dark:text-sky">
             {t("badge")}
           </p>
-          <span className="text-xl font-bold leading-snug">
+          <span className="text-lg sm:text-xl lg:text-2xl font-bold leading-snug">
             {t("titleLine1")}
           </span>
-          <span className="text-xl font-bold leading-snug">
+          <span className="text-lg sm:text-xl lg:text-2xl font-bold leading-snug">
             {t("titleLine2")}
           </span>
         </div>
@@ -64,7 +64,7 @@ export function LoginHero() {
                 <p className="mb-2 text-base font-bold text-sky">
                   {t("cardTitle")}
                 </p>
-                <p className="max-w-70 text-[0.78rem] leading-relaxed">
+                <p className="max-w-[70%] sm:max-w-70 text-[0.68rem] sm:text-[0.78rem] leading-relaxed">
                   {t("cardDescription")}
                 </p>
               </div>

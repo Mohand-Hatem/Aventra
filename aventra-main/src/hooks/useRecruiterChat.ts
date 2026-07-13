@@ -24,10 +24,16 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   createdAt: string;
+  uncertainCount?: number;
 }
 
 interface UseRecruiterChatProps {
   onSearch: (results: CandidateResult[]) => void;
+  // Fired for every completed (non-error) response, including greetings and
+  // off-topic/zero-result ones — used to drive "filter section" visibility,
+  // which must hide again the moment the latest message isn't a real search
+  // with results, independent of whatever candidates are still on screen.
+  onSearchOutcome?: (hasResults: boolean) => void;
 }
 
 const COMPANY_SEARCH_TIMEOUT_MS = 60_000;
@@ -52,7 +58,10 @@ function getCompanySearchErrorMessage(
   return getApiErrorMessage(error, t("somethingWentWrong"));
 }
 
-export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
+export function useRecruiterChat({
+  onSearch,
+  onSearchOutcome,
+}: UseRecruiterChatProps) {
   const queryClient = useQueryClient();
   const t = useTranslations("candidateSearch.assistant");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -108,18 +117,33 @@ export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
       const response = await chatMutation.mutateAsync(text);
       setTokenLimitError(null);
       let assistantContent: string;
+      let uncertainCount: number | undefined;
 
       if (response.isGreeting || response.isOffTopic) {
         assistantContent = response.message || t("replies.greeting");
+        onSearchOutcome?.(false);
       } else {
         const normalizedResults = normalizeCandidateResults(response.results);
         const resultsCount = response.resultsCount ?? normalizedResults.length;
-        assistantContent =
-          resultsCount > 0
-            ? t("resultsFound", { count: resultsCount })
-            : t("noMatches");
+
+        if (resultsCount === 0) {
+          // Covers both empty-result shapes: plain no-match and
+          // uncertain-heavy no-match — the backend already folds the
+          // uncertain-candidate wording into `message` for the latter.
+          assistantContent = response.message || t("noMatches");
+        } else {
+          assistantContent = t("resultsFound", { count: resultsCount });
+          if (
+            "uncertainCount" in response &&
+            response.uncertainCount !== undefined &&
+            response.uncertainCount > 0
+          ) {
+            uncertainCount = response.uncertainCount;
+          }
+        }
 
         onSearch(normalizedResults);
+        onSearchOutcome?.(resultsCount > 0);
       }
 
       void Promise.all([
@@ -134,6 +158,7 @@ export function useRecruiterChat({ onSearch }: UseRecruiterChatProps) {
           role: "assistant",
           content: assistantContent,
           createdAt: getCurrentTime(),
+          uncertainCount,
         },
       ]);
     } catch (error) {

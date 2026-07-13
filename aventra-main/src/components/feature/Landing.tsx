@@ -38,7 +38,7 @@ function ScoreGauge({ score }: { score: number }) {
   const { n, digits } = useLocaleFormat();
   const data = [{ value: score }];
   return (
-    <div className="relative size-24 shrink-0">
+    <div className="relative size-16 sm:size-24 shrink-0">
       <ChartContainer
         config={gaugeConfig}
         className="h-full w-full"
@@ -69,7 +69,7 @@ function ScoreGauge({ score }: { score: number }) {
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
         <span
           dir="ltr"
-          className="text-lg font-bold leading-none text-foreground"
+          className="text-base sm:text-lg font-bold leading-none text-foreground"
         >
           {n(score)}
         </span>
@@ -116,7 +116,7 @@ function CandidateChart() {
               {n(c.score)}
             </span>
           </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+          <div className="h-1.5 sm:h-2 w-full overflow-hidden rounded-full bg-muted">
             <div
               className="h-full rounded-full"
               style={{
@@ -167,7 +167,7 @@ function HeroCard({
   return (
     <div
       className={cn(
-        "rounded-xl border p-5",
+        "rounded-xl border p-3 sm:p-5",
         "border-border/60 bg-card shadow-card",
         "dark:border-border/40",
         className,
@@ -203,7 +203,7 @@ function B2BCards() {
 
       <div className="flex flex-col  gap-3">
         <div className="relative   flex h-40 md:h-44 overflow-hidden border border-border/60 rounded-lg bg-card shadow-card dark:border-border/40">
-          <div className="flex flex-1 w-[50%]  flex-col justify-evenly py-5 ps-6 pe-2">
+          <div className="flex flex-1 w-full sm:w-[50%]  flex-col justify-evenly py-5 ps-6 pe-2">
             <div>
               <p className="text-[10px] md:text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                 {t("jobSeekers")}
@@ -216,7 +216,7 @@ function B2BCards() {
               {t("b2cDesc")}
             </p>
           </div>
-          <div className="relative w-[50%] right-5 md:right-10   shrink-0">
+          <div className="relative w-[50%] right-5 sm:right-6 md:right-10   shrink-0">
             <Image
               src="/ats.png"
               alt={t("altAts")}
@@ -229,7 +229,7 @@ function B2BCards() {
 
         {/* B2B card */}
         <div className="relative flex h-40 md:h-44 overflow-hidden border border-border/60 rounded-lg bg-card shadow-card dark:border-border/40">
-          <div className="flex flex-1 w-[50%] flex-col justify-evenly py-5 ps-6 pe-4">
+          <div className="flex flex-1 w-full sm:w-[50%] flex-col justify-evenly py-5 ps-6 pe-4">
             <div>
               <p className="text-[10px] md:text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                 {t("companies")}
@@ -242,7 +242,7 @@ function B2BCards() {
               {t("b2bDesc")}
             </p>
           </div>
-          <div className="relative w-[50%] right-5 md:right-10 shrink-0">
+          <div className="relative w-[50%] right-5 sm:right-6 md:right-10 shrink-0">
             <Image
               src="/comapny.png"
               alt={t("altCompany")}
@@ -440,7 +440,7 @@ function handleUploadClick() {
   return (
     <section
       className={cn(
-        "relative min-h-screen lg:h-screen w-full overflow-y-auto lg:overflow-hidden bg-background",
+        "relative min-h-screen w-full overflow-y-auto lg:overflow-hidden bg-background",
 
         "[--chart-accent:var(--color-primary)] dark:[--chart-accent:var(--color-sky)]",
       )}
@@ -460,7 +460,7 @@ function handleUploadClick() {
         className="pointer-events-none absolute bottom-0 inset-s-0 z-0 h-[30vh] w-[30vw] rounded-full bg-primary/10 blur-3xl dark:bg-sky/10"
       />
 
-      <div className="relative z-10 mx-auto grid h-auto lg:h-full w-full max-w-360 grid-cols-1 items-center gap-8 px-4 pt-24 pb-12 sm:px-6 lg:grid-cols-2 lg:gap-14">
+      <div className="relative z-10 mx-auto grid h-auto lg:h-full w-full max-w-360 grid-cols-1 items-center gap-8 px-4 pt-12 pb-8 sm:pt-20 sm:pb-12 lg:pt-16 xl:pt-24 sm:px-6 lg:grid-cols-2 lg:gap-14">
         {/* ── LEFT: hero copy + B2B/B2C cards ── */}
         <div className="flex flex-col">
           <span className="mb-4 flex w-fit items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
@@ -471,7 +471,7 @@ function handleUploadClick() {
           {/* Heading + Mobile Pie Chart row */}
           <div className="flex flex-row items-start justify-between gap-4">
             <div className="flex-1">
-              <h1 className="font-heading text-4xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-5xl lg:text-[3.4rem]">
+              <h1 className="font-heading text-2xl sm:text-4xl font-bold leading-[1.1] tracking-tight text-foreground lg:text-5xl xl:text-[3.4rem]">
                 {t("titleLine1")}
                 <br />
                 <span className="text-primary dark:text-sky">

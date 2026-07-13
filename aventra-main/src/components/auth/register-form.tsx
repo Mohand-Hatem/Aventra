@@ -115,7 +115,7 @@ export function RegisterForm() {
   };
 
   return (
-    <div className="relative flex w-full flex-col items-center justify-center bg-background px-6 py-25 md:py-10 sm:px-12 lg:px-16 lg:w-[54%]">
+    <div className="relative flex w-full flex-col items-center justify-center -mt-5 bg-background px-6 py-20 md:py-10 sm:px-12 lg:px-16 lg:w-[54%]">
       <div className="w-full max-w-[480px]">
         <div className="parent-Links flex justify-between items-center">
           <div className=" lg:hidden">
@@ -308,7 +308,7 @@ export function RegisterForm() {
             )}
           </div>
 
-          <div className="flex justify-around flex-1">
+          <div className="flex flex-col gap-3 md:flex-row md:justify-around md:flex-1">
             {passwordChecks.map((item) => (
               <p
                 key={item.label}
@@ -332,7 +332,10 @@ export function RegisterForm() {
           >
             {isSubmitting ? (
               <span className="inline-flex items-center gap-2">
-                <ScaleLoader size="sm" className="text-primary-foreground dark:text-primary-foreground" />
+                <ScaleLoader
+                  size="sm"
+                  className="text-primary-foreground dark:text-primary-foreground"
+                />
                 {t("creatingAccount")}
               </span>
             ) : (

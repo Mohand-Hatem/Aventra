@@ -56,7 +56,7 @@ export function LoginForm() {
   };
 
   return (
-    <div className="relative flex w-full flex-col items-center justify-center bg-background px-6 py-10 sm:px-12 lg:px-16 lg:w-[54%]">
+    <div className="relative flex w-full flex-col items-center justify-center bg-background px-6 py-8 xl:py-10 sm:px-12 lg:px-16 lg:w-[54%]">
       <div className="w-full max-w-[440px]">
         <div className="parent-Links flex justify-between items-center">
           <div className="lg:hidden">
@@ -177,7 +177,10 @@ export function LoginForm() {
           >
             {isPending ? (
               <span className="inline-flex items-center gap-2">
-                <ScaleLoader size="sm" className="text-primary-foreground dark:text-primary-foreground" />
+                <ScaleLoader
+                  size="sm"
+                  className="text-primary-foreground dark:text-primary-foreground"
+                />
                 {t("signingIn")}
               </span>
             ) : (

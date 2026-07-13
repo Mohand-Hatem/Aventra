@@ -7,13 +7,28 @@
 "use client";
 
 import { useState } from "react";
-import { IconDownload, IconEye, IconUsers } from "@tabler/icons-react";
+import {
+  IconCertificate,
+  IconBriefcase,
+  IconDownload,
+  IconEye,
+  IconSchool,
+  IconUsers,
+} from "@tabler/icons-react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import {
   getLocalizedCandidateName,
   type CandidateResult,
 } from "@/types/company";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { SkillsDialogContent } from "./SkillsDialogContent";
 
 const PAGE_SIZE = 5;
 
@@ -38,6 +53,65 @@ function ScoreBadge({ score }: { score: number }) {
       )}
     >
       {score}%
+    </span>
+  );
+}
+
+// Deterministic /company/filter results have no semantic matchScore — show
+// the matched-skill count instead when that's all we have.
+function MatchCell({ candidate }: { candidate: CandidateResult }) {
+  if (candidate.matchScore !== undefined) {
+    return <ScoreBadge score={candidate.matchScore} />;
+  }
+  if (candidate.matchCount !== undefined) {
+    return (
+      <span className="inline-flex items-center justify-center rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary dark:bg-sky/15 dark:text-sky">
+        {candidate.matchCount}
+      </span>
+    );
+  }
+  return <span className="text-xs text-muted-foreground">—</span>;
+}
+
+function SectionBadges({ candidate }: { candidate: CandidateResult }) {
+  const hasEducation = (candidate.education?.length ?? 0) > 0;
+  const hasCertifications = (candidate.certifications?.length ?? 0) > 0;
+  const hasProjects = (candidate.projects?.length ?? 0) > 0;
+
+  if (!hasEducation && !hasCertifications && !hasProjects) return null;
+
+  return (
+    <div className="mt-1 flex items-center gap-1">
+      {hasEducation && (
+        <IconSchool className="size-3 text-muted-foreground/70" />
+      )}
+      {hasCertifications && (
+        <IconCertificate className="size-3 text-muted-foreground/70" />
+      )}
+      {hasProjects && (
+        <IconBriefcase className="size-3 text-muted-foreground/70" />
+      )}
+    </div>
+  );
+}
+
+function SkillChip({
+  skill,
+  matched,
+}: {
+  skill: string;
+  matched: boolean;
+}) {
+  return (
+    <span
+      className={cn(
+        "rounded-md px-2 py-0.5 text-[11px]",
+        matched
+          ? "bg-primary font-bold text-primary-foreground dark:bg-sky dark:text-zinc-900"
+          : "bg-muted text-muted-foreground",
+      )}
+    >
+      {skill}
     </span>
   );
 }
@@ -67,6 +141,7 @@ export default function ResultsTable({
   const locale = useLocale();
 
   const [page, setPage] = useState(1);
+  const [openSkillsDialogFor, setOpenSkillsDialogFor] = useState<string | null>(null);
 
   const totalPages = Math.max(1, Math.ceil(candidates.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -158,12 +233,118 @@ export default function ResultsTable({
               {t("resultsTable.export")}
             </button>
           )}
-
         </div>
       </div>
 
-      {/* Table */}
-      <div className="flex-1 overflow-x-auto overflow-y-auto" style={{ maxHeight: "calc(5 * 80px + 48px)" }}>
+      {/* Mobile Card View */}
+      <div
+        className="flex md:hidden flex-col flex-1 overflow-y-auto"
+        style={{ maxHeight: "calc(5 * 160px + 48px)" }}
+      >
+        {paginated.map((c, idx) => {
+          const rank = (currentPage - 1) * PAGE_SIZE + idx + 1;
+          const name = getName(c);
+          const initials = getInitials(name);
+          const isSelected = selectedCandidate?.cvId === c.cvId;
+
+          return (
+            <div
+              key={c.cvId}
+              onClick={() => onSelectCandidate(c)}
+              className={cn(
+                "cursor-pointer border-b border-border/50 p-4 transition-colors",
+                isSelected ? "bg-primary/5 dark:bg-sky/5" : "hover:bg-muted/50",
+              )}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <RankBadge rank={rank} />
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary dark:bg-sky/10 dark:text-sky">
+                    {initials}
+                  </div>
+                </div>
+                <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                  <IconEye size={15} />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <div>
+                  <p className="font-medium text-foreground text-sm">{name}</p>
+                  {c.email ? (
+                    <p className="text-xs text-muted-foreground">{c.email}</p>
+                  ) : null}
+                  <SectionBadges candidate={c} />
+                </div>
+
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground mb-1">
+                    {t("resultsTable.skills")}
+                  </p>
+                  <div className="flex flex-wrap gap-1 items-center">
+                    {c.skills.slice(0, 2).map((skill) => (
+                      <SkillChip
+                        key={skill}
+                        skill={skill}
+                        matched={!!c.matchedSkills?.some(
+                          (m) => m.toLowerCase() === skill.toLowerCase(),
+                        )}
+                      />
+                    ))}
+                    {c.skills.length > 2 && (
+                      <Dialog
+                        open={openSkillsDialogFor === c.cvId}
+                        onOpenChange={(open) => {
+                          if (!open) setOpenSkillsDialogFor(null);
+                        }}
+                      >
+                        <DialogTrigger asChild>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenSkillsDialogFor(c.cvId);
+                            }}
+                            className="rounded border border-primary/20 bg-primary/10 hover:bg-primary/20 px-1.5 py-0.5 text-[10px] font-bold text-primary dark:text-sky dark:bg-sky/10 dark:border-sky/20 dark:hover:bg-sky/20 transition-colors cursor-pointer"
+                          >
+                            View All
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent onClick={(e) => e.stopPropagation()}>
+                          <DialogHeader>
+                            <DialogTitle>{name}&apos;s Skills</DialogTitle>
+                          </DialogHeader>
+                          <SkillsDialogContent candidate={c} />
+                        </DialogContent>
+                      </Dialog>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">
+                      {t("resultsTable.match")}
+                    </p>
+                    <MatchCell candidate={c} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">
+                      {t("resultsTable.atsScore")}
+                    </p>
+                    <ScoreBadge score={c.atsScore} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop Table View */}
+      <div
+        className="hidden md:flex md:flex-col flex-1 overflow-x-hidden overflow-y-auto"
+        style={{ maxHeight: "calc(5 * 80px + 48px)" }}
+      >
         <table className="w-full text-sm">
           <thead className="sticky top-0 bg-muted/60 backdrop-blur-sm">
             <tr>
@@ -226,38 +407,59 @@ export default function ResultsTable({
                             {c.email}
                           </p>
                         ) : null}
+                        <SectionBadges candidate={c} />
                       </div>
                     </div>
                   </td>
 
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-1">
-                      {c.skills.slice(0, 5).map((skill) => (
-                        <span
+                  <td className="px-4 py-3 align-top">
+                    <div className="flex flex-wrap gap-1 items-center">
+                      {c.skills.slice(0, 2).map((skill) => (
+                        <SkillChip
                           key={skill}
-                          className="rounded-md bg-muted px-2 py-0.5 text-[11px] text-muted-foreground"
-                        >
-                          {skill}
-                        </span>
+                          skill={skill}
+                          matched={!!c.matchedSkills?.some(
+                            (m) => m.toLowerCase() === skill.toLowerCase(),
+                          )}
+                        />
                       ))}
 
-                      {c.skills.length > 5 && (
-                        <span className="rounded-md bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
-                          +{c.skills.length - 5}
-                        </span>
+                      {c.skills.length > 2 && (
+                        <Dialog
+                          open={openSkillsDialogFor === c.cvId}
+                          onOpenChange={(open) => {
+                            if (!open) setOpenSkillsDialogFor(null);
+                          }}
+                        >
+                          <DialogTrigger asChild>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenSkillsDialogFor(c.cvId);
+                              }}
+                              className="rounded border border-primary/20 bg-primary/10 hover:bg-primary/20 px-1.5 py-0.5 text-[10px] font-bold text-primary dark:text-sky dark:bg-sky/10 dark:border-sky/20 dark:hover:bg-sky/20 transition-colors cursor-pointer"
+                            >
+                              View All
+                            </button>
+                          </DialogTrigger>
+                          <DialogContent onClick={(e) => e.stopPropagation()}>
+                            <DialogHeader>
+                              <DialogTitle>{name}&apos;s Skills</DialogTitle>
+                            </DialogHeader>
+                            <SkillsDialogContent candidate={c} />
+                          </DialogContent>
+                        </Dialog>
                       )}
                     </div>
                   </td>
 
                   <td className="px-4 py-3">
-                    <ScoreBadge score={c.matchScore} />
+                    <MatchCell candidate={c} />
                   </td>
 
                   <td className="px-4 py-3">
                     <ScoreBadge score={c.atsScore} />
                   </td>
-
-
 
                   <td className="px-3 py-3">
                     <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">

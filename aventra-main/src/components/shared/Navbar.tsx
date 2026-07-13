@@ -22,13 +22,6 @@ export default function Navbar() {
   const isLoggedIn = !!userInfo;
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
 
-  // const navLinks = [
-  //   { href: "/", label: t("home") },
-  //   { href: "/pricing", label: t("pricing") },
-  //   { href: "/about", label: t("about") },
-  //   { href: "/contact", label: t("contact") },
-  // ] as const;
-
   const roleNavLinks =
     userInfo?.role === ROLES.admin
       ? [

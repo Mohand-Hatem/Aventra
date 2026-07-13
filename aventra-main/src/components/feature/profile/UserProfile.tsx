@@ -872,7 +872,7 @@ export function UserProfile() {
         </header>
 
         {/* Insight cards — strengths, weaknesses, suggestions, ATS */}
-        <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 sm:grid-rows-2 sm:min-h-80 xl:grid-cols-4 xl:grid-rows-1 xl:min-h-80">
+        <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 sm:grid-rows-2 sm:min-h-80 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 xl:grid-rows-1 xl:min-h-80">
           <InsightCard
             title={t("strengths")}
             icon={IconTrendingUp}
@@ -1464,7 +1464,7 @@ export function UserProfile() {
                     <Label htmlFor="name-en">{tRegister("englishName")}</Label>
                     <Input
                       id="name-en"
-                      autoComplete="name"
+                      autoComplete="off"
                       aria-invalid={!!errors.name?.en}
                       className={inputClassName(!!errors.name?.en)}
                       {...register("name.en")}
@@ -1480,7 +1480,7 @@ export function UserProfile() {
                     <Label htmlFor="name-ar">{tRegister("arabicName")}</Label>
                     <Input
                       id="name-ar"
-                      autoComplete="name"
+                      autoComplete="off"
                       aria-invalid={!!errors.name?.ar}
                       className={inputClassName(!!errors.name?.ar)}
                       dir="rtl"

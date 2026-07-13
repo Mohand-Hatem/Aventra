@@ -102,7 +102,7 @@ export default function FloatingChat({
             ? "relative h-[700px]"
             : cn(
                 "fixed   right-5 h-[700px] ml-4 border-l",
-                isOpen ? "w-[380px] opacity-100" : "w-0 opacity-0 border-none",
+                isOpen ? "w-[min(90vw,380px)] opacity-100" : "w-0 opacity-0 border-none",
               ),
         )}
       >
@@ -180,6 +180,7 @@ export default function FloatingChat({
                   role={message.role}
                   content={message.content}
                   time={message.createdAt}
+                  uncertainCount={message.uncertainCount}
                 />
               ))}
               {isThinking && <TypingIndicator />}
@@ -192,7 +193,7 @@ export default function FloatingChat({
           {/* Suggestion Chips */}
           <div className="flex flex-col gap-3 px-2">
             {/* Row 1: Tech */}
-            <div className="flex justify-center items-center gap-1.5 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth">
+            <div className="flex flex-wrap justify-center items-center gap-1.5 md:overflow-x-auto scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth">
               {suggestionsTech.map((s) => {
                 const Icon = s.icon;
                 return (
@@ -219,7 +220,7 @@ export default function FloatingChat({
               })}
             </div>
             {/* Row 2: Track */}
-            <div className="flex justify-center items-center gap-1.5 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth">
+            <div className="flex flex-wrap justify-center items-center gap-1.5 md:overflow-x-auto scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth">
               {suggestionsTrack.map((s) => {
                 const Icon = s.icon;
                 return (

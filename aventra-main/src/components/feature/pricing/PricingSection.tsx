@@ -14,9 +14,9 @@ export default function PricingSection() {
   const { plans, unlimitedPlan } = usePricingPlans();
   return (
     <section className="min-h-screen w-full bg-background">
-      <div className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6">
+      <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 xl:py-24">
         {/* Header */}
-        <div className="mb-16 text-center">
+        <div className="mb-8 xl:mb-16 text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 dark:border-sky/30 dark:bg-sky/10 px-4 py-1.5 text-sm font-medium text-primary dark:text-sky">
             <IconSparkles size={14} />
             {showUnlimitedOnly ? t("badgeUnlimited") : t("badge")}

@@ -30,7 +30,7 @@ function MarqueeItem({
   label: string;
 }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-xs font-medium text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
+    <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] sm:px-3.5 sm:py-1.5 sm:text-xs font-medium text-primary dark:border-sky/30 dark:bg-sky/10 dark:text-sky">
       <span className="size-1.5 shrink-0 rounded-full bg-primary dark:bg-sky" />
       {icon}
       {label}
@@ -39,7 +39,7 @@ function MarqueeItem({
 }
 
 function MarqueeSeparator() {
-  return <span className="mx-5 h-4 w-px bg-border opacity-30" aria-hidden />;
+  return <span className="mx-2 sm:mx-4 lg:mx-5 h-4 w-px bg-border opacity-30" aria-hidden />;
 }
 
 const socials = [

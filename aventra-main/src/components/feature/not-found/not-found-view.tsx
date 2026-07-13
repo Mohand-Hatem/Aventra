@@ -52,16 +52,7 @@ export function NotFoundView() {
   const t = useTranslations("notFound");
 
   return (
-    <section
-      className="
-        relative flex min-h-[calc(100vh-4rem)] flex-1 items-center
-        justify-center overflow-hidden
-        bg-canvas
-        px-4 py-16
-        sm:px-6
-        lg:px-8
-      "
-    >
+    <section className="relative flex min-h-[calc(100vh-4rem)] flex-1 items-center justify-center overflow-hidden bg-canvas px-4 py-16 sm:px-6 lg:px-8">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -top-32 -left-32 size-96 rounded-full bg-primary/20 blur-3xl dark:bg-sky/20"
@@ -92,13 +83,7 @@ export function NotFoundView() {
           <Button
             asChild
             size="lg"
-            className="
-              w-full rounded-xl px-6 text-sm
-              sm:w-auto
-              dark:bg-sky
-              dark:text-slate-950
-              dark:hover:bg-sky/90
-            "
+            className="w-full rounded-xl px-6 text-sm sm:w-auto dark:bg-sky dark:text-slate-950 dark:hover:bg-sky/90"
           >
             <Link href={APP_ROUTES.home}>
               <IconHome className="size-4" />
@@ -110,12 +95,7 @@ export function NotFoundView() {
             type="button"
             variant="outline"
             size="lg"
-            className="
-              w-full rounded-xl px-6 text-sm
-              sm:w-auto
-              dark:border-sky/40
-              dark:hover:bg-sky/10
-            "
+            className="w-full rounded-xl px-6 text-sm sm:w-auto dark:border-sky/40 dark:hover:bg-sky/10"
             onClick={() => router.back()}
           >
             <IconArrowLeft className="size-4 rtl:rotate-180" />

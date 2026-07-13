@@ -28,15 +28,15 @@ export function RefineFilters({
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-card h-full flex flex-col justify-between">
       <div>
-        <h2 className="text-lg font-bold text-foreground mb-6">
-          Filters
-        </h2>
+        <h2 className="text-lg font-bold text-foreground mb-6">Filters</h2>
 
         {/* Min Score Filter */}
         <div className="mb-6 space-y-3">
           <div className="flex justify-between items-center text-sm font-semibold text-foreground">
             <span>{t("resultsTable.match")}</span>
-            <span className="text-primary dark:text-sky tabular-nums">{minScore}%</span>
+            <span className="text-primary dark:text-sky tabular-nums">
+              {minScore}%
+            </span>
           </div>
           <div className="relative flex items-center">
             <input
@@ -89,7 +89,10 @@ export function RefineFilters({
                     )}
                   </div>
                   <span className="font-medium text-foreground">
-                    {level} <span className="text-xs text-muted-foreground/80 font-normal">({count})</span>
+                    {level}{" "}
+                    <span className="text-xs text-muted-foreground/80 font-normal">
+                      ({count})
+                    </span>
                   </span>
                 </label>
               );
@@ -115,16 +118,22 @@ export function AIQuickSearch({
   const assistantT = useTranslations("candidateSearch.assistant");
 
   // Map keys to icons from react-icons
-  const getPromptIcon = (key: typeof promptKeys[number]) => {
+  const getPromptIcon = (key: (typeof promptKeys)[number]) => {
     switch (key) {
       case "frontend":
-        return <FaReact className="h-4.5 w-4.5 text-primary dark:text-sky animate-spin-slow" />;
+        return (
+          <FaReact className="h-4.5 w-4.5 text-primary dark:text-sky animate-spin-slow" />
+        );
       case "backend":
         return <FaServer className="h-4.5 w-4.5 text-primary dark:text-sky" />;
       case "flutter":
-        return <RiFlutterFill className="h-4.5 w-4.5 text-primary dark:text-sky" />;
+        return (
+          <RiFlutterFill className="h-4.5 w-4.5 text-primary dark:text-sky" />
+        );
       case "data":
-        return <FaDatabase className="h-4.5 w-4.5 text-primary dark:text-sky" />;
+        return (
+          <FaDatabase className="h-4.5 w-4.5 text-primary dark:text-sky" />
+        );
       default:
         return <FaCode className="h-4.5 w-4.5 text-primary dark:text-sky" />;
     }

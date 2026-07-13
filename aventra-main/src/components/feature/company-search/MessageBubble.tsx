@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { IconUser } from "@tabler/icons-react";
+import { IconUser, IconAlertTriangle } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
 
@@ -9,13 +10,16 @@ interface MessageBubbleProps {
   role: "user" | "assistant";
   content: string;
   time: string;
+  uncertainCount?: number;
 }
 
 export default function MessageBubble({
   role,
   content,
   time,
+  uncertainCount,
 }: MessageBubbleProps) {
+  const t = useTranslations("candidateSearch.assistant");
   const isUser = role === "user";
   const userInfo = useAuthStore((state) => state.userInfo);
 
@@ -41,7 +45,7 @@ export default function MessageBubble({
 
       {/* Bubble + timestamp */}
       <div
-        className={cn("flex max-w-[78%] flex-col gap-1", isUser && "items-end")}
+        className={cn("flex max-w-[85%] sm:max-w-[75%] md:max-w-[78%] flex-col gap-1", isUser && "items-end")}
       >
         <div
           className={cn(
@@ -53,6 +57,13 @@ export default function MessageBubble({
         >
           {content}
         </div>
+
+        {!isUser && uncertainCount ? (
+          <div className="flex items-start gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[11px] leading-snug text-amber-700 dark:text-amber-400">
+            <IconAlertTriangle className="mt-0.5 size-3.5 shrink-0" />
+            <span>{t("uncertainCandidates", { count: uncertainCount })}</span>
+          </div>
+        ) : null}
 
         <span className="px-1 text-[10px] text-muted-foreground/50">
           {time}

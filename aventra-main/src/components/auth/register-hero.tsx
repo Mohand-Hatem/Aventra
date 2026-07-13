@@ -22,14 +22,14 @@ export function RegisterHero() {
       />
 
       <div className="relative z-10 flex h-full w-full flex-col justify-between">
-        <div className="mt-15 xl:mt-5 flex h-[15%] flex-col justify-end px-10">
-          <p className="text-[0.62rem] font-bold uppercase tracking-[0.22em] text-primary dark:text-sky">
+        <div className="flex h-auto sm:h-[15%] flex-col justify-end px-4 md:px-8 lg:px-10 ">
+          <p className="text-[0.55rem] sm:text-[0.62rem] font-bold uppercase tracking-[0.22em] text-primary dark:text-sky">
             {t("badge")}
           </p>
-          <span className="text-lg  font-bold leading-snug">
+          <span className="text-base lg:text-lg  font-bold leading-snug">
             {t("candidateLine")}
           </span>
-          <span className="text-lg  mt-2 font-bold leading-snug">
+          <span className="text-base lg:text-lg  mt-2 font-bold leading-snug">
             {t("companyLine")}
           </span>
         </div>
@@ -66,7 +66,7 @@ export function RegisterHero() {
                 <p className="mb-2 text-base font-bold text-sky">
                   {t("cardTitle")}
                 </p>
-                <p className="max-w-70 text-[0.78rem] leading-relaxed">
+                <p className="max-w-[70%] sm:max-w-70 text-[0.68rem] sm:text-[0.78rem] leading-relaxed">
                   {t("cardDescription")}
                 </p>
               </div>

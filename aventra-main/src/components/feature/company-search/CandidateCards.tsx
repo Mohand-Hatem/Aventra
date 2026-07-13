@@ -17,6 +17,11 @@ import {
   FaFilePdf,
   FaXmark,
 } from "react-icons/fa6";
+import {
+  IconBriefcase,
+  IconCertificate,
+  IconSchool,
+} from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { ensureAbsoluteUrl } from "@/lib/utils";
 import {
@@ -25,6 +30,14 @@ import {
 } from "@/types/company";
 
 import { CandidateSummaryPanel } from "./CandidateDetail";
+import { SkillsDialogContent } from "./SkillsDialogContent";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface CandidateCardsProps {
   candidates: CandidateResult[];
@@ -173,6 +186,36 @@ const getAtsColorClasses = (score: number) => {
   };
 };
 
+// Shown only once a candidate has education/certifications/projects data —
+// populated by /company/filter results (AI search results don't carry these).
+function SectionBadges({ candidate }: { candidate: CandidateResult }) {
+  const hasEducation = (candidate.education?.length ?? 0) > 0;
+  const hasCertifications = (candidate.certifications?.length ?? 0) > 0;
+  const hasProjects = (candidate.projects?.length ?? 0) > 0;
+
+  if (!hasEducation && !hasCertifications && !hasProjects) return null;
+
+  return (
+    <div className="mt-0.5 flex items-center gap-1">
+      {hasEducation && (
+        <IconSchool className="size-3 text-muted-foreground/70" />
+      )}
+      {hasCertifications && (
+        <IconCertificate className="size-3 text-muted-foreground/70" />
+      )}
+      {hasProjects && (
+        <IconBriefcase className="size-3 text-muted-foreground/70" />
+      )}
+    </div>
+  );
+}
+
+function isMatchedSkill(skill: string, candidate: CandidateResult) {
+  return !!candidate.matchedSkills?.some(
+    (m) => m.toLowerCase() === skill.toLowerCase(),
+  );
+}
+
 export default function CandidateCards({
   candidates,
   selectedCandidate,
@@ -184,6 +227,8 @@ export default function CandidateCards({
 }: CandidateCardsProps) {
   const t = useTranslations("candidateSearch");
   const locale = useLocale();
+
+  const [openSkillsDialogFor, setOpenSkillsDialogFor] = useState<string | null>(null);
 
   if (isPending && !candidates.length) {
     return (
@@ -243,7 +288,7 @@ export default function CandidateCards({
       {/* Top Filter Bar */}
       <div className="flex items-center justify-between border-b border-border/40 py-2.5 px-4 bg-muted/10">
         <div className="flex items-center gap-6">
-          <div className="flex flex-col justify-center gap-1 w-48 h-14">
+          <div className="flex flex-col justify-center gap-1 w-full sm:w-48 h-14">
             <h1 className="text-md dark:text-sky text-primary font-bold">
               Filter By ATS Score
             </h1>
@@ -267,14 +312,11 @@ export default function CandidateCards({
           <span className="bg-primary/10 text-primary dark:bg-sky/20 dark:text-sky px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider">
             AI Filter Active
           </span>
-          <button className="text-[10px] text-muted-foreground hover:text-foreground hover:underline font-medium">
-            Clear search
-          </button>
         </div>
       </div>
 
       {/* Table Header */}
-      <div className="grid grid-cols-[1fr_60px] sm:grid-cols-[1fr_60px_120px] md:grid-cols-[3.5fr_2fr_1fr_1.5fr] px-6 py-3 border-b border-border/40 bg-muted/5 text-[10px] font-bold text-muted-foreground tracking-wider uppercase">
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr_60px] md:grid-cols-[1fr_60px_120px] lg:grid-cols-[3.5fr_2fr_1fr_1.5fr] px-6 py-3 border-b border-border/40 bg-muted/5 text-[10px] font-bold text-muted-foreground tracking-wider uppercase">
         <div>Candidate</div>
         <div className="hidden md:block">Top Skills</div>
         <div>ATS</div>
@@ -345,23 +387,53 @@ export default function CandidateCards({
                     <span className="text-[11px] text-muted-foreground truncate">
                       {jobTitle}
                     </span>
+                    <SectionBadges candidate={c} />
                   </div>
                 </div>
 
                 {/* Skills */}
-                <div className="hidden md:flex flex-wrap gap-1.5 pr-2">
-                  {c.skills.slice(0, 3).map((skill) => (
-                    <span
-                      key={skill}
-                      className="rounded bg-secondary border border-border/40 px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground"
+                <div className="hidden md:flex flex-wrap gap-1.5 pr-6 items-center">
+                  {c.skills.slice(0, 2).map((skill) => {
+                    const matched = isMatchedSkill(skill, c);
+                    return (
+                      <span
+                        key={skill}
+                        className={cn(
+                          "rounded border px-1.5 py-0.5 text-[10px] font-semibold",
+                          matched
+                            ? "border-primary/30 bg-primary text-primary-foreground dark:bg-sky dark:text-zinc-900"
+                            : "border-border/40 bg-sky/20 text-muted-foreground",
+                        )}
+                      >
+                        {skill}
+                      </span>
+                    );
+                  })}
+                  {c.skills.length > 2 && (
+                    <Dialog
+                      open={openSkillsDialogFor === c.cvId}
+                      onOpenChange={(open) => {
+                        if (!open) setOpenSkillsDialogFor(null);
+                      }}
                     >
-                      {skill}
-                    </span>
-                  ))}
-                  {c.skills.length > 3 && (
-                    <span className="rounded bg-secondary border border-border/40 px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                      +{c.skills.length - 3}
-                    </span>
+                      <DialogTrigger asChild>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenSkillsDialogFor(c.cvId);
+                          }}
+                          className="rounded border border-primary/20 bg-primary/10 hover:bg-primary/20 px-1.5 py-0.5 text-[10px] font-bold text-primary dark:text-sky dark:bg-sky/10 dark:border-sky/20 dark:hover:bg-sky/20 transition-colors cursor-pointer"
+                        >
+                          View All
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent onClick={(e) => e.stopPropagation()}>
+                        <DialogHeader>
+                          <DialogTitle>{name}&apos;s Skills</DialogTitle>
+                        </DialogHeader>
+                        <SkillsDialogContent candidate={c} />
+                      </DialogContent>
+                    </Dialog>
                   )}
                 </div>
 

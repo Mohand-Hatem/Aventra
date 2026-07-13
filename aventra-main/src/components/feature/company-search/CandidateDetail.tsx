@@ -59,6 +59,12 @@ export function CandidateSummaryPanel({ candidate }: SummaryPanelProps) {
   // Experience — from parsedData
   const experience = parsedData?.experience ?? [];
 
+  // Education — prefer /cv/:id parsedData, fallback to search result
+  const education =
+    (parsedData?.education?.length
+      ? parsedData.education
+      : candidate.education) ?? [];
+
   // Contact details & Skills from parsedData
   const contact = parsedData?.contact || {};
   const skills = parsedData?.skills || {};
@@ -216,6 +222,32 @@ export function CandidateSummaryPanel({ candidate }: SummaryPanelProps) {
             </div>
           )}
 
+          {/* ── Education ── */}
+          {education.length > 0 && (
+            <div className="mt-8 pt-6 border-t border-border/40">
+              <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-5">
+                EDUCATION
+              </h4>
+              <div className="space-y-5">
+                {education.map((edu, i) => {
+                  const year =
+                    "year" in edu ? edu.year : ("graduationDate" in edu ? edu.graduationDate : undefined);
+                  return (
+                    <div key={i} className="flex flex-col">
+                      <span className="font-bold text-sm text-foreground">
+                        {edu.degree}
+                      </span>
+                      <span className="text-xs text-muted-foreground font-medium mt-0.5">
+                        {edu.institution}
+                        {year ? ` • ${year}` : ""}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* ── Skills & Contact Information ── */}
           {(technicalSkills.length > 0 ||
             softSkills.length > 0 ||
@@ -357,7 +389,7 @@ export function CandidateSummaryPanel({ candidate }: SummaryPanelProps) {
           <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-5">
             CV PREVIEW
           </h4>
-          <div className="h-[420px] w-full bg-muted/10 border border-border/60 rounded-xl overflow-hidden relative flex items-center justify-center">
+          <div className="h-[250px] sm:h-[300px] md:h-[420px] w-full bg-muted/10 border border-border/60 rounded-xl overflow-hidden relative flex items-center justify-center">
             {resumeUrl ? (
               <>
                 <iframe
